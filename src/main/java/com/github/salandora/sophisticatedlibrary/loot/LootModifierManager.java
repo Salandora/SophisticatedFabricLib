@@ -59,6 +59,8 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 	}
 
 	protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+		profiler.push("LootModifierManager prepare: %s".formatted(getName()));
+
 		Map<ResourceLocation, JsonElement> map = new HashMap<>();
 		SimpleJsonResourceReloadListener.scanDirectory(resourceManager, folder, GSON, map);
 
@@ -66,6 +68,8 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 		List<ResourceLocation> finalLocations = new ArrayList<>();
 		for (Resource resource : resourceManager.getResourceStack(global_loot_modifiers)) {
 			try (Reader reader = resource.openAsReader()) {
+				profiler.push("LootModifierManager prepare resource: %s".formatted(resource.sourcePackId()));
+
 				JsonObject jsonObject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
 				if (GsonHelper.getAsBoolean(jsonObject, "replace", false)) {
 					finalLocations.clear();
@@ -77,25 +81,38 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 					finalLocations.remove(location); // Update ordering
 					finalLocations.add(location);
 				}
+
+				profiler.pop();
 			} catch (RuntimeException | IOException exception) {
 				SophisticatedLibrary.LOGGER.error("Couldn't read global loot modifier list '{}' in data pack '{}'", global_loot_modifiers, resource.sourcePackId(), exception);
 			}
 		}
 
-		return finalLocations.stream().collect(Collectors.toMap(Function.identity(), map::get));
+		Map<ResourceLocation, JsonElement> collect = finalLocations.stream().collect(Collectors.toMap(Function.identity(), map::get));
+
+		profiler.pop();
+		return collect;
 	}
 
 	protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+		profiler.push("LootModifierManager apply: %s".formatted(getName()));
+
 		DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
 		ImmutableMap.Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
 		for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
 			ResourceLocation location = entry.getKey();
+			profiler.push("LootModifierManager apply: %s".formatted(location));
+
 			JsonElement json = entry.getValue();
 			IGlobalLootModifier.DIRECT_CODEC.parse(ops, json)
 					.resultOrPartial(errorMsg -> SophisticatedLibrary.LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, errorMsg))
 					.ifPresent(carrier -> builder.put(location, carrier));
+
+			profiler.pop();
 		}
 		this.registeredLootModifiers = builder.build();
+
+		profiler.pop();
 	}
 
 	public Collection<IGlobalLootModifier> getAllLootMods() {

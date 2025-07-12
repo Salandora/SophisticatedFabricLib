@@ -45,16 +45,17 @@ public class ModelLoadingPlugin implements PreparableModelLoadingPlugin<Map<Reso
 						var loader = RegisterGeometryLoadersCallback.get(loaderLocation);
 						if (loader != null) {
 							if (element.has("transform")) {
-								SophisticatedLibrary.LOGGER.info("Found transform element in " + entry.getKey());
+								SophisticatedLibrary.LOGGER.info("Found transform element in {}", entry.getKey());
 							}
+
 							if (element.has("visibility")) {
-								SophisticatedLibrary.LOGGER.info("Found visibility element in " + entry.getKey());
+								SophisticatedLibrary.LOGGER.info("Found visibility element in {}", entry.getKey());
 							}
 
 							return Pair.of(id, loader.read(element));
 						}
 					} catch(IOException e) {
-						SophisticatedLibrary.LOGGER.error("Failed to load model " + entry.getKey(), e);
+						SophisticatedLibrary.LOGGER.error("Failed to load model {}", entry.getKey(), e);
 					}
 					return null;
 				}, executor));
