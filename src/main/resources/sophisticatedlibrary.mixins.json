@@ -1,9 +1,20 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.github.salandora.sophisticatedlibrary.mixin",
+  "package": "com.github.salandora.sophisticatedlibrary.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "BlockMixin",
+    "BlockStateMixin",
+    "ItemMixin",
+    "ItemStackMixin",
+    "accessors.AxeItemAccessor",
+    "accessors.ShovelItemAccessor",
+    "tools.AxeItemMixin",
+    "tools.HoeItemMixin",
+    "tools.PickaxeItemMixin",
+    "tools.ShearsItemMixin",
+    "tools.ShovelItemMixin"
   ],
   "client": [
   ],
