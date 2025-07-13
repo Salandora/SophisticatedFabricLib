@@ -3,6 +3,7 @@ package com.github.salandora.sophisticatedlibrary.model.client;
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
 import com.github.salandora.sophisticatedlibrary.model.loading.IUnbakedGeometry;
 import com.github.salandora.sophisticatedlibrary.model.loading.RegisterGeometryLoadersCallback;
+import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
 import com.github.salandora.sophisticatedlibrary.model.models.BlockModelWrapper;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
@@ -72,7 +73,7 @@ public class ModelLoadingPlugin implements PreparableModelLoadingPlugin<Map<Reso
 				return model;
 			}
 
-			if (model instanceof BlockModel blockModel && blockModel.parent instanceof BlockModelWrapper wrapper) {
+			if (model instanceof BlockModel blockModel && ((BlockModelAccessor) blockModel).parent() instanceof BlockModelWrapper wrapper) {
 				// We need to replace the model of BlockModelWrapper wrapped models with the BlockModelWrapper model
 				// or else they will not be visible
 				return wrapper;

@@ -2,6 +2,7 @@ package com.github.salandora.sophisticatedlibrary.model.models;
 
 import com.github.salandora.sophisticatedlibrary.model.loading.BlockModelGeometryBakingContext;
 import com.github.salandora.sophisticatedlibrary.model.loading.IUnbakedGeometry;
+import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -20,7 +21,7 @@ public class BlockModelWrapper extends BlockModel {
 	}
 
 	public BlockModelWrapper(BlockModel original, @Nullable IUnbakedGeometry wrapper) {
-		super(original.parentLocation, original.getElements(), original.textureMap, original.hasAmbientOcclusion(), original.getGuiLight(), original.getTransforms(), original.getOverrides());
+		super(((BlockModelAccessor) original).parentLocation(), original.getElements(), ((BlockModelAccessor) original).textureMap(), original.hasAmbientOcclusion(), original.getGuiLight(), original.getTransforms(), original.getOverrides());
 		this.name = original.name;
 		this.context = new BlockModelGeometryBakingContext(this);
 		this.wrapper = wrapper;

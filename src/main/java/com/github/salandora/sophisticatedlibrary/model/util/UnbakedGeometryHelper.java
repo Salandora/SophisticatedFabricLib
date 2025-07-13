@@ -1,5 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.model.util;
 
+import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
+import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.ItemModelGeneratorAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -21,7 +23,7 @@ public class UnbakedGeometryHelper {
 	private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
 
 	public static List<BlockElement> createUnbakedItemElements(int layer, SpriteContents sprite) {
-		return ITEM_MODEL_GENERATOR.processFrames(layer, "layer" + layer, sprite);
+		return ((ItemModelGeneratorAccessor) ITEM_MODEL_GENERATOR).callProcessFrames(layer, "layer" + layer, sprite);
 	}
 
 	public static List<BlockElement> createUnbakedItemMaskElements(int layer, SpriteContents maskSprite) {
@@ -81,7 +83,7 @@ public class UnbakedGeometryHelper {
 
 				Material material = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(face.texture()));
 				TextureAtlasSprite sprite = spriteGetter.apply(material);
-				quads.add(BlockModel.bakeFace(element, face, sprite, entry.getKey(), state));
+				quads.add(BlockModelAccessor.callBakeFace(element, face, sprite, entry.getKey(), state));
 			}
 		}
 		return quads;

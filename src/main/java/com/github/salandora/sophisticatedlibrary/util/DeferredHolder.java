@@ -99,6 +99,7 @@ public class DeferredHolder<T, U extends T> implements Holder<T>, Supplier<U> {
 		return this.holder != null && this.holder.is(tagKey);
 	}
 
+	@Deprecated
 	@Override
 	public boolean is(Holder<T> holder) {
 		this.bind(false);

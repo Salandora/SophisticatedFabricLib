@@ -21,7 +21,8 @@
   },
   "mixins": [
     "sophisticatedlibrary.mixins.json",
-    "sophisticatedlibrary.loot.mixins.json"
+    "sophisticatedlibrary.loot.mixins.json",
+    "sophisticatedlibrary.model.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
