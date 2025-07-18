@@ -2,10 +2,13 @@ package com.github.salandora.sophisticatedlibrary.transfer;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
 
 public interface SlottedStackStorage extends SlottedStorage<ItemVariant> {
 	ItemStack getStackInSlot(int slot);
@@ -24,6 +27,12 @@ public interface SlottedStackStorage extends SlottedStorage<ItemVariant> {
 
 	default long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext ctx) {
 		return getSlot(slot).extract(resource, maxAmount, ctx);
+	}
+
+	@Override
+	default Iterator<StorageView<ItemVariant>> iterator() {
+		//noinspection unchecked,rawtypes
+		return (Iterator) getSlots().iterator();
 	}
 
 	/// Do not call from an open transaction
