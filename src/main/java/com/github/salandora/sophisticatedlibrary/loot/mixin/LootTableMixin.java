@@ -1,8 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.loot.mixin;
 
 import com.github.salandora.sophisticatedlibrary.loot.SophisticatedLoot;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilderExtension;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableExtension;
+import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilder;
+import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTable;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Mixin(LootTable.class)
-public abstract class LootTableMixin  implements SophisticatedLootTableExtension {
+public abstract class LootTableMixin  implements SophisticatedLootTable {
 	@Shadow
 	public abstract void getRandomItemsRaw(LootContext context, Consumer<ItemStack> output);
 
@@ -93,7 +93,7 @@ public abstract class LootTableMixin  implements SophisticatedLootTableExtension
 	}
 
 	@Mixin(LootTable.Builder.class)
-	public static class BuilderMixin implements SophisticatedLootTableBuilderExtension {
+	public static class BuilderMixin implements SophisticatedLootTableBuilder {
 		@Unique
 		private ResourceLocation sophisticatedLibrary$id;
 
@@ -105,7 +105,7 @@ public abstract class LootTableMixin  implements SophisticatedLootTableExtension
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
 		private LootTable sophisticatedLibrary$injectLootTableId(LootTable table) {
 			if (this.sophisticatedLibrary$id != null) {
-				((SophisticatedLootTableExtension) table).sophisticatedLibrary$setId(this.sophisticatedLibrary$id);
+				((SophisticatedLootTable) table).sophisticatedLibrary$setId(this.sophisticatedLibrary$id);
 			}
 
 			return table;

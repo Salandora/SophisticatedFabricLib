@@ -6,6 +6,8 @@
   "mixins": [
     "BlockMixin",
     "BlockStateMixin",
+    "DataComponentHolderMixin",
+    "ItemContainerContentsMixin",
     "ItemMixin",
     "ItemStackMixin",
     "accessors.AxeItemAccessor",

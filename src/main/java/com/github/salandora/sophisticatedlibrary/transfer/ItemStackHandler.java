@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemStackHandler implements SlottedStackStorage {
+public class ItemStackHandler implements SlottedStackStorageModifiable {
 	protected NonNullList<ItemStack> stacks;
 
 	public ItemStackHandler() {
@@ -133,16 +133,6 @@ public class ItemStackHandler implements SlottedStackStorage {
 		}
 
 		return existing.copyWithCount(extract);
-	}
-
-	@Override
-	public long insertSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext ctx) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public long extractSlot(int slot, ItemVariant resource, long maxAmount, TransactionContext ctx) {
-		throw new NotImplementedException();
 	}
 
 	@Override

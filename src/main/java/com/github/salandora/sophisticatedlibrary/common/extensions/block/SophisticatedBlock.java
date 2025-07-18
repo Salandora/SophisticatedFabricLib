@@ -16,11 +16,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public interface SophisticatedBlockExtension {
+public interface SophisticatedBlock {
 	@Nullable
 	default BlockState sophisticatedLibrary$getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
 		ItemStack stack = context.getItemInHand();
-		if (!stack.sophisticatedLibrary$canPerformAction(itemAbility)) {
+		if (!stack.sophisticatedLibrary_canPerformAction(itemAbility)) {
 			return null;
 		}
 		if (ItemAbilities.AXE_STRIP == itemAbility) {

@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.DebugMessages;
@@ -258,15 +259,20 @@ public class FluidUtil {
 			FluidActionResult filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, false);
 			if (filledSimulated.isSuccess()) {
 				// check if we can give the itemStack to the inventory
-				ItemStack remainder = inventory.insertItem(filledSimulated.getResult(), true);
-				if (remainder.isEmpty() || player != null) {
+				long inserted = StorageUtil.simulateInsert(inventory, ItemVariant.of(filledSimulated.getResult()), filledSimulated.getResult().getCount(), null);
+				if (inserted > 0 || player != null) {
 					FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
-					remainder = inventory.insertItem(filledReal.getResult(), !doFill);
+					try (Transaction insert = Transaction.openOuter()) {
+						inserted = StorageUtil.tryInsertStacking(inventory, ItemVariant.of(filledReal.getResult()), filledReal.getResult().getCount(), insert);
+						if (doFill) {
+							insert.commit();
+						}
+					}
 
 					// give it to the player or drop it at their feet
-					if (!remainder.isEmpty() && player != null && doFill) {
+					if (inserted > 0 && player != null && doFill) {
 						try (Transaction ctx = Transaction.openOuter()) {
-							PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(remainder.getItem()), remainder.getCount(), ctx);
+							PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(filledReal.getResult()), inserted, ctx);
 							ctx.commit();
 						}
 					}
@@ -299,15 +305,20 @@ public class FluidUtil {
 			FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, false);
 			if (emptiedSimulated.isSuccess()) {
 				// check if we can give the itemStack to the inventory
-				ItemStack remainder = inventory.insertItem(emptiedSimulated.getResult(), true);
-				if (remainder.isEmpty() || player != null) {
+				long inserted = StorageUtil.simulateInsert(inventory, ItemVariant.of(emptiedSimulated.getResult()), emptiedSimulated.getResult().getCount(), null);
+				if (inserted > 0 || player != null) {
 					FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
-					remainder = inventory.insertItem(emptiedReal.getResult(), !doDrain);
+					try (Transaction insert = Transaction.openOuter()) {
+						inserted = StorageUtil.tryInsertStacking(inventory, ItemVariant.of(emptiedReal.getResult()), emptiedReal.getResult().getCount(), insert);
+						if (doDrain) {
+							insert.commit();
+						}
+					}
 
 					// give it to the player or drop it at their feet
-					if (!remainder.isEmpty() && player != null && doDrain) {
+					if (inserted > 0 && player != null && doDrain) {
 						try (Transaction ctx = Transaction.openOuter()) {
-							PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(remainder.getItem()), remainder.getCount(), ctx);
+							PlayerInventoryStorage.of(player).offerOrDrop(ItemVariant.of(emptiedReal.getResult()), inserted, ctx);
 							ctx.commit();
 						}
 					}

@@ -32,4 +32,8 @@ public class SimpleFluidContent implements DataComponentHolder {
 	public FluidStack copy() {
 		return this.fluidStack.copy();
 	}
+
+	public long getAmount() {
+		return this.fluidStack.getAmount();
+	}
 }

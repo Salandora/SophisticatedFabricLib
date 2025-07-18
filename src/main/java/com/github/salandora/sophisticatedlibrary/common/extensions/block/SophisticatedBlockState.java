@@ -4,7 +4,7 @@ import com.github.salandora.sophisticatedlibrary.common.ItemAbility;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface SophisticatedBlockStateExtension {
+public interface SophisticatedBlockState {
 	private BlockState self() {
 		return (BlockState) this;
 	}

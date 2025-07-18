@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.loot;
 
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilderExtension;
+import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilder;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;
@@ -34,7 +34,7 @@ public class SophisticatedLoot implements ModInitializer {
 		ResourceLocation last = SophisticatedLibrary.id("last");
 		LootTableEvents.MODIFY.addPhaseOrdering(Event.DEFAULT_PHASE, last);
 		LootTableEvents.MODIFY.register(last, (key, builder, source, provider) ->
-				((SophisticatedLootTableBuilderExtension) builder).sophisticatedLibrary$setId(key.location()));
+				((SophisticatedLootTableBuilder) builder).sophisticatedLibrary$setId(key.location()));
 	}
 
 	public static ObjectArrayList<ItemStack> modifyLoot(ResourceLocation lootTableId, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
