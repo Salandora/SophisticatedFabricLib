@@ -9,19 +9,40 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.material.Fluid;
+
+import java.util.Optional;
 
 public class FluidStack extends SingleFluidStorage {
 	public static final FluidStack EMPTY = new FluidStack(FluidVariant.blank(), 0);
 
-	public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
+	public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(() ->
+			RecordCodecBuilder.create(
 			instance -> instance.group(
 					FluidVariant.CODEC.fieldOf("FluidVariant").forGetter(FluidStack::getVariant),
 					Codec.LONG.fieldOf("Amount").forGetter(FluidStack::getAmount)
 			).apply(instance, FluidStack::new)
+	));
+
+	public static final Codec<FluidStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
+			.xmap(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = StreamCodec.composite(
+			FluidVariant.PACKET_CODEC, FluidStack::getVariant,
+			ByteBufCodecs.VAR_LONG, FluidStack::getAmount,
+			FluidStack::new
 	);
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_STREAM_CODEC = STREAM_CODEC
+			.apply(ByteBufCodecs::optional)
+			.map(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
 
 	public static boolean isSameFluidSameComponents(FluidStack first, FluidStack second) {
 		return first.isResourceBlank() && second.isResourceBlank() || first.variant == second.variant;
