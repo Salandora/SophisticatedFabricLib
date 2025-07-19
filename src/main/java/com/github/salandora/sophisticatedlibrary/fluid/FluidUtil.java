@@ -1,7 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.fluid;
 
 import com.github.salandora.sophisticatedlibrary.transfer.MutableContainerItemContext;
-import com.github.salandora.sophisticatedlibrary.transfer.SlottedStackStorage;
+import com.github.salandora.sophisticatedlibrary.transfer.IItemHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.FabricStorageWrapper;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -240,7 +241,7 @@ public class FluidUtil {
 		return FluidActionResult.FAILURE;
 	}
 
-	public static FluidActionResult tryFillContainerAndStow(ItemStack container, Storage<FluidVariant> fluidSource, SlottedStackStorage inventory, long maxAmount, @Nullable Player player, boolean doFill) {
+	public static FluidActionResult tryFillContainerAndStow(ItemStack container, Storage<FluidVariant> fluidSource, IItemHandler inventory, long maxAmount, @Nullable Player player, boolean doFill) {
 		if (container.isEmpty()) {
 			return FluidActionResult.FAILURE;
 		}
@@ -259,11 +260,12 @@ public class FluidUtil {
 			FluidActionResult filledSimulated = tryFillContainer(container, fluidSource, maxAmount, player, false);
 			if (filledSimulated.isSuccess()) {
 				// check if we can give the itemStack to the inventory
-				long inserted = StorageUtil.simulateInsert(inventory, ItemVariant.of(filledSimulated.getResult()), filledSimulated.getResult().getCount(), null);
+				FabricStorageWrapper<IItemHandler> storage = FabricStorageWrapper.of(inventory);
+				long inserted = StorageUtil.simulateInsert(storage, ItemVariant.of(filledSimulated.getResult()), filledSimulated.getResult().getCount(), null);
 				if (inserted > 0 || player != null) {
 					FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
 					try (Transaction insert = Transaction.openOuter()) {
-						inserted = StorageUtil.tryInsertStacking(inventory, ItemVariant.of(filledReal.getResult()), filledReal.getResult().getCount(), insert);
+						inserted = StorageUtil.tryInsertStacking(storage, ItemVariant.of(filledReal.getResult()), filledReal.getResult().getCount(), insert);
 						if (doFill) {
 							insert.commit();
 						}
@@ -286,7 +288,7 @@ public class FluidUtil {
 
 		return FluidActionResult.FAILURE;
 	}
-	public static FluidActionResult tryEmptyContainerAndStow(ItemStack container, Storage<FluidVariant> fluidDestination, SlottedStackStorage inventory, long maxAmount, @Nullable Player player, boolean doDrain) {
+	public static FluidActionResult tryEmptyContainerAndStow(ItemStack container, Storage<FluidVariant> fluidDestination, IItemHandler inventory, long maxAmount, @Nullable Player player, boolean doDrain) {
 		if (container.isEmpty()) {
 			return FluidActionResult.FAILURE;
 		}
@@ -305,11 +307,12 @@ public class FluidUtil {
 			FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, false);
 			if (emptiedSimulated.isSuccess()) {
 				// check if we can give the itemStack to the inventory
-				long inserted = StorageUtil.simulateInsert(inventory, ItemVariant.of(emptiedSimulated.getResult()), emptiedSimulated.getResult().getCount(), null);
+				FabricStorageWrapper<IItemHandler> storage = FabricStorageWrapper.of(inventory);
+				long inserted = StorageUtil.simulateInsert(storage, ItemVariant.of(emptiedSimulated.getResult()), emptiedSimulated.getResult().getCount(), null);
 				if (inserted > 0 || player != null) {
 					FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
 					try (Transaction insert = Transaction.openOuter()) {
-						inserted = StorageUtil.tryInsertStacking(inventory, ItemVariant.of(emptiedReal.getResult()), emptiedReal.getResult().getCount(), insert);
+						inserted = StorageUtil.tryInsertStacking(storage, ItemVariant.of(emptiedReal.getResult()), emptiedReal.getResult().getCount(), insert);
 						if (doDrain) {
 							insert.commit();
 						}

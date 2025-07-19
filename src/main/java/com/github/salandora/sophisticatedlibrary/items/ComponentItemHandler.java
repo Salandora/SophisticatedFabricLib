@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.items;
 
 import com.github.salandora.sophisticatedlibrary.common.extensions.component.SophisticatedMutableDataComponentHolder;
-import com.github.salandora.sophisticatedlibrary.transfer.SlottedStackStorageModifiable;
+import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import com.google.common.base.Preconditions;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ComponentItemHandler implements SlottedStackStorageModifiable {
+public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	protected final SophisticatedMutableDataComponentHolder parent;
 	protected final DataComponentType<ItemContainerContents> component;
 	protected final int size;
@@ -25,14 +25,8 @@ public abstract class ComponentItemHandler implements SlottedStackStorageModifia
 		Preconditions.checkArgument(size <= 256, "The max size of ItemContainerContents is 256 slots.");
 	}
 
-	// TODO: implement?
 	@Override
-	public SingleSlotStorage<ItemVariant> getSlot(int slot) {
-		return null;
-	}
-
-	@Override
-	public int getSlotCount() {
+	public int getSlots() {
 		return size;
 	}
 
@@ -53,12 +47,6 @@ public abstract class ComponentItemHandler implements SlottedStackStorageModifia
 		if (!ItemStack.matches(stack, existing)) {
 			this.updateContents(contents, stack, slot);
 		}
-	}
-
-	// TODO: implement?
-	@Override
-	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		return 0;
 	}
 
 	@NotNull
@@ -96,12 +84,6 @@ public abstract class ComponentItemHandler implements SlottedStackStorageModifia
 		}
 
 		return toInsert.copyWithCount(toInsert.getCount() - inserted);
-	}
-
-	// TODO: implement?
-	@Override
-	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		return 0;
 	}
 
 	@NotNull
@@ -181,7 +163,7 @@ public abstract class ComponentItemHandler implements SlottedStackStorageModifia
 	protected void updateContents(ItemContainerContents contents, ItemStack stack, int slot) {
 		this.validateSlotIndex(slot);
 		// Use the max of the contents slots and the capability slots to avoid truncating
-		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlotCount()), ItemStack.EMPTY);
+		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlots()), ItemStack.EMPTY);
 		contents.copyInto(list);
 		ItemStack oldStack = list.get(slot);
 		list.set(slot, stack);
@@ -193,8 +175,8 @@ public abstract class ComponentItemHandler implements SlottedStackStorageModifia
 	 * Throws {@link UnsupportedOperationException} if the provided slot index is invalid.
 	 */
 	protected final void validateSlotIndex(int slot) {
-		if (slot < 0 || slot >= getSlotCount()) {
-			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlotCount() + ")");
+		if (slot < 0 || slot >= getSlots()) {
+			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlots() + ")");
 		}
 	}
 }

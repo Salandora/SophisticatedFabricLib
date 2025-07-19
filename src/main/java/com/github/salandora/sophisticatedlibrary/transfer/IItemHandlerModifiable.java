@@ -2,6 +2,6 @@ package com.github.salandora.sophisticatedlibrary.transfer;
 
 import net.minecraft.world.item.ItemStack;
 
-public interface SlottedStackStorageModifiable extends SlottedStackStorage {
+public interface IItemHandlerModifiable extends IItemHandler {
 	void setStackInSlot(int slot, ItemStack stack);
 }

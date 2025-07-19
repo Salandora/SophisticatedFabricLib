@@ -1,14 +1,13 @@
 package com.github.salandora.sophisticatedlibrary.items;
 
-import com.github.salandora.sophisticatedlibrary.transfer.SlottedStackStorage;
-import com.github.salandora.sophisticatedlibrary.transfer.SlottedStackStorageModifiable;
+import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 
-public class EmptyItemHandler implements SlottedStackStorageModifiable {
+public class EmptyItemHandler implements IItemHandlerModifiable {
 	public static final EmptyItemHandler INSTANCE = new EmptyItemHandler();
 
 	@Override
@@ -26,42 +25,7 @@ public class EmptyItemHandler implements SlottedStackStorageModifiable {
 	}
 
 	@Override
-	public int getSlotCount() {
-		return 0;
-	}
-
-	@Override
-	public SingleSlotStorage<ItemVariant> getSlot(int slot) {
-		return new SingleStackStorage() {
-			@Override
-			protected boolean canInsert(ItemVariant itemVariant) {
-				return false;
-			}
-
-			@Override
-			protected boolean canExtract(ItemVariant itemVariant) {
-				return false;
-			}
-
-			@Override
-			protected ItemStack getStack() {
-				return ItemStack.EMPTY;
-			}
-
-			@Override
-			protected void setStack(ItemStack stack) {
-
-			}
-		};
-	}
-
-	@Override
-	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		return 0;
-	}
-
-	@Override
-	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+	public int getSlots() {
 		return 0;
 	}
 

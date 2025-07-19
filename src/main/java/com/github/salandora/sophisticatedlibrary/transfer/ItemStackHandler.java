@@ -1,8 +1,5 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -10,10 +7,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemStackHandler implements SlottedStackStorageModifiable {
+public class ItemStackHandler implements IItemHandlerModifiable {
 	protected NonNullList<ItemStack> stacks;
 
 	public ItemStackHandler() {
@@ -46,7 +42,7 @@ public class ItemStackHandler implements SlottedStackStorageModifiable {
 	}
 
 	@Override
-	public int getSlotCount() {
+	public int getSlots() {
 		return stacks.size();
 	}
 
@@ -60,8 +56,8 @@ public class ItemStackHandler implements SlottedStackStorageModifiable {
 	}
 
 	@Override
-	public SingleSlotStorage<ItemVariant> getSlot(int slot) {
-		return null;
+	public boolean isItemValid(int slot, ItemStack stack) {
+		return true;
 	}
 
 	@Override
@@ -135,16 +131,6 @@ public class ItemStackHandler implements SlottedStackStorageModifiable {
 		return existing.copyWithCount(extract);
 	}
 
-	@Override
-	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		throw new NotImplementedException();
-	}
-
 	public CompoundTag serializeNBT(HolderLookup.Provider registries) {
 		ListTag listTag = new ListTag();
 		for (int i = 0; i < stacks.size(); i++) {
@@ -158,7 +144,7 @@ public class ItemStackHandler implements SlottedStackStorageModifiable {
 
 		CompoundTag saveTag = new CompoundTag();
 		saveTag.put("Items", listTag);
-		saveTag.putInt("Size", getSlotCount());
+		saveTag.putInt("Size", getSlots());
 		return saveTag;
 	}
 
@@ -168,7 +154,7 @@ public class ItemStackHandler implements SlottedStackStorageModifiable {
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag itemTag = tagList.getCompound(i);
 			int slot = itemTag.getInt("Slot");
-			if (slot >= 0 && slot < getSlotCount()) {
+			if (slot >= 0 && slot < getSlots()) {
 				ItemStack stack = ItemStack.parseOptional(registries, itemTag);
 				stacks.set(slot, stack);
 			}
