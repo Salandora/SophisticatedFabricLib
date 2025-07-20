@@ -3,9 +3,6 @@ package com.github.salandora.sophisticatedlibrary.items;
 import com.github.salandora.sophisticatedlibrary.common.extensions.component.SophisticatedMutableDataComponentHolder;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import com.google.common.base.Preconditions;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
@@ -26,7 +23,7 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	}
 
 	@Override
-	public int getSlots() {
+	public int getSlotCount() {
 		return size;
 	}
 
@@ -154,7 +151,7 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	/**
 	 * Performs a copy and write operation on the underlying data component, changing the stack in the target slot.
 	 * <p>
-	 * If the existing component is larger than {@link #getSlots()}, additional slots will <b>not</b> be truncated.
+	 * If the existing component is larger than {@link #getSlotCount()}, additional slots will <b>not</b> be truncated.
 	 *
 	 * @param contents The existing contents from {@link #getContents()}
 	 * @param stack    The new stack to set to the slot
@@ -163,7 +160,7 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	protected void updateContents(ItemContainerContents contents, ItemStack stack, int slot) {
 		this.validateSlotIndex(slot);
 		// Use the max of the contents slots and the capability slots to avoid truncating
-		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlots()), ItemStack.EMPTY);
+		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlotCount()), ItemStack.EMPTY);
 		contents.copyInto(list);
 		ItemStack oldStack = list.get(slot);
 		list.set(slot, stack);
@@ -175,8 +172,8 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	 * Throws {@link UnsupportedOperationException} if the provided slot index is invalid.
 	 */
 	protected final void validateSlotIndex(int slot) {
-		if (slot < 0 || slot >= getSlots()) {
-			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlots() + ")");
+		if (slot < 0 || slot >= getSlotCount()) {
+			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlotCount() + ")");
 		}
 	}
 }

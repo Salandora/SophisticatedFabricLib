@@ -2,6 +2,8 @@ package com.github.salandora.sophisticatedlibrary.items.wrapper;
 
 import com.github.salandora.sophisticatedlibrary.items.EmptyItemHandler;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +17,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable {
         this.baseIndex = new int[itemHandler.length];
         int index = 0;
         for (int i = 0; i < itemHandler.length; i++) {
-            index += itemHandler[i].getSlots();
+            index += itemHandler[i].getSlotCount();
             baseIndex[i] = index;
         }
         this.slotCount = index;
@@ -51,7 +53,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public int getSlots() {
+    public int getSlotCount() {
         return slotCount;
     }
 

@@ -57,7 +57,7 @@ public class FabricStorageWrapper<T extends IItemHandler> implements SlottedStor
 
 	@Override
 	public int getSlotCount() {
-		return this.wrapped.getSlots();
+		return this.wrapped.getSlotCount();
 	}
 
 	@Override

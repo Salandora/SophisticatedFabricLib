@@ -42,7 +42,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 	}
 
 	@Override
-	public int getSlots() {
+	public int getSlotCount() {
 		return stacks.size();
 	}
 
@@ -144,7 +144,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 
 		CompoundTag saveTag = new CompoundTag();
 		saveTag.put("Items", listTag);
-		saveTag.putInt("Size", getSlots());
+		saveTag.putInt("Size", getSlotCount());
 		return saveTag;
 	}
 
@@ -154,7 +154,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag itemTag = tagList.getCompound(i);
 			int slot = itemTag.getInt("Slot");
-			if (slot >= 0 && slot < getSlots()) {
+			if (slot >= 0 && slot < getSlotCount()) {
 				ItemStack stack = ItemStack.parseOptional(registries, itemTag);
 				stacks.set(slot, stack);
 			}

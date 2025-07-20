@@ -1,6 +1,9 @@
 package com.github.salandora.sophisticatedlibrary.items.wrapper;
 
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
@@ -10,9 +13,11 @@ public class InvWrapper implements IItemHandlerModifiable {
 	}
 
 	private final Container wrappedInventory;
+	private final InventoryStorage wrappedInventoryStorage;
 
 	private InvWrapper(Container inventory) {
 		this.wrappedInventory = inventory;
+		this.wrappedInventoryStorage = InventoryStorage.of(inventory, null);
 	}
 
 	@Override
@@ -113,7 +118,7 @@ public class InvWrapper implements IItemHandlerModifiable {
 	}
 
 	@Override
-	public int getSlots() {
+	public int getSlotCount() {
 		return this.wrappedInventory.getContainerSize();
 	}
 
@@ -146,5 +151,15 @@ public class InvWrapper implements IItemHandlerModifiable {
 	@Override
 	public int hashCode() {
 		return this.wrappedInventory.hashCode();
+	}
+
+	@Override
+	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		return this.wrappedInventoryStorage.insert(resource, maxAmount, transaction);
+	}
+
+	@Override
+	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+		return this.wrappedInventoryStorage.extract(resource, maxAmount, transaction);
 	}
 }
