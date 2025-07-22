@@ -1,9 +1,7 @@
-package com.github.salandora.sophisticatedlibrary.items.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 
 import com.github.salandora.sophisticatedlibrary.items.EmptyItemHandler;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

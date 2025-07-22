@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedlibrary.items.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import net.minecraft.world.item.ItemStack;

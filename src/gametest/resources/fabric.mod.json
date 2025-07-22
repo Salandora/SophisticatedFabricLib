@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "sophisticatedlibrary-gametest",
+  "version": "1.0.0",
+  "name": "Sophisticated Library Gametest",
+  "icon": "assets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.github.salandora.sophisticatedlibrary.SophisticatedLibraryGameTest"
+    ],
+    "fabric-client-gametest": [
+      "com.github.salandora.sophisticatedlibrary.client.SophisticatedLibraryClientGameTest"
+    ]
+  }
+}

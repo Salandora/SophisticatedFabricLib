@@ -31,7 +31,8 @@ def fabricModules = [
         "fabric-renderer-api-v1",
         "fabric-resource-conditions-api-v1",
         "fabric-resource-loader-v0",
-        "fabric-transfer-api-v1"
+        "fabric-transfer-api-v1",
+        "fabric-gametest-api-v1"
 ]
 
 repositories {
@@ -51,6 +52,14 @@ logger.lifecycle("${project.name} version: ${project.version}")
 base {
     archivesName = "${mod_id}"
 }
+
+/*fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "${project.name}-gametest"
+        eula = true
+    }
+}*/
 
 loom {
     runtimeOnlyLog4j = true

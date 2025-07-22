@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin;
 
-import com.github.salandora.sophisticatedlibrary.transfer.FabricStorageWrapper;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandler;
+import com.github.salandora.sophisticatedlibrary.util.Capabilities;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import com.github.salandora.sophisticatedlibrary.util.Capabilities;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,11 +51,11 @@ public class HopperBlockEntityMixin {
 
 		Collections.shuffle(list);
 		for (Entity entity : list) {
-			IItemHandler target = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, direction.getOpposite());
+			Storage<ItemVariant> target = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, direction.getOpposite());
 			if (target != null) {
 				long moved = StorageUtil.move(
 						InventoryStorage.of(blockEntity, direction),
-						FabricStorageWrapper.of(target),
+						target,
 						iv -> true,
 						1,
 						null
@@ -88,10 +87,10 @@ public class HopperBlockEntityMixin {
 
 		Collections.shuffle(list);
 		for (Entity entity : list) {
-			IItemHandler source = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, Direction.DOWN);
+			Storage<ItemVariant> source = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, Direction.DOWN);
 			if (source != null) {
 				long moved = StorageUtil.move(
-						FabricStorageWrapper.of(source),
+						source,
 						InventoryStorage.of(hopper, Direction.UP),
 						iv -> true,
 						1,

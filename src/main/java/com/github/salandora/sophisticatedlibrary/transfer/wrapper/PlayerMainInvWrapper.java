@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedlibrary.items.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;

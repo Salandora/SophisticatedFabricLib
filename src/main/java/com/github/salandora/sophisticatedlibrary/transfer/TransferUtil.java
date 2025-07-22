@@ -5,9 +5,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public interface TransferUtil {
 	static FluidStack simulateExtractAnyFluid(Storage<FluidVariant> storage, long maxAmount) {
@@ -23,5 +25,11 @@ public interface TransferUtil {
 		}
 
 		return FluidStack.EMPTY;
+	}
+
+	static <T> T simulate(Function<Transaction, T> func, @Nullable Transaction maybeParent) {
+		try (Transaction ctx = Transaction.openNested(maybeParent)) {
+			return func.apply(ctx);
+		}
 	}
 }
