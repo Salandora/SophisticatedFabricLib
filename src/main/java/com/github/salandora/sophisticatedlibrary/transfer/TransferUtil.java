@@ -20,8 +20,11 @@ public interface TransferUtil {
 		StoragePreconditions.notNegative(maxAmount);
 
 		FluidVariant extractable = StorageUtil.findExtractableResource(storage, transaction);
-		if (extractable != null && !extractable.isBlank()) {
-			return new FluidStack(extractable, StorageUtil.simulateExtract(storage, extractable, maxAmount, transaction));
+		if (extractable != null) {
+			long extractableAmount = StorageUtil.simulateExtract(storage, extractable, maxAmount, transaction);
+			if (extractableAmount > 0) {
+				return new FluidStack(extractable, extractableAmount);
+			}
 		}
 
 		return FluidStack.EMPTY;
