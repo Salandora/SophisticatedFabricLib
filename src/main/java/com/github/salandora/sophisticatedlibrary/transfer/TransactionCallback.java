@@ -7,13 +7,7 @@ public class TransactionCallback {
 		context.addCloseCallback(new TransactionCallback.Success(onSuccess));
 	}
 
-	private static class Success implements TransactionContext.CloseCallback {
-		private final Runnable onSuccess;
-
-		public Success(Runnable onSuccess) {
-			this.onSuccess = onSuccess;
-		}
-
+	private record Success(Runnable onSuccess) implements TransactionContext.CloseCallback {
 		@Override
 		public void onClose(TransactionContext transaction, TransactionContext.Result result) {
 			if (result.wasAborted()) {
