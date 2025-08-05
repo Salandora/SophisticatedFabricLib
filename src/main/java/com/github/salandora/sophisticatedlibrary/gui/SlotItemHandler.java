@@ -30,7 +30,7 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public void set(ItemStack stack) {
-		((IItemHandlerModifiable) getItemHandler()).setStackInSlot(this.index, stack);
+		getItemHandler().setStackInSlot(this.index, stack);
 		this.setChanged();
 	}
 
