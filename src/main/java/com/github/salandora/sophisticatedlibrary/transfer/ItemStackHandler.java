@@ -155,8 +155,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 			CompoundTag itemTag = tagList.getCompound(i);
 			int slot = itemTag.getInt("Slot");
 			if (slot >= 0 && slot < getSlotCount()) {
-				ItemStack stack = ItemStack.parseOptional(registries, itemTag);
-				stacks.set(slot, stack);
+				ItemStack.parse(registries, itemTag).ifPresent(stack -> stacks.set(slot, stack));
 			}
 		}
 	}
