@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
     id 'idea'
-    id 'fabric-loom' version '1.10.+'
+    id 'fabric-loom' version '1.11.+'
     id 'maven-publish'
 }
 
