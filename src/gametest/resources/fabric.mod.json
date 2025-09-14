@@ -2,18 +2,11 @@
   "schemaVersion": 1,
   "id": "sophisticatedlibrary-gametest",
   "version": "1.0.0",
-  "name": "Sophisticated Library Gametest",
-  "icon": "",
+  "name": "Sophisticated Library Test mod",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "com.github.salandora.sophisticatedlibrary.DeferredRegistryTest"
-    ],
     "fabric-gametest": [
-      "com.github.salandora.sophisticatedlibrary.SophisticatedLibraryGameTest"
-    ],
-    "fabric-client-gametest": [
-      "com.github.salandora.sophisticatedlibrary.client.SophisticatedLibraryClientGameTest"
+      "com.github.salandora.sophisticatedlibrary.GlobalLootModifierTest"
     ]
   }
 }

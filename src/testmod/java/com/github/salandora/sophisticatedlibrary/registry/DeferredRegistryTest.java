@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedlibrary;
+package com.github.salandora.sophisticatedlibrary.registry;
 
 import com.github.salandora.sophisticatedlibrary.util.DeferredHolder;
 import com.github.salandora.sophisticatedlibrary.util.DeferredRegister;
