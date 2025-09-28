@@ -30,9 +30,7 @@ def fabricModules = [
         "fabric-registry-sync-v0",
         "fabric-renderer-api-v1",
         "fabric-resource-conditions-api-v1",
-        "fabric-resource-loader-v0",
-        "fabric-transfer-api-v1",
-        "fabric-gametest-api-v1"
+        "fabric-transfer-api-v1"
 ]
 
 repositories {
@@ -177,12 +175,10 @@ dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 
     testmodImplementation sourceSets.main.output
-    gametestImplementation sourceSets.testmod.output
 
-    gametestImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
-    gametestImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.+'
-    gametestImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.+'
-    gametestImplementation "org.mockito:mockito-core:5.10.+"
+    gametestImplementation sourceSets.testmod.output
+    modGametestImplementation fabricApi.module("fabric-gametest-api-v1", project.fabric_version)
+    modGametestImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
 
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.+'
