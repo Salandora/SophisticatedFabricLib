@@ -22,7 +22,4 @@ public class RegisterGeometryLoadersCallback {
 	public interface GeometryLoaderRegistry {
 		void registerLoader(Map<ResourceLocation, IGeometryLoader<?>> loaders);
 	}
-
-	static {
-	}
 }
