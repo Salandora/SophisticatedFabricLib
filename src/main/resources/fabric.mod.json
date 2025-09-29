@@ -21,6 +21,7 @@
   },
   "mixins": [
     "sophisticatedlibrary.mixins.json",
+    "sophisticatedlibrary.event.mixins.json",
     "sophisticatedlibrary.loot.mixins.json",
     "sophisticatedlibrary.model.mixins.json"
   ],
@@ -31,6 +32,7 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_47": ["com/github/salandora/sophisticatedlibrary/loot/extensions/SophisticatedLootContext"],
+      "net/minecraft/class_1297": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedEntity"],
       "net/minecraft/class_1792": ["com/github/salandora/sophisticatedlibrary/common/extensions/item/SophisticatedItem"],
       "net/minecraft/class_1799": ["com/github/salandora/sophisticatedlibrary/common/extensions/item/SophisticatedItemStack", "com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedMutableDataComponentHolder"],
       "net/minecraft/class_2248": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBlock"],

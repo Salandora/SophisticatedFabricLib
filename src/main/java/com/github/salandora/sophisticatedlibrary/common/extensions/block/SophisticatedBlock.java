@@ -4,21 +4,30 @@ import com.github.salandora.sophisticatedlibrary.common.ItemAbilities;
 import com.github.salandora.sophisticatedlibrary.common.ItemAbility;
 import com.github.salandora.sophisticatedlibrary.common.mixin.accessors.AxeItemAccessor;
 import com.github.salandora.sophisticatedlibrary.common.mixin.accessors.ShovelItemAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface SophisticatedBlock {
 	@Nullable
-	default BlockState sophisticatedLibrary$getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+	default BlockState sophisticatedLibrary_getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
 		ItemStack stack = context.getItemInHand();
 		if (!stack.sophisticatedLibrary_canPerformAction(itemAbility)) {
 			return null;
@@ -60,5 +69,23 @@ public interface SophisticatedBlock {
 		}
 
 		return null;
+	}
+
+	default boolean sophisticatedLibrary_addLandingEffects(BlockState state1, ServerLevel level, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
+		return false;
+	}
+
+	default boolean sophisticatedLibrary_addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+		return false;
+	}
+
+	@Environment(EnvType.CLIENT)
+	default boolean sophisticatedLibrary_addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
+		return false;
+	}
+
+	@Environment(EnvType.CLIENT)
+	default boolean sophisticatedLibrary_addDestroyEffects(BlockState state, Level level, BlockPos pos, ParticleEngine manager) {
+		return !state.shouldSpawnTerrainParticles();
 	}
 }

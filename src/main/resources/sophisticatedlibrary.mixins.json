@@ -7,10 +7,15 @@
     "BlockMixin",
     "BlockStateMixin",
     "DataComponentHolderMixin",
+    "EntityMixin_CustomData",
+    "EntityMixin_Drops",
+    "EntityMixin_RunningEffect",
     "HopperBlockEntityMixin",
     "ItemContainerContentsMixin",
     "ItemMixin",
     "ItemStackMixin",
+    "LivingEntityMixin_Drops",
+    "LivingEntityMixin_LandingEffect",
     "accessors.AxeItemAccessor",
     "accessors.ShovelItemAccessor",
     "tools.AxeItemMixin",
@@ -20,6 +25,8 @@
     "tools.ShovelItemMixin"
   ],
   "client": [
+    "MinecraftMixin_HitEffect",
+    "ParticleEngineMixin_DestroyEffect"
   ],
   "injectors": {
     "defaultRequire": 1
