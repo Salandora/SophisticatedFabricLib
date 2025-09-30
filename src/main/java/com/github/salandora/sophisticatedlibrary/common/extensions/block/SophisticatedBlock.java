@@ -2,8 +2,8 @@ package com.github.salandora.sophisticatedlibrary.common.extensions.block;
 
 import com.github.salandora.sophisticatedlibrary.common.ItemAbilities;
 import com.github.salandora.sophisticatedlibrary.common.ItemAbility;
-import com.github.salandora.sophisticatedlibrary.common.mixin.accessors.AxeItemAccessor;
-import com.github.salandora.sophisticatedlibrary.common.mixin.accessors.ShovelItemAccessor;
+import com.github.salandora.sophisticatedlibrary.common.mixin.common.accessors.AxeItemAccessor;
+import com.github.salandora.sophisticatedlibrary.common.mixin.common.accessors.ShovelItemAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleEngine;

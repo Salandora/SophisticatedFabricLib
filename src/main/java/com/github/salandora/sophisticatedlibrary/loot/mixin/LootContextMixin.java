@@ -13,12 +13,12 @@ public class LootContextMixin implements SophisticatedLootContext {
 	private ResourceLocation sophisticatedLibrary$queriedLootTableId;
 
 	@Override
-	public void sophisticatedLibrary$setQueriedLootTableId(ResourceLocation queriedLootTableId) {
+	public void sophisticatedLibrary_setQueriedLootTableId(ResourceLocation queriedLootTableId) {
 		this.sophisticatedLibrary$queriedLootTableId = queriedLootTableId;
 	}
 
 	@Override
-	public ResourceLocation sophisticatedLibrary$getQueriedLootTableId() {
+	public ResourceLocation sophisticatedLibrary_getQueriedLootTableId() {
 		return this.sophisticatedLibrary$queriedLootTableId == null ? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.sophisticatedLibrary$queriedLootTableId;
 	}
 }

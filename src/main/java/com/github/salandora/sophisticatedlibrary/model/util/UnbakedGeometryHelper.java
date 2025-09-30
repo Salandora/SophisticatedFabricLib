@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.model.util;
 
-import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
-import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.ItemModelGeneratorAccessor;
+import com.github.salandora.sophisticatedlibrary.model.mixin.client.accessors.BlockModelAccessor;
+import com.github.salandora.sophisticatedlibrary.model.mixin.client.accessors.ItemModelGeneratorAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.SpriteContents;

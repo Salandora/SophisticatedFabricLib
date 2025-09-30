@@ -3,7 +3,7 @@ package com.github.salandora.sophisticatedlibrary.model.client;
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
 import com.github.salandora.sophisticatedlibrary.model.loading.IUnbakedGeometry;
 import com.github.salandora.sophisticatedlibrary.model.loading.RegisterGeometryLoadersCallback;
-import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
+import com.github.salandora.sophisticatedlibrary.model.mixin.client.accessors.BlockModelAccessor;
 import com.github.salandora.sophisticatedlibrary.model.models.BlockModelWrapper;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;

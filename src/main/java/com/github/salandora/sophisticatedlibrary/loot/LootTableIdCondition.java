@@ -31,7 +31,7 @@ public class LootTableIdCondition implements LootItemCondition {
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		return lootContext.sophisticatedLibrary$getQueriedLootTableId().equals(this.targetLootTableId);
+		return lootContext.sophisticatedLibrary_getQueriedLootTableId().equals(this.targetLootTableId);
 	}
 
 	public static Builder builder(ResourceLocation targetLootTableId) {

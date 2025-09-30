@@ -6,8 +6,11 @@
   "mixins": [
   ],
   "client": [
-    "accessors.BlockModelAccessor",
-    "accessors.ItemModelGeneratorAccessor"
+    "client.ParticleEngineMixin_UpdateSprite",
+    "client.ScreenEffectRendererMixin_UpdateSprite",
+    "client.TerrainParticleMixin_UpdateSprite",
+    "client.accessors.BlockModelAccessor",
+    "client.accessors.ItemModelGeneratorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

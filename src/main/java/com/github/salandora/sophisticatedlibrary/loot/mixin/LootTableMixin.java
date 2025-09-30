@@ -46,7 +46,7 @@ public abstract class LootTableMixin  implements SophisticatedLootTable {
 	private ResourceLocation sophisticatedLibrary$id;
 
 	@Override
-	public void sophisticatedLibrary$setId(ResourceLocation id) {
+	public void sophisticatedLibrary_setId(ResourceLocation id) {
 		this.sophisticatedLibrary$id = id;
 	}
 
@@ -98,14 +98,14 @@ public abstract class LootTableMixin  implements SophisticatedLootTable {
 		private ResourceLocation sophisticatedLibrary$id;
 
 		@Override
-		public void sophisticatedLibrary$setId(ResourceLocation id) {
+		public void sophisticatedLibrary_setId(ResourceLocation id) {
 			this.sophisticatedLibrary$id = id;
 		}
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
 		private LootTable sophisticatedLibrary$injectLootTableId(LootTable table) {
 			if (this.sophisticatedLibrary$id != null) {
-				((SophisticatedLootTable) table).sophisticatedLibrary$setId(this.sophisticatedLibrary$id);
+				((SophisticatedLootTable) table).sophisticatedLibrary_setId(this.sophisticatedLibrary$id);
 			}
 
 			return table;

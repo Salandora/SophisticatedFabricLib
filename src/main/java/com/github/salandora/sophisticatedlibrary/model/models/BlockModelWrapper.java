@@ -2,7 +2,7 @@ package com.github.salandora.sophisticatedlibrary.model.models;
 
 import com.github.salandora.sophisticatedlibrary.model.loading.BlockModelGeometryBakingContext;
 import com.github.salandora.sophisticatedlibrary.model.loading.IUnbakedGeometry;
-import com.github.salandora.sophisticatedlibrary.model.mixin.accessors.BlockModelAccessor;
+import com.github.salandora.sophisticatedlibrary.model.mixin.client.accessors.BlockModelAccessor;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
