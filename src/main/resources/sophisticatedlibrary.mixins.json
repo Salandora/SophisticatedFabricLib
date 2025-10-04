@@ -17,6 +17,7 @@
     "common.ItemStackMixin_MutableDataComponentHolder",
     "common.LivingEntityMixin_Drops",
     "common.LivingEntityMixin_LandingEffect",
+    "common.PiglinAI_makesPiglinsNeutral",
     "common.PlayerMixin",
     "common.ServerPlayerMixin_DroppedByPlayer",
     "common.SlotMixin_Background",
