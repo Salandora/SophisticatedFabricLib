@@ -32,8 +32,7 @@
   "client": [
     "client.AbstractContainerScreenMixin",
     "client.ItemInHandRendererMixin_shouldCauseReequipAnimation",
-    "client.MinecraftMixin_HitEffect",
-    "client.ParticleEngineMixin_DestroyEffect"
+    "client.ParticleEngineMixin_addEffects"
   ],
   "injectors": {
     "defaultRequire": 1
