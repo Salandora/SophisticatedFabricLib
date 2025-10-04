@@ -1,6 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  },
   "package": "com.github.salandora.sophisticatedlibrary.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [

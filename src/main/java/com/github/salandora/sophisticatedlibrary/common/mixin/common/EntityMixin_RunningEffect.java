@@ -1,5 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
+import com.llamalad7.mixinextras.expression.Definition;
+import com.llamalad7.mixinextras.expression.Expression;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -8,18 +11,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class EntityMixin_RunningEffect {
 	@Shadow
 	private Level level;
 
-	@Inject(method = "spawnSprintParticle", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;"), cancellable = true)
-	private void sophisticatedCore$addRunningEffects(CallbackInfo ci, @Local BlockPos blockPos, @Local BlockState blockState) {
-		if (blockState.sophisticatedLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this)) {
-			ci.cancel();
-		}
+	@Definition(id = "blockState", local = @Local(type = BlockState.class))
+	@Definition(id = "getRenderShape", method = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;")
+	@Definition(id = "INVISIBLE", field = "Lnet/minecraft/world/level/block/RenderShape;INVISIBLE:Lnet/minecraft/world/level/block/RenderShape;")
+	@Expression("blockState.getRenderShape() != INVISIBLE")
+	@ModifyExpressionValue(
+			method = "spawnSprintParticle",
+			at = @At(value = "MIXINEXTRAS:EXPRESSION")
+	)
+	private boolean sophisticatedLibrary$addRunningEffects(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
+		return !blockState.sophisticatedLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this) && original;
 	}
 }
