@@ -4,6 +4,7 @@
   "package": "com.github.salandora.sophisticatedlibrary.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "common.BaseRailBlockMixin",
     "common.BlockMixin",
     "common.BlockStateMixin",
     "common.DataComponentHolderMixin",
@@ -11,6 +12,7 @@
     "common.EntityMixin_Drops",
     "common.EntityMixin_RunningEffect",
     "common.HopperBlockEntityMixin_EntityItemHandler",
+    "common.IngredientMixin",
     "common.ItemContainerContentsMixin",
     "common.ItemMixin",
     "common.ItemStackMixin",

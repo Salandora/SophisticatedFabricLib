@@ -43,6 +43,8 @@
         "com/github/salandora/sophisticatedlibrary/common/extensions/item/SophisticatedItemStack",
         "com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedMutableDataComponentHolder"
       ],
+      "net/minecraft/class_1856": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedIngredient"],
+      "net/minecraft/class_2241": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBaseRailBlock"],
       "net/minecraft/class_2248": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBlock"],
       "net/minecraft/class_2680": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBlockState"],
       "net/minecraft/class_9322": ["com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedDataComponentHolder"],
