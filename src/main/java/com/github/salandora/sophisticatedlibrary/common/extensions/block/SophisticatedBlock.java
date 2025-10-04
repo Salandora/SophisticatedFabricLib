@@ -22,8 +22,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface SophisticatedBlock {
-	@Nullable
-	default BlockState sophisticatedLibrary_getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+	default @Nullable BlockState sophisticatedLibrary_getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
 		ItemStack stack = context.getItemInHand();
 		if (!stack.sophisticatedLibrary_canPerformAction(itemAbility)) {
 			return null;

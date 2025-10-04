@@ -11,13 +11,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin_DroppedByPlayer {
-	@Inject(method = "drop(Z)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;removeFromSelected(Z)Lnet/minecraft/world/item/ItemStack;"), cancellable = true)
+	@Inject(
+			method = "drop(Z)Z",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Inventory;removeFromSelected(Z)Lnet/minecraft/world/item/ItemStack;"
+			),
+			cancellable = true
+	)
 	private void sophisticatedLibrary$drop(boolean dropStack, CallbackInfoReturnable<Boolean> cir, @Local Inventory inventory) {
 		ItemStack selected = inventory.getSelected();
 		//noinspection ConstantValue
 		if (selected.isEmpty() || !selected.sophisticatedLibrary_onDroppedByPlayer((ServerPlayer) (Object) this)) {
 			cir.setReturnValue(false);
-			cir.cancel();
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package com.github.salandora.sophisticatedlibrary.common;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +11,8 @@ public record ItemAbility(String name) {
 	}
 
 	@Override
-	public @NotNull String toString() {
+	public String toString() {
 		return "ItemAbility[%s]".formatted(name);
 	}
 }
+

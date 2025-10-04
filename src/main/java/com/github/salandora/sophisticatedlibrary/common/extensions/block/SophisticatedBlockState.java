@@ -9,12 +9,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+
 public interface SophisticatedBlockState {
 	private BlockState self() {
 		return (BlockState) this;
 	}
 
-	default BlockState sophisticatedLibrary_getToolModifiedState(UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+	default @Nullable BlockState sophisticatedLibrary_getToolModifiedState(UseOnContext context, ItemAbility itemAbility, boolean simulate) {
 		return self().getBlock().sophisticatedLibrary_getToolModifiedState(self(), context, itemAbility, simulate);
 	}
 
