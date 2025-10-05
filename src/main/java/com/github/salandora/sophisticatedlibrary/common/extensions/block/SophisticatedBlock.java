@@ -14,6 +14,8 @@ import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,5 +74,13 @@ public interface SophisticatedBlock {
 
 	default boolean sophisticatedLibrary_addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
 		return false;
+	}
+
+	default float sophisticatedLibrary_getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+		return Float.NaN;
+	}
+
+	default boolean sophisticatedLibrary_canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+		return true;
 	}
 }
