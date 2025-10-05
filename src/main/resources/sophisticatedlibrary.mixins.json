@@ -27,6 +27,7 @@
     "common.PiglinAI_makesPiglinsNeutral",
     "common.PlayerMixin",
     "common.ServerPlayerMixin_DroppedByPlayer",
+    "common.ShearableBlocksMixin_Shearable",
     "common.SlotMixin_Background",
     "common.WitherBossMixin_canEntityDestroy",
     "common.WitherSkullMixin_canEntityDestroy",
