@@ -1,9 +1,9 @@
 package com.github.salandora.sophisticatedlibrary.datagen;
 
-import com.github.salandora.sophisticatedlibrary.loot.GlobalLootModifierProvider;
-import com.github.salandora.sophisticatedlibrary.loot.IGlobalLootModifier;
 import com.github.salandora.sophisticatedlibrary.loot.LootMultiplierModifier;
-import com.github.salandora.sophisticatedlibrary.loot.LootTableIdCondition;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.GlobalLootModifierProvider;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.LootTableIdCondition;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.resources.ResourceKey;

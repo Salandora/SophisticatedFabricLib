@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.client;
 
-import com.github.salandora.sophisticatedlibrary.common.client.api.ClientExtensionManager;
-import com.github.salandora.sophisticatedlibrary.common.client.api.IClientBlockExtensions;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.client.ClientExtensionManager;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.client.IClientBlockExtensions;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;

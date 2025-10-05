@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
-import com.github.salandora.sophisticatedlibrary.fluid.FluidStack;
+import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidStack;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;

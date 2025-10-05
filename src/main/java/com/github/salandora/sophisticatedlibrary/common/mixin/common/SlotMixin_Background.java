@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.inventory.SophisticatedSlot;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.inventory.SophisticatedSlot;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;

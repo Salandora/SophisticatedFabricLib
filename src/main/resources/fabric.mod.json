@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.github.salandora.sophisticatedlibrary.model.client.SophisticatedModelClient"
+      "com.github.salandora.sophisticatedlibrary.model.SophisticatedModelClient"
     ],
     "main": [
       "com.github.salandora.sophisticatedlibrary.SophisticatedLibrary",
@@ -32,30 +32,30 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_47": ["com/github/salandora/sophisticatedlibrary/loot/extensions/SophisticatedLootContext"],
-      "net/minecraft/class_465": ["com/github/salandora/sophisticatedlibrary/common/extensions/client/gui/screens/inventory/SophisticatedAbstractContainerScreen"],
-      "net/minecraft/class_727": ["com/github/salandora/sophisticatedlibrary/model/extensions/client/particle/SophisticatedTerrainParticle"],
-      "net/minecraft/class_1297": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedEntity"],
-      "net/minecraft/class_1657": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedPlayer"],
-      "net/minecraft/class_1735": ["com/github/salandora/sophisticatedlibrary/common/extensions/inventory/SophisticatedSlot"],
-      "net/minecraft/class_1792": ["com/github/salandora/sophisticatedlibrary/common/extensions/item/SophisticatedItem"],
+      "net/minecraft/class_47": ["com/github/salandora/sophisticatedlibrary/loot/api/v1/extensions/SophisticatedLootContext"],
+      "net/minecraft/class_465": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/client/gui/screens/inventory/SophisticatedAbstractContainerScreen"],
+      "net/minecraft/class_727": ["com/github/salandora/sophisticatedlibrary/model/api/v1/extensions/client/particle/SophisticatedTerrainParticle"],
+      "net/minecraft/class_1297": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedEntity"],
+      "net/minecraft/class_1657": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedPlayer"],
+      "net/minecraft/class_1735": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/inventory/SophisticatedSlot"],
+      "net/minecraft/class_1792": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/item/SophisticatedItem"],
       "net/minecraft/class_1799": [
-        "com/github/salandora/sophisticatedlibrary/common/extensions/item/SophisticatedItemStack",
-        "com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedMutableDataComponentHolder"
+        "com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/item/SophisticatedItemStack",
+        "com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedMutableDataComponentHolder"
       ],
-      "net/minecraft/class_1856": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedIngredient"],
-      "net/minecraft/class_2241": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBaseRailBlock"],
-      "net/minecraft/class_2248": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBlock"],
-      "net/minecraft/class_2311": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2397": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2476": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2526": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2541": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2560": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2680": ["com/github/salandora/sophisticatedlibrary/common/extensions/block/SophisticatedBlockState"],
-      "net/minecraft/class_5147": ["com/github/salandora/sophisticatedlibrary/common/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_9322": ["com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedDataComponentHolder"],
-      "net/minecraft/class_9288": ["com/github/salandora/sophisticatedlibrary/common/extensions/component/SophisticatedItemContainerContents"]
+      "net/minecraft/class_1856": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedIngredient"],
+      "net/minecraft/class_2241": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBaseRailBlock"],
+      "net/minecraft/class_2248": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBlock"],
+      "net/minecraft/class_2311": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2397": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2476": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2526": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2541": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2560": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2680": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBlockState"],
+      "net/minecraft/class_5147": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_9322": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedDataComponentHolder"],
+      "net/minecraft/class_9288": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedItemContainerContents"]
     },
     "modmenu": {
       "parent": {

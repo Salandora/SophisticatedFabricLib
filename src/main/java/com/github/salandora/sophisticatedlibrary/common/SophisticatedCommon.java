@@ -1,15 +1,10 @@
 package com.github.salandora.sophisticatedlibrary.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.block.entity.SophisticatedBlockEntity;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.block.entity.SophisticatedBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SophisticatedCommon implements ModInitializer {
     @Override

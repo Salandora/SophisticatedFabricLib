@@ -1,5 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.fluid;
 
+import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidActionResult;
+import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidUtil;
 import com.github.salandora.sophisticatedlibrary.transfer.ItemStackHandler;
 import com.github.salandora.sophisticatedlibrary.util.TestFluidStorage;
 import com.github.salandora.sophisticatedlibrary.util.TestHelper;

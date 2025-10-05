@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.block.SophisticatedIngredient;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.block.SophisticatedIngredient;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

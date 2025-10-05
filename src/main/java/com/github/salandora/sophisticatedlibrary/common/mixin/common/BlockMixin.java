@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.block.SophisticatedBlock;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.block.SophisticatedBlock;
 import net.minecraft.world.level.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.block.SophisticatedBaseRailBlock;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.block.SophisticatedBaseRailBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.BlockGetter;

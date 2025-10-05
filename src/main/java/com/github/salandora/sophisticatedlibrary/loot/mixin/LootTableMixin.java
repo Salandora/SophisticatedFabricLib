@@ -1,8 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.loot.mixin;
 
 import com.github.salandora.sophisticatedlibrary.loot.SophisticatedLoot;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilder;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTable;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.extensions.SophisticatedLootTable;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.extensions.SophisticatedLootTableBuilder;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;

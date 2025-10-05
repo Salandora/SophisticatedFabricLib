@@ -1,5 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.loot;
 
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.LootModifier;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

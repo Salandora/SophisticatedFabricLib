@@ -1,9 +1,12 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common.tools;
 
-import com.github.salandora.sophisticatedlibrary.common.ItemAbilities;
-import com.github.salandora.sophisticatedlibrary.common.ItemAbility;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbilities;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbility;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 

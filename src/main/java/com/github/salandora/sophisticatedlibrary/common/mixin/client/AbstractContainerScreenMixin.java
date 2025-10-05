@@ -1,11 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.client;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.client.gui.screens.inventory.SophisticatedAbstractContainerScreen;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.client.gui.screens.inventory.SophisticatedAbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

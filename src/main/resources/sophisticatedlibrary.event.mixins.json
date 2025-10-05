@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.github.salandora.sophisticatedlibrary.event.mixin",
+  "package": "com.github.salandora.sophisticatedlibrary.event.mixin.v1",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "common.Entity_EntityTick",

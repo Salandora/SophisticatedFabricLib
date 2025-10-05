@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.loot;
 
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
 import com.github.salandora.sophisticatedlibrary.util.DeferredHolder;
 import com.github.salandora.sophisticatedlibrary.util.DeferredRegister;
 import com.mojang.serialization.MapCodec;

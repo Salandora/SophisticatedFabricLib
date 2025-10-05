@@ -1,0 +1,178 @@
+package com.github.salandora.sophisticatedlibrary.transfer;
+
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.component.SophisticatedMutableDataComponentHolder;
+import com.google.common.base.Preconditions;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import org.jetbrains.annotations.NotNull;
+
+public abstract class ComponentItemHandler implements IItemHandlerModifiable {
+	protected final SophisticatedMutableDataComponentHolder parent;
+	protected final DataComponentType<ItemContainerContents> component;
+	protected final int size;
+
+	public ComponentItemHandler(SophisticatedMutableDataComponentHolder parent, DataComponentType<ItemContainerContents> component, int size) {
+		this.parent = parent;
+		this.component = component;
+		this.size = size;
+		Preconditions.checkArgument(size <= 256, "The max size of ItemContainerContents is 256 slots.");
+	}
+
+	@Override
+	public int getSlotCount() {
+		return size;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		ItemContainerContents contents = getContents();
+		return this.getStackFromContents(contents, slot);
+	}
+
+	@Override
+	public void setStackInSlot(int slot, ItemStack stack) {
+		this.validateSlotIndex(slot);
+		if (!this.isItemValid(slot, stack)) {
+			throw new RuntimeException("Invalid stack " + stack + " for slot " + slot + ")");
+		}
+		ItemContainerContents contents = this.getContents();
+		ItemStack existing = this.getStackFromContents(contents, slot);
+		if (!ItemStack.matches(stack, existing)) {
+			this.updateContents(contents, stack, slot);
+		}
+	}
+
+	@NotNull
+	public ItemStack insertItem(int slot, @NotNull ItemStack toInsert, boolean simulate) {
+		this.validateSlotIndex(slot);
+
+		if (toInsert.isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+
+		if (!this.isItemValid(slot, toInsert)) {
+			return toInsert;
+		}
+
+		ItemContainerContents contents = this.getContents();
+		ItemStack existing = this.getStackFromContents(contents, slot);
+		// Max amount of the stack that could be inserted
+		int insertLimit = Math.min(this.getSlotLimit(slot), toInsert.getMaxStackSize());
+
+		if (!existing.isEmpty()) {
+			if (!ItemStack.isSameItemSameComponents(toInsert, existing)) {
+				return toInsert;
+			}
+
+			insertLimit -= existing.getCount();
+		}
+
+		if (insertLimit <= 0) {
+			return toInsert;
+		}
+
+		int inserted = Math.min(insertLimit, toInsert.getCount());
+		if (!simulate) {
+			this.updateContents(contents, toInsert.copyWithCount(existing.getCount() + inserted), slot);
+		}
+
+		return toInsert.copyWithCount(toInsert.getCount() - inserted);
+	}
+
+	@NotNull
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+		this.validateSlotIndex(slot);
+
+		if (amount == 0) {
+			return ItemStack.EMPTY;
+		}
+
+		ItemContainerContents contents = this.getContents();
+		ItemStack existing = this.getStackFromContents(contents, slot);
+
+		if (existing.isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+
+		int toExtract = Math.min(amount, existing.getMaxStackSize());
+		if (!simulate) {
+			this.updateContents(contents, existing.copyWithCount(existing.getCount() - toExtract), slot);
+		}
+
+		return existing.copyWithCount(toExtract);
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return Item.ABSOLUTE_MAX_STACK_SIZE;
+	}
+
+	@Override
+	public boolean isItemValid(int slot, ItemStack stack) {
+		return stack.getItem().canFitInsideContainerItems();
+	}
+
+	/**
+	 * Called from {@link #updateContents} after the stack stored in a slot has been updated.
+	 * <p>
+	 * Modifications to the stacks used as parameters here will not write-back to the stored data.
+	 *
+	 * @param slot     The slot that changed
+	 * @param oldStack The old stack that was present in the slot
+	 * @param newStack The new stack that is now present in the slot
+	 */
+	protected void onContentsChanged(int slot, ItemStack oldStack, ItemStack newStack) {}
+
+	/**
+	 * Retrieves the {@link ItemContainerContents} from the parent object's data component map.
+	 */
+	protected ItemContainerContents getContents() {
+		return this.parent.getOrDefault(this.component, ItemContainerContents.EMPTY);
+	}
+
+	/**
+	 * Retrieves a copy of a single stack from the underlying data component, returning {@link ItemStack#EMPTY} if the component does not have a slot present.
+	 * <p>
+	 * Throws an exception if the slot is out-of-bounds for this capability.
+	 *
+	 * @param contents The existing contents from {@link #getContents()}
+	 * @param slot     The target slot
+	 * @return A copy of the stack in the target slot
+	 */
+	protected ItemStack getStackFromContents(ItemContainerContents contents, int slot) {
+		this.validateSlotIndex(slot);
+		return contents.sophisticatedLibrary_getSlots() <= slot ? ItemStack.EMPTY : contents.sophisticatedLibrary_getStackInSlot(slot);
+	}
+
+	/**
+	 * Performs a copy and write operation on the underlying data component, changing the stack in the target slot.
+	 * <p>
+	 * If the existing component is larger than {@link #getSlotCount()}, additional slots will <b>not</b> be truncated.
+	 *
+	 * @param contents The existing contents from {@link #getContents()}
+	 * @param stack    The new stack to set to the slot
+	 * @param slot     The target slot
+	 */
+	protected void updateContents(ItemContainerContents contents, ItemStack stack, int slot) {
+		this.validateSlotIndex(slot);
+		// Use the max of the contents slots and the capability slots to avoid truncating
+		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlotCount()), ItemStack.EMPTY);
+		contents.copyInto(list);
+		ItemStack oldStack = list.get(slot);
+		list.set(slot, stack);
+		this.parent.sophisticatedLibrary_set(this.component, ItemContainerContents.fromItems(list));
+		this.onContentsChanged(slot, oldStack, stack);
+	}
+
+	/**
+	 * Throws {@link UnsupportedOperationException} if the provided slot index is invalid.
+	 */
+	protected final void validateSlotIndex(int slot) {
+		if (slot < 0 || slot >= getSlotCount()) {
+			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlotCount() + ")");
+		}
+	}
+}

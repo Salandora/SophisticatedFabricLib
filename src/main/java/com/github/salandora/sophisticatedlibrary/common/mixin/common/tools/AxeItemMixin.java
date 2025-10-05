@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common.tools;
 
-import com.github.salandora.sophisticatedlibrary.common.ItemAbilities;
-import com.github.salandora.sophisticatedlibrary.common.ItemAbility;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbilities;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbility;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.DiggerItem;

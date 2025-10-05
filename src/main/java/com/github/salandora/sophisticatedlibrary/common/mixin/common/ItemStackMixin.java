@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.item.SophisticatedItemStack;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.item.SophisticatedItemStack;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 

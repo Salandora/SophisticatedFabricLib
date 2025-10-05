@@ -1,6 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.model.mixin.client;
 
-import com.github.salandora.sophisticatedlibrary.model.util.ModelData;
+import com.github.salandora.sophisticatedlibrary.model.api.v1.client.render.CustomParticleIcon;
+import com.github.salandora.sophisticatedlibrary.model.api.v1.util.ModelData;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import com.github.salandora.sophisticatedlibrary.model.client.render.CustomParticleIcon;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

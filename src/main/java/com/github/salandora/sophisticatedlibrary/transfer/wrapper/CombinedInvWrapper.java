@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 
-import com.github.salandora.sophisticatedlibrary.items.EmptyItemHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.EmptyItemHandler;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

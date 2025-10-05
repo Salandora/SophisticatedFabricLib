@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.entity.SophisticatedShearable;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.entity.SophisticatedShearable;
 import net.minecraft.world.level.block.*;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
-import com.github.salandora.sophisticatedlibrary.common.extensions.component.SophisticatedMutableDataComponentHolder;
+import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.component.SophisticatedMutableDataComponentHolder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.item.ItemStack;

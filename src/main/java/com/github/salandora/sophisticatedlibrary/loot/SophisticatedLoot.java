@@ -1,7 +1,10 @@
 package com.github.salandora.sophisticatedlibrary.loot;
 
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
-import com.github.salandora.sophisticatedlibrary.loot.extensions.SophisticatedLootTableBuilder;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.LootTableIdCondition;
+import com.github.salandora.sophisticatedlibrary.loot.api.v1.extensions.SophisticatedLootTableBuilder;
+import com.github.salandora.sophisticatedlibrary.loot.impl.LootModifierManager;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.api.ModInitializer;

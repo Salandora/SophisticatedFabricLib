@@ -1,6 +1,7 @@
 package com.github.salandora.sophisticatedlibrary.fluid;
 
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
+import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;

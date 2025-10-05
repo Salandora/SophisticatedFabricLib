@@ -1,7 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.model.mixin.client;
 
-import com.github.salandora.sophisticatedlibrary.model.client.render.CustomParticleIcon;
-import com.github.salandora.sophisticatedlibrary.model.util.ModelData;
+import com.github.salandora.sophisticatedlibrary.model.api.v1.client.render.CustomParticleIcon;
+import com.github.salandora.sophisticatedlibrary.model.api.v1.extensions.client.particle.SophisticatedTerrainParticle;
+import com.github.salandora.sophisticatedlibrary.model.api.v1.util.ModelData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
@@ -9,7 +10,6 @@ import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import com.github.salandora.sophisticatedlibrary.model.extensions.client.particle.SophisticatedTerrainParticle;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
