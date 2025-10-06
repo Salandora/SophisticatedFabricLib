@@ -3,10 +3,14 @@
   "id": "sophisticatedlibrary",
   "version": "${version}",
   "name": "SophisticatedLibrary",
-  "description": "",
+  "description": "A library mod for the sophisticated mods",
+  "license": "GNU General Public License v3.0",
   "authors": ["Salandora"],
-  "contact": {},
-  "license": "LGPL-3.0",
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-library-fabric",
+    "issues": "https://github.com/Salandora/SophisticatedLibrary/issues",
+    "sources": "https://github.com/Salandora/SophisticatedLibrary"
+  },
   "icon": "assets/sophisticatedlibrary/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -27,8 +31,9 @@
     "sophisticatedlibrary.model.mixins.json"
   ],
   "depends": {
+    "minecraft": "${minecraft_version}",
     "fabricloader": ">=${loader_version}",
-    "minecraft": "${minecraft_version}"
+    "fabric-api": ">=${fabric_version}"
   },
   "custom": {
     "loom:injected_interfaces": {
@@ -58,6 +63,7 @@
       "net/minecraft/class_9288": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedItemContainerContents"]
     },
     "modmenu": {
+      "badges": ["library"],
       "parent": {
         "id": "sophisticatedmods",
         "name": "Sophisticated Mods",
