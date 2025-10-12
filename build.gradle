@@ -92,7 +92,7 @@ loom {
     }
 
     runs {
-        datagen {
+        gametestDatagen {
             server()
             name "Gametest Data Generation"
             vmArg "-Dfabric-api.datagen"
@@ -191,7 +191,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.+'
 }
 
-runDatagen {
+runGametestDatagen {
     outputs.dir file("src/gametest/generated")
 }
 
@@ -204,7 +204,7 @@ test {
     }
 }
 
-processGametestResources.dependsOn(runDatagen)
+processGametestResources.dependsOn(runGametestDatagen)
 
 tasks.register('validateMixinNames', ValidateMixinNameTask) {
     source(sourceSets.main.output)
