@@ -1,10 +1,17 @@
 package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.Collections;
+import java.util.List;
 
 public class RangedWrapper implements IItemHandlerModifiable {
+	private final List<SingleSlotStorage<ItemVariant>> parts;
 	private final IItemHandlerModifiable inventory;
 	private final int start;
 	private final int end;
@@ -13,6 +20,14 @@ public class RangedWrapper implements IItemHandlerModifiable {
 		this.inventory = inventory;
 		this.start = start;
 		this.end = end;
+
+		this.parts = Collections.unmodifiableList(this.inventory.getSlots().subList(start, end));
+	}
+
+	@Override
+	@UnmodifiableView
+	public List<SingleSlotStorage<ItemVariant>> getSlots() {
+		return this.parts;
 	}
 
 	@Override

@@ -1,15 +1,16 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Iterator;
+import java.util.List;
 
 public interface IItemHandler extends SlottedStorage<ItemVariant> {
 	int getSlotCount();
@@ -33,18 +34,12 @@ public interface IItemHandler extends SlottedStorage<ItemVariant> {
 	}
 
 	@Override
-	default SingleSlotStorage<ItemVariant> getSlot(int slot) {
-		return new SingleStackStorage() {
-			@Override
-			protected ItemStack getStack() {
-				return getStackInSlot(slot);
-			}
+	@UnmodifiableView
+	List<SingleSlotStorage<ItemVariant>> getSlots();
 
-			@Override
-			protected void setStack(ItemStack stack) {
-				setStackInSlot(slot, stack);
-			}
-		};
+	@Override
+	default SingleSlotStorage<ItemVariant> getSlot(int slot) {
+		return getSlots().get(slot);
 	}
 
 	/// Do not override

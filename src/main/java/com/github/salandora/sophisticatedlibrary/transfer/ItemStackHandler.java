@@ -1,5 +1,8 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -9,23 +12,51 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ItemStackHandler implements IItemHandlerModifiable {
 	protected NonNullList<ItemStack> stacks;
+
+	private List<SingleSlotStorage<ItemVariant>> parts;
+	private final List<ItemStackHandlerSlotWrapper> backingList;
 
 	public ItemStackHandler() {
 		this(1);
 	}
 
 	public ItemStackHandler(int size) {
-		stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+		this(NonNullList.withSize(size, ItemStack.EMPTY));
 	}
 
 	public ItemStackHandler(NonNullList<ItemStack> stacks) {
 		this.stacks = stacks;
+
+		this.parts = Collections.emptyList();
+		this.backingList = new ArrayList<>();
+		resizeSlotList();
 	}
 
 	public void setSize(int size) {
 		stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+		resizeSlotList();
+	}
+
+	public void resizeSlotList() {
+		int inventorySize = this.stacks.size();
+		if (inventorySize != this.parts.size()) {
+			while (this.backingList.size() < inventorySize) {
+				this.backingList.add(new ItemStackHandlerSlotWrapper(this, this.backingList.size()));
+			}
+
+			this.parts = Collections.unmodifiableList(this.backingList.subList(0, inventorySize));
+		}
+	}
+
+	@Override
+	public List<SingleSlotStorage<ItemVariant>> getSlots() {
+		return this.parts;
 	}
 
 	@Override
@@ -168,4 +199,24 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 	protected void onLoad() {}
 
 	protected void onContentsChanged(int slot) {}
+
+	public static class ItemStackHandlerSlotWrapper extends SingleStackStorage {
+		private final ItemStackHandler storage;
+		private final int slot;
+
+		public ItemStackHandlerSlotWrapper(ItemStackHandler storage, int slot) {
+			this.storage = storage;
+			this.slot = slot;
+		}
+
+		@Override
+		protected ItemStack getStack() {
+			return this.storage.getStackInSlot(this.slot);
+		}
+
+		@Override
+		protected void setStack(ItemStack stack) {
+			this.storage.setStackInSlot(this.slot, stack);
+		}
+	}
 }

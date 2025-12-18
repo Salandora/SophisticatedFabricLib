@@ -3,9 +3,13 @@ package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
 import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.List;
 
 public class InvWrapper implements IItemHandlerModifiable {
 	public static InvWrapper of(Container container) {
@@ -18,6 +22,12 @@ public class InvWrapper implements IItemHandlerModifiable {
 	private InvWrapper(Container inventory) {
 		this.wrappedInventory = inventory;
 		this.wrappedInventoryStorage = InventoryStorage.of(inventory, null);
+	}
+
+	@Override
+	@UnmodifiableView
+	public List<SingleSlotStorage<ItemVariant>> getSlots() {
+		return this.wrappedInventoryStorage.getSlots();
 	}
 
 	@Override
