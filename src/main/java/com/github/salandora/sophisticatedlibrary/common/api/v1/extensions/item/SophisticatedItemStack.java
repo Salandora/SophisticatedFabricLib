@@ -2,11 +2,12 @@ package com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.item;
 
 import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbility;
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedlibrary.util.LazyOptional;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,9 +16,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nullable;
 
@@ -52,10 +52,14 @@ public interface SophisticatedItemStack {
 		return burnTime;
 	}
 
+	default void sophisticatedLibrary_onArmorTick(Level level, Player player) {
+		self().getItem().sophisticatedLibrary_onArmorTick(self(), level, player);
+	}
+
 	default InteractionResult sophisticatedLibrary_onItemUseFirst(UseOnContext context) {
 		Player player = context.getPlayer();
 		BlockPos pos = context.getClickedPos();
-		if (!player.getAbilities().mayBuild && !self().canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), pos, false))) {
+		if (!player.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(context.getLevel().registryAccess().registryOrThrow(Registries.BLOCK), new BlockInWorld(context.getLevel(), pos, false))) {
 			return InteractionResult.PASS;
 		} else {
 			Item item = self().getItem();
@@ -68,18 +72,19 @@ public interface SophisticatedItemStack {
 		}
 	}
 
-	@ApiStatus.OverrideOnly
-	default int sophisticatedLibrary_getEnchantmentLevel(Holder<Enchantment> enchantment) {
-		return self().getItem().sophisticatedLibrary_getEnchantmentLevel(self(), enchantment);
-	}
-
 	default boolean sophisticatedLibrary_makesPiglinsNeutral(LivingEntity wearer) {
 		return self().getItem().sophisticatedLibrary_makesPiglinsNeutral(self(), wearer);
 	}
 
-	@Nullable
-	default <T> T sophisticatedLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
+	default <T> LazyOptional<T> sophisticatedLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
 		MutableContainerItemContext context = new MutableContainerItemContext(self());
-		return context.find(lookup);
+		return LazyOptional.of(() -> context.find(lookup));
+	}
+
+	default <T> LazyOptional<T> sophisticatedLibrary_getLazyCapability(ItemApiLookup<LazyOptional<T>, Void> lookup) {
+		// This can be null!
+		LazyOptional<T> capability = lookup.find(self(), null);
+		return capability == null ? LazyOptional.empty() : capability;
+
 	}
 }

@@ -39,16 +39,16 @@ public class BlockModelWrapper extends BlockModel {
 	}
 
 	@Override
-	public BakedModel bake(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, boolean guiLight3d) {
+	public BakedModel bake(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation location, boolean guiLight3d) {
 		if (wrapper != null) {
 			ItemOverrides overrides = getOverrides().isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(baker, this, getOverrides());
-			return wrapper.bake(context, baker, spriteGetter, state, overrides);
+			return wrapper.bake(context, baker, spriteGetter, state, overrides, location);
 		}
 
 		if (this.parent instanceof BlockModelWrapper wrapperParent) {
-			return wrapperParent.bake(baker, wrapperParent, spriteGetter, state, guiLight3d);
+			return wrapperParent.bake(baker, wrapperParent, spriteGetter, state, location, guiLight3d);
 		}
 
-		return super.bake(baker, model, spriteGetter, state, guiLight3d);
+		return super.bake(baker, model, spriteGetter, state, location, guiLight3d);
 	}
 }

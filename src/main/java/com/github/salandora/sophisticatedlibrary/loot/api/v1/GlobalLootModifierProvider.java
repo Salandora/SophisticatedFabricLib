@@ -5,16 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
+import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.fabricmc.fabric.impl.datagen.FabricDataGenHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -45,20 +43,20 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 		this.replace = replace;
 	}
 
-	protected abstract void generate(BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> consumer);
+	protected abstract void generate(BiConsumer<ResourceLocation, IGlobalLootModifier> consumer);
 
 	@Override
 	public final CompletableFuture<?> run(CachedOutput writer) {
 		HashMap<ResourceLocation, IGlobalLootModifier> builders = Maps.newHashMap();
-		HashMap<ResourceLocation, ResourceCondition[]> conditionMap = new HashMap<>();
+		HashMap<ResourceLocation, ConditionJsonProvider[]> conditionMap = new HashMap<>();
 
 		return this.registriesLookup.thenCompose(lookup -> {
 			this.generate((registryKey, builder) -> {
-				ResourceCondition[] conditions = FabricDataGenHelper.consumeConditions(builder);
-				conditionMap.put(registryKey.location(), conditions);
+				ConditionJsonProvider[] conditions = FabricDataGenHelper.consumeConditions(builder);
+				conditionMap.put(registryKey, conditions);
 
-				if (builders.put(registryKey.location(), builder) != null) {
-					throw new IllegalStateException("Duplicate loot table " + registryKey.location());
+				if (builders.put(registryKey, builder) != null) {
+					throw new IllegalStateException("Duplicate loot table " + registryKey);
 				}
 			});
 
@@ -66,15 +64,14 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 			Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
 			List<ResourceLocation> entries = new ArrayList<>();
 
-			RegistryOps<JsonElement> ops = lookup.createSerializationContext(JsonOps.INSTANCE);
 			ImmutableList.Builder<CompletableFuture<?>> futures = new ImmutableList.Builder<>();
 
 			for (Map.Entry<ResourceLocation, IGlobalLootModifier> entry : builders.entrySet()) {
 				var name = entry.getKey();
-				entries.add(ResourceLocation.fromNamespaceAndPath(modid, name.getPath()));
+				entries.add(new ResourceLocation(modid, name.getPath()));
 
-				JsonObject tableJson = (JsonObject) IGlobalLootModifier.DIRECT_CODEC.encodeStart(ops, entry.getValue()).getOrThrow(IllegalStateException::new);
-				FabricDataGenHelper.addConditions(tableJson, conditionMap.remove(entry.getKey()));
+				JsonObject tableJson = (JsonObject) IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow(false, s -> {});
+				ConditionJsonProvider.write(tableJson, conditionMap.remove(entry.getKey()));
 
 				Path modifierPath = modifierFolderPath.resolve(name.getPath() + ".json");
 				futures.add(DataProvider.saveStable(writer, tableJson, modifierPath));
@@ -90,7 +87,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 		});
 	}
 
-	public BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> withConditions(BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> exporter, ResourceCondition... conditions) {
+	public BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> withConditions(BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> exporter, ConditionJsonProvider... conditions) {
 		Preconditions.checkArgument(conditions.length > 0, "Must add at least one condition.");
 		return (id, table) -> {
 			FabricDataGenHelper.addConditions(table, conditions);

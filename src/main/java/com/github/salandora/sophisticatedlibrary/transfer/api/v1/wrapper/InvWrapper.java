@@ -11,7 +11,7 @@ public class InvWrapper implements IItemHandlerModifiable {
 
 	private final Container wrappedInventory;
 
-	private InvWrapper(Container inventory) {
+	public InvWrapper(Container inventory) {
 		this.wrappedInventory = inventory;
 	}
 
@@ -24,7 +24,7 @@ public class InvWrapper implements IItemHandlerModifiable {
 
 		if (!stackInSlot.isEmpty()) {
 			if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxStackSize(), getSlotLimit(slot)) ||
-					!ItemStack.isSameItemSameComponents(stack, stackInSlot) ||
+					!ItemStack.isSameItemSameTags(stack, stackInSlot) ||
 					!this.wrappedInventory.canPlaceItem(slot, stack)) {
 				return stack;
 			}

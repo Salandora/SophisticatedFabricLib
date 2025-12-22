@@ -2,16 +2,12 @@ package com.github.salandora.sophisticatedlibrary.transfer;
 
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.ItemStackHandler;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,12 +86,10 @@ public class ItemStackHandlerTest {
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 4));
 		handler.setStackInSlot(1, new ItemStack(Items.STONE, 6));
 
-		HolderLookup.Provider provider = HolderLookup.Provider.create(Stream.of(BuiltInRegistries.REGISTRY.asLookup()));
-
-		CompoundTag tag = handler.serializeNBT(provider);
+		CompoundTag tag = handler.serializeNBT();
 
 		ItemStackHandler loaded = new ItemStackHandler(0);
-		loaded.deserializeNBT(provider, tag);
+		loaded.deserializeNBT(tag);
 
 		assertEquals(2, loaded.getSlotCount());
 		assertEquals(4, loaded.getStackInSlot(0).getCount());

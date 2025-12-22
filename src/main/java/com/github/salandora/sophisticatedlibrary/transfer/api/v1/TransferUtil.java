@@ -20,7 +20,7 @@ public interface TransferUtil {
 		// fill up stacks
 		for (int slot = 0; slot < storageSize; slot++) {
 			ItemStack slotStack = storage.getStackInSlot(slot);
-			if (ItemStack.isSameItemSameComponents(stack, slotStack)) {
+			if (ItemStack.isSameItemSameTags(stack, slotStack)) {
 				stack = storage.insertItem(slot, stack, simulate);
 				if (stack.isEmpty()) {
 					return stack;

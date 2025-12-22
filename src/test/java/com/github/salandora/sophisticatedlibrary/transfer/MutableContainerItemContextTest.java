@@ -7,12 +7,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluids;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,9 +34,7 @@ public class MutableContainerItemContextTest {
 		return createItemStack(item, 1);
 	}
 	public static ItemStack createItemStack(Item item, int count) {
-		ItemStack itemStack = new ItemStack(item, count);
-		itemStack.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER));
-		return itemStack;
+		return PotionUtils.setPotion(new ItemStack(Items.POTION, count), Potions.WATER);
 	}
 
 	record TestCase(ItemStack input, FluidVariant fluid, long amount, boolean commit,

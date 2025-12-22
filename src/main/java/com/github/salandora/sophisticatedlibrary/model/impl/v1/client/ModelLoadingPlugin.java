@@ -42,7 +42,7 @@ public class ModelLoadingPlugin implements PreparableModelLoadingPlugin<Map<Reso
 							return null;
 						}
 
-						ResourceLocation loaderLocation = ResourceLocation.parse(loaderElement.getAsString());
+						ResourceLocation loaderLocation = new ResourceLocation(loaderElement.getAsString());
 						var loader = RegisterGeometryLoadersCallback.get(loaderLocation);
 						if (loader != null) {
 							if (element.has("transform")) {
@@ -81,7 +81,7 @@ public class ModelLoadingPlugin implements PreparableModelLoadingPlugin<Map<Reso
 			return model;
 		});
 		context.modifyModelOnLoad().register((model, ctx) -> {
-			ResourceLocation id = ctx.resourceId();
+			ResourceLocation id = ctx.id();
 			if (id != null) {
 				var customModel = data.get(id);
 				if (customModel != null && model instanceof BlockModel blockModel) {

@@ -8,7 +8,7 @@ public interface SophisticatedBlockEntity {
 		return (BlockEntity) this;
 	}
 
-	default void sophisticatedLibrary_invalidateCapabilities() {
+	default void sophisticatedLibrary_invalidateCaps() {
 		BlockEntity be = self();
 		if (!(be.getLevel() instanceof ServerWorldCache serverWorldCache)) {
 			return;

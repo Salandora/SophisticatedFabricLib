@@ -3,6 +3,7 @@ package com.github.salandora.sophisticatedlibrary.model.api.v1.loading;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -14,8 +15,9 @@ public class GeometryBakingContext implements IGeometryBakingContext {
 	private final Function<String, Boolean> hasTexture;
 	private final Function<String, Material> getMaterial;
 	private final Transformation rootTransformation;
+	private final ResourceLocation modelLocation;
 
-	public GeometryBakingContext(boolean useAmbientOcclusion, boolean isGui3d, boolean useBlockLight, ItemTransforms itemTransforms, Function<String, Boolean> hasTexture, Function<String, Material> getMaterial, Transformation rootTransformation) {
+	public GeometryBakingContext(boolean useAmbientOcclusion, boolean isGui3d, boolean useBlockLight, ItemTransforms itemTransforms, Function<String, Boolean> hasTexture, Function<String, Material> getMaterial, Transformation rootTransformation, ResourceLocation modelLocation) {
 		this.useAmbientOcclusion = useAmbientOcclusion;
 		this.isGui3d = isGui3d;
 		this.useBlockLight = useBlockLight;
@@ -23,6 +25,7 @@ public class GeometryBakingContext implements IGeometryBakingContext {
 		this.hasTexture = hasTexture;
 		this.getMaterial = getMaterial;
 		this.rootTransformation = rootTransformation;
+		this.modelLocation = modelLocation;
 	}
 
 	@Override
@@ -58,6 +61,10 @@ public class GeometryBakingContext implements IGeometryBakingContext {
 	@Override
 	public Transformation getRootTransform() {
 		return rootTransformation;
+	}
+
+	public ResourceLocation getModelLocation() {
+		return modelLocation;
 	}
 
 	public static Builder builder(IGeometryBakingContext parent) {
@@ -118,8 +125,8 @@ public class GeometryBakingContext implements IGeometryBakingContext {
 			return this;
 		}
 
-		public IGeometryBakingContext build() {
-			return new GeometryBakingContext(useAmbientOcclusion, isGui3d, useBlockLight, itemTransforms, hasTexture, getMaterial, rootTransformation);
+		public IGeometryBakingContext build(ResourceLocation modelLocation) {
+			return new GeometryBakingContext(useAmbientOcclusion, isGui3d, useBlockLight, itemTransforms, hasTexture, getMaterial, rootTransformation, modelLocation);
 		}
 	}
 }

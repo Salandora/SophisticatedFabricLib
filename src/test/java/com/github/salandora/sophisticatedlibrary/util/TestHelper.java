@@ -35,6 +35,6 @@ public class TestHelper {
 	public static boolean containsItem(ItemStackHandler storage, ItemStack stack) {
 		return IntStream.range(0, storage.getSlotCount())
 				.mapToObj(storage::getStackInSlot)
-				.anyMatch(slotStack -> ItemStack.isSameItemSameComponents(slotStack, stack));
+				.anyMatch(slotStack -> ItemStack.isSameItemSameTags(slotStack, stack));
 	}
 }

@@ -9,7 +9,6 @@ import com.github.salandora.sophisticatedlibrary.util.TestFluidStorage;
 import com.github.salandora.sophisticatedlibrary.util.TestHelper;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Abilities;
@@ -18,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,9 +44,7 @@ public class FluidUtilTest {
 		return createItemStack(item, 1);
 	}
 	public static ItemStack createItemStack(Item item, int count) {
-		ItemStack itemStack = new ItemStack(item, count);
-		itemStack.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER));
-		return itemStack;
+		return PotionUtils.setPotion(new ItemStack(Items.POTION, count), Potions.WATER);
 	}
 
 	private static void assertItemStack(ItemStack expected, ItemStack got) {

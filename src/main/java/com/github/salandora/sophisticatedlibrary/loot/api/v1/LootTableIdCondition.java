@@ -1,21 +1,18 @@
 package com.github.salandora.sophisticatedlibrary.loot.api.v1;
 
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 
 public class LootTableIdCondition implements LootItemCondition {
-	public static final MapCodec<LootTableIdCondition> CODEC = RecordCodecBuilder.mapCodec(
-			builder -> builder
-					.group(
-							ResourceLocation.CODEC.fieldOf("loot_table_id").forGetter(idCondition -> idCondition.targetLootTableId))
-					.apply(builder, LootTableIdCondition::new));
-	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(CODEC);
+	public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
 	public static final ResourceLocation UNKNOWN_LOOT_TABLE = SophisticatedLibrary.id("unknown_loot_table");
 
 	private final ResourceLocation targetLootTableId;
@@ -48,6 +45,18 @@ public class LootTableIdCondition implements LootItemCondition {
 		@Override
 		public LootItemCondition build() {
 			return new LootTableIdCondition(targetLootTableId);
+		}
+	}
+
+	public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootTableIdCondition> {
+		@Override
+		public void serialize(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx) {
+			object.addProperty("loot_table_id", instance.targetLootTableId.toString());
+		}
+
+		@Override
+		public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx) {
+			return new LootTableIdCondition(new ResourceLocation(GsonHelper.getAsString(object, "loot_table_id")));
 		}
 	}
 }

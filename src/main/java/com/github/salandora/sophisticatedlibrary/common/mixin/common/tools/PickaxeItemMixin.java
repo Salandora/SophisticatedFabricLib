@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(PickaxeItem.class)
 public class PickaxeItemMixin extends DiggerItem {
-	protected PickaxeItemMixin(Tier tier, TagKey<Block> blocks, Properties properties) {
-		super(tier, blocks, properties);
+	protected PickaxeItemMixin(float attackDamageModifier, float attackSpeedModifier, Tier tier, TagKey<Block> blocks, Properties properties) {
+		super(attackDamageModifier, attackSpeedModifier, tier, blocks, properties);
 	}
 
 	@Override

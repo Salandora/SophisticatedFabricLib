@@ -3,8 +3,8 @@ package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.IItemHandler;
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.TransferUtil;
 import com.github.salandora.sophisticatedlibrary.util.Capabilities;
+import com.github.salandora.sophisticatedlibrary.util.LazyOptional;
 import com.mojang.datafixers.util.Function5;
-import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.core.BlockPos;
@@ -25,7 +25,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
@@ -36,16 +35,12 @@ public class FluidUtil {
         return (int) (amount / BUCKET_VOLUME_IN_MILLIBUCKETS);
     }
 
-    public static boolean isFluidStorage(ItemStack stack) {
-		return ContainerItemContext.withConstant(stack).find(Capabilities.FluidHandler.ITEM) != null;
-    }
-
-	public static Optional<IFluidHandlerItem> getFluidHandler(ItemStack stack) {
-		return Optional.ofNullable(stack.sophisticatedLibrary_getCapability(Capabilities.FluidHandler.ITEM));
+	public static LazyOptional<IFluidHandlerItem> getFluidHandler(ItemStack stack) {
+		return stack.sophisticatedLibrary_getCapability(Capabilities.FluidHandler.ITEM);
 	}
 
-	public static Optional<IFluidHandler> getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
-		return Optional.ofNullable(Capabilities.FluidHandler.SIDED.find(level, pos, side));
+	public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
+		return LazyOptional.of(() -> Capabilities.FluidHandler.SIDED.find(level, pos, side));
 	}
 
 	public static boolean tryPlaceFluid(@Nullable Player player, Level level, InteractionHand hand, BlockPos pos, IFluidHandler source, FluidStack resource) {
@@ -131,7 +126,7 @@ public class FluidUtil {
     }
 	public static FluidStack tryFluidTransfer(IFluidHandler to, IFluidHandler from, FluidStack resource, boolean doTransfer) {
 		FluidStack extractable = from.drain(resource, IFluidHandler.FluidAction.SIMULATE);
-		if (!extractable.isEmpty() && FluidStack.isSameFluidSameComponents(resource, extractable)) {
+		if (!extractable.isEmpty() && resource.isFluidEqual(extractable)) {
 			return tryTransferFluid(to, from, extractable, doTransfer);
 		}
 		return FluidStack.EMPTY;

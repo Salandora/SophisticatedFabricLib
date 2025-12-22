@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 @Mixin(LootTable.class)
@@ -37,7 +36,7 @@ public abstract class LootTableMixin  implements SophisticatedLootTable {
 
 	@Shadow
 	@Final
-	private Optional<ResourceLocation> randomSequence;
+	ResourceLocation randomSequence;
 
 	@Shadow
 	public abstract ObjectArrayList<ItemStack> getRandomItems(LootParams params);

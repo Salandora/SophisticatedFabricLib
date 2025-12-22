@@ -6,7 +6,6 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -32,9 +31,9 @@ public class GlobalLootModifierTest {
 		context.startSequence()
 				.thenExecute(() -> context.setBlock(0, 1, 0, Blocks.CHEST))
 				.thenExecute(() -> {
-					ChestBlockEntity chestBlockEntity = context.getBlockEntity(new BlockPos(0, 1, 0));
+					ChestBlockEntity chestBlockEntity = (ChestBlockEntity) context.getBlockEntity(new BlockPos(0, 1, 0));
 					chestBlockEntity.setLootTable(BuiltInLootTables.SIMPLE_DUNGEON, seed);
-					chestBlockEntity.unpackLootTable(context.makeMockPlayer(GameType.SURVIVAL));
+					chestBlockEntity.unpackLootTable(context.makeMockPlayer());
 					stacks.set(IntStream.range(0, 27)
 							.mapToObj(chestBlockEntity::getItem)
 							.filter(Predicate.not(ItemStack::isEmpty))
@@ -48,7 +47,7 @@ public class GlobalLootModifierTest {
 					);
 				})
 				.thenExecute(() ->
-						expected.set(context.getLevel().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.SIMPLE_DUNGEON)
+						expected.set(context.getLevel().getServer().getLootData().getLootTable(BuiltInLootTables.SIMPLE_DUNGEON)
 							.getRandomItems(new LootParams.Builder(context.getLevel())
 									.withParameter(LootContextParams.ORIGIN, context.absoluteVec(new Vec3(0, 2, 0)))
 									.create(LootContextParamSets.CHEST), seed)

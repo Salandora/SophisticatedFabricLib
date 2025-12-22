@@ -1,10 +1,10 @@
 package com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.entity;
 
-import io.netty.buffer.Unpooled;
+import com.github.salandora.sophisticatedlibrary.util.LazyOptional;
 import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -21,12 +21,12 @@ public interface SophisticatedPlayer {
 		return (Player)this;
 	}
 
-	default OptionalInt sophisticatedCore_openMenu(MenuProvider menuProvider, BlockPos pos) {
-		return this.sophisticatedCore_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
+	default OptionalInt sophisticatedLibrary_openMenu(MenuProvider menuProvider, BlockPos pos) {
+		return this.sophisticatedLibrary_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
 	}
 
-	default OptionalInt sophisticatedCore_openMenu(MenuProvider menu, Consumer<RegistryFriendlyByteBuf> context) {
-		var screenHandlerFactory = new ExtendedScreenHandlerFactory<>() {
+	default OptionalInt sophisticatedLibrary_openMenu(MenuProvider menu, Consumer<FriendlyByteBuf> context) {
+		var screenHandlerFactory = new ExtendedScreenHandlerFactory() {
 			@Override
 			public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
 				return menu.createMenu(i, inventory, player);
@@ -43,23 +43,19 @@ public interface SophisticatedPlayer {
 			}
 
 			@Override
-			public byte[] getScreenOpeningData(ServerPlayer player) {
-				final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.registryAccess());
+			public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
 				context.accept(buf);
-				return buf.array();
 			}
 		};
 
 		return this.self().openMenu(screenHandlerFactory);
 	}
 
-	@Nullable
-	default <T> T sophisticatedCore_getCapability(EntityApiLookup<T, ?> lookup) {
-		return sophisticatedCore_getCapability(lookup, null);
+	default <T> LazyOptional<T> sophisticatedLibrary_getCapability(EntityApiLookup<T, ?> lookup) {
+		return sophisticatedLibrary_getCapability(lookup, null);
 	}
 
-	@Nullable
-	default <T, C> T sophisticatedCore_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
-		return lookup.find(self(), context);
+	default <T, C> LazyOptional<T> sophisticatedLibrary_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
+		return LazyOptional.of(() -> lookup.find(self(), context));
 	}
 }

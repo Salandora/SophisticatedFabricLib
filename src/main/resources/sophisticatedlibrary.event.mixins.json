@@ -1,11 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.github.salandora.sophisticatedlibrary.event.mixin.v1",
-  "compatibilityLevel": "JAVA_21",
+  "package": "com.github.salandora.sophisticatedlibrary.event.mixin.v0",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.Entity_EntityTick",
     "common.ItemEntityMixin_PickupItem",
+    "common.LivingEntityMixin_tick",
     "common.MobMixin_FinalizeSpawn",
     "common.PersistentEntitySectionManagerMixin_JoinWorld",
     "common.ResultSlotMixin_ItemCrafted",
@@ -17,6 +18,7 @@
     "client.ClientLevelMixin_JoinWorld",
     "client.ClientLevelMixin_LevelLoad",
     "client.ClientPacketListenerMixin_UpdateRecipes",
+    "client.KeyboardHandlerMixin_KeyPressed",
     "client.MouseHandlerMixin_MouseScrolled"
   ],
   "injectors": {

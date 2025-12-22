@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.model.impl.v1.models;
 
+import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
 import com.github.salandora.sophisticatedlibrary.model.api.v1.loading.GeometryBakingContext;
 import com.github.salandora.sophisticatedlibrary.model.api.v1.loading.IGeometryBakingContext;
 import com.github.salandora.sophisticatedlibrary.model.api.v1.loading.IGeometryLoader;
@@ -11,7 +12,6 @@ import com.github.salandora.sophisticatedlibrary.util.Lazy;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
-import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
@@ -75,7 +75,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 		return new DynamicFluidContainerModel(FluidVariant.of(newFluid), applyFluidLuminosity);
 	}
 
-	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
+	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
 		return new LazyBaked(() -> {
 			Material particleLocation = context.hasTexture("particle") ? context.getMaterial("particle") : null;
 			Material baseLocation = context.hasTexture("base") ? context.getMaterial("base") : null;
@@ -92,7 +92,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 			var itemContext = GeometryBakingContext.builder(context)
 					.withGui3d(false)
 					.withUseBlockLight(false)
-					.build();
+					.build(modelLocation);
 			var overrideHandler = new ContainedFluidOverrideHandler(overrides, baker, itemContext, this);
 
 			Mesh baseMesh = null, fluidMesh = null;
@@ -100,7 +100,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 				// Base texture
 				var builder = new SimpleMeshBuilder(translucentMaterial);
 				var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
-				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState);
+				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState, modelLocation);
 
 				quads.forEach(builder::addUnculledFace);
 
@@ -113,7 +113,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 
 				var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
 				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite.contents()); // Use template as mask
-				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState); // Bake with fluid texture
+				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState, modelLocation); // Bake with fluid texture
 
 				quads.forEach(builder::addUnculledFace);
 
@@ -278,12 +278,10 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 
 			FluidVariant variant;
 			if (jsonObject.has("fluid")) {
-				ResourceLocation fluidName = ResourceLocation.parse(jsonObject.get("fluid").getAsString());
+				ResourceLocation fluidName = new ResourceLocation(jsonObject.get("fluid").getAsString());
 
 				Fluid fluid = BuiltInRegistries.FLUID.get(fluidName);
 				variant = FluidVariant.of(fluid);
-			} else if (jsonObject.has("variant")) {
-				variant = FluidVariant.CODEC.decode(JsonOps.INSTANCE, jsonObject).getOrThrow().getFirst();
 			} else {
 				throw new RuntimeException("Either 'fluid' or ' variant' must be present for a dynamic fluid container model");
 			}
@@ -320,7 +318,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 
 						if (!cache.containsKey(name)) {
 							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
-							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this);
+							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this, new ResourceLocation(SophisticatedLibrary.MOD_ID, "bucket_override"));
 							cache.put(name, bakedModel);
 							return bakedModel;
 						}

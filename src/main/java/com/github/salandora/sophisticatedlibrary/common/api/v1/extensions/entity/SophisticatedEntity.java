@@ -19,4 +19,7 @@ public interface SophisticatedEntity {
 	default Collection<ItemEntity> sophisticatedLibrary_captureDrops(@Nullable Collection<ItemEntity> value) {
 		throw new RuntimeException("This should have been implemented via mixin.");
 	}
+
+	default void sophisticatedLibrary_invalidateCaps() {
+	}
 }

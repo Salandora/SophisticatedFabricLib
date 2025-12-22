@@ -3,11 +3,14 @@ package com.github.salandora.sophisticatedlibrary.loot.impl;
 import com.github.salandora.sophisticatedlibrary.SophisticatedLibrary;
 import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.impl.resource.conditions.ResourceConditionsImpl;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +20,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.storage.loot.Deserializers;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -28,10 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class LootModifierManager implements IdentifiableResourceReloadListener, PreparableReloadListener {
-	private static final Gson GSON = new GsonBuilder()
-			.setPrettyPrinting()
-			.disableHtmlEscaping()
-			.create();
+	public static final Gson GSON = Deserializers.createFunctionSerializer().create();
 
 	private static final String folder = "loot_modifiers";
 	public static final ResourceLocation ID = SophisticatedLibrary.id(folder);
@@ -53,10 +54,7 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 		return CompletableFuture
 				.supplyAsync(() -> this.prepare(resourceManager, preparationsProfiler), backgroundExecutor)
 				.thenCompose(preparationBarrier::wait)
-				.thenAcceptAsync((object) -> {
-					applyResourceConditions(reloadProfiler, object);
-					this.apply(object, resourceManager, reloadProfiler);
-				}, gameExecutor);
+				.thenAcceptAsync((object) -> this.apply(object, resourceManager, reloadProfiler), gameExecutor);
 	}
 
 	protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
@@ -65,7 +63,7 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 		Map<ResourceLocation, JsonElement> map = new HashMap<>();
 		SimpleJsonResourceReloadListener.scanDirectory(resourceManager, folder, GSON, map);
 
-		ResourceLocation global_loot_modifiers = ResourceLocation.fromNamespaceAndPath("sophisticated", folder + "/global_loot_modifiers.json");
+		ResourceLocation global_loot_modifiers = new ResourceLocation("sophisticated", folder + "/global_loot_modifiers.json");
 		List<ResourceLocation> finalLocations = new ArrayList<>();
 		for (Resource resource : resourceManager.getResourceStack(global_loot_modifiers)) {
 			try (Reader reader = resource.openAsReader()) {
@@ -78,7 +76,7 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 
 				JsonArray entries = GsonHelper.getAsJsonArray(jsonObject, "entries");
 				for (int i = 0; i < entries.size(); i++) {
-					ResourceLocation location = ResourceLocation.parse(GsonHelper.convertToString(entries.get(i), "entries[" + i + "]"));
+					ResourceLocation location = ResourceLocation.tryParse(GsonHelper.convertToString(entries.get(i), "entries[" + i + "]"));
 					finalLocations.remove(location); // Update ordering
 					finalLocations.add(location);
 				}
@@ -90,8 +88,9 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 		}
 
 		Map<ResourceLocation, JsonElement> collect = finalLocations.stream().collect(Collectors.toMap(Function.identity(), map::get));
-
 		profiler.pop();
+
+		applyResourceConditions(profiler, collect);
 		return collect;
 	}
 
@@ -136,8 +135,12 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 			if (resourceData.isJsonObject()) {
 				JsonObject obj = resourceData.getAsJsonObject();
 
-				if (!ResourceConditionsImpl.applyResourceConditions(obj, getName(), entry.getKey(), this.registries)) {
-					it.remove();
+				if (obj.has(ResourceConditions.CONDITIONS_KEY)) {
+					boolean matched = ResourceConditions.objectMatchesConditions(obj);
+
+					if (!matched) {
+						it.remove();
+					}
 				}
 			}
 		}

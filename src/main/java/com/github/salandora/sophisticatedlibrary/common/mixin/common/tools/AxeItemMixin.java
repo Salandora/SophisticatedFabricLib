@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AxeItem.class)
 public class AxeItemMixin extends DiggerItem {
-	protected AxeItemMixin(Tier tier, TagKey<Block> blocks, Properties properties) {
-		super(tier, blocks, properties);
+	protected AxeItemMixin(float attackDamageModifier, float attackSpeedModifier, Tier tier, TagKey<Block> blocks, Properties properties) {
+		super(attackDamageModifier, attackSpeedModifier, tier, blocks, properties);
 	}
 
 	@Override

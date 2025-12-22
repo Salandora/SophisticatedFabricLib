@@ -59,7 +59,7 @@ public class TestFluidStorage implements IFluidHandler {
 			return inserted;
 		}
 
-		if (FluidStack.isSameFluidSameComponents(this.content, fluidStack)) {
+		if (this.content.isFluidEqual(fluidStack)) {
 			long inserted = Math.min(fluidStack.getAmount(), this.capacity - this.content.getAmount());
 			if (action.execute()) {
 				this.content.grow(inserted);
@@ -77,7 +77,7 @@ public class TestFluidStorage implements IFluidHandler {
 			return FluidStack.EMPTY;
 		}
 
-		if (FluidStack.isSameFluidSameComponents(this.content, drainStack)) {
+		if (this.content.isFluidEqual(drainStack)) {
 			long extracted = Math.min(drainStack.getAmount(), this.capacity - this.content.getAmount());
 			if (action.execute()) {
 				this.content.shrink(extracted);

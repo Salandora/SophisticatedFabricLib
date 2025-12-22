@@ -1,3 +1,4 @@
+/*
 package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 
 import com.mojang.serialization.Codec;
@@ -37,3 +38,4 @@ public class SimpleFluidContent implements DataComponentHolder {
 		return this.fluidStack.getAmount();
 	}
 }
+*/

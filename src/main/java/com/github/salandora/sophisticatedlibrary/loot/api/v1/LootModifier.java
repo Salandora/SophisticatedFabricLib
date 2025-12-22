@@ -5,10 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public abstract class LootModifier implements IGlobalLootModifier {
@@ -21,7 +20,7 @@ public abstract class LootModifier implements IGlobalLootModifier {
 
 	protected LootModifier(LootItemCondition[] conditionsIn) {
 		this.conditions = conditionsIn;
-		this.combinedConditions = AllOfCondition.allOf(List.of(conditionsIn));
+		this.combinedConditions = LootItemConditions.andConditions(conditionsIn);
 	}
 
 	@Override

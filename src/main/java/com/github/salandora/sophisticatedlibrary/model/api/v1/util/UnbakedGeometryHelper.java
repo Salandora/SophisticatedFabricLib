@@ -71,7 +71,7 @@ public class UnbakedGeometryHelper {
 		return elements;
 	}
 
-	public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state) {
+	public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation modelLocation) {
 		if (elements.isEmpty()) {
 			return List.of();
 		}
@@ -81,9 +81,9 @@ public class UnbakedGeometryHelper {
 			for (var entry : element.faces.entrySet()) {
 				BlockElementFace face = entry.getValue();
 
-				Material material = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(face.texture()));
+				Material material = new Material(InventoryMenu.BLOCK_ATLAS, new ResourceLocation(face.texture));
 				TextureAtlasSprite sprite = spriteGetter.apply(material);
-				quads.add(BlockModelAccessor.callBakeFace(element, face, sprite, entry.getKey(), state));
+				quads.add(BlockModelAccessor.callBakeFace(element, face, sprite, entry.getKey(), state, modelLocation));
 			}
 		}
 		return quads;

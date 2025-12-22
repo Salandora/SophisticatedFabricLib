@@ -40,7 +40,7 @@ public class DeferredRegister<T> {
 	}
 
 	public <U extends T> DeferredHolder<T, U> register(String name, Supplier<U> supplier) {
-		DeferredHolder<T, U> holder = DeferredHolder.create(this.registryKey, ResourceLocation.fromNamespaceAndPath(this.namespace, name));
+		DeferredHolder<T, U> holder = DeferredHolder.create(this.registryKey, new ResourceLocation(this.namespace, name));
 
 		if (entries.putIfAbsent(holder, supplier) != null) {
 			throw new IllegalArgumentException("Duplicate entry " + name);

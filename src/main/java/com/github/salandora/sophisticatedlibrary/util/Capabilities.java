@@ -10,6 +10,7 @@ import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.fabric.
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.fabric.FabricFluidStorageWrapper;
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.fabric.FabricItemHandlerWrapper;
 import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.fabric.FabricItemStorageWrapper;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.items.ShulkerInvWrapper;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
@@ -18,13 +19,14 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
 
 import java.util.List;
 
 public class Capabilities {
 	public static class ItemHandler {
 		/**
-		 * Can be used to register Item ItemHandlers or through fallback to {@link ItemStorage#ITEM} with a wrapper
+		 * Can be used to register Item ItemHandlers
 		 */
 		public static final ItemApiLookup<IItemHandler, ContainerItemContext> ITEM = ItemApiLookup.get(SophisticatedLibrary.id("item_item_storage"), IItemHandler.class, ContainerItemContext.class);
 
@@ -57,18 +59,25 @@ public class Capabilities {
 
 			ENTITY.registerForType((player, ctx) -> PlayerInvWrapper.of(player), EntityType.PLAYER);
 
-			ITEM.registerFallback((stack, ctx) -> {
-				var storage = ItemStorage.ITEM.find(stack, ctx);
-				if (storage == null) {
-					return null;
-				}
-
-				if (storage instanceof FabricItemHandlerWrapper wrapper) {
-					return wrapper.getHandler();
-				}
-
-				return FabricItemStorageWrapper.of(storage);
-			});
+			ITEM.registerForItems((stack, ctx) -> new ShulkerInvWrapper(stack),
+					Items.SHULKER_BOX,
+					Items.WHITE_SHULKER_BOX,
+					Items.ORANGE_SHULKER_BOX,
+					Items.MAGENTA_SHULKER_BOX,
+					Items.LIGHT_BLUE_SHULKER_BOX,
+					Items.YELLOW_SHULKER_BOX,
+					Items.LIME_SHULKER_BOX,
+					Items.PINK_SHULKER_BOX,
+					Items.GRAY_SHULKER_BOX,
+					Items.LIGHT_GRAY_SHULKER_BOX,
+					Items.CYAN_SHULKER_BOX,
+					Items.PURPLE_SHULKER_BOX,
+					Items.BLUE_SHULKER_BOX,
+					Items.BROWN_SHULKER_BOX,
+					Items.GREEN_SHULKER_BOX,
+					Items.RED_SHULKER_BOX,
+					Items.BLACK_SHULKER_BOX
+			);
 
 			SIDED.registerFallback((level, pos, state,be, dir) -> {
 				var storage = ItemStorage.SIDED.find(level, pos, state, be, dir);

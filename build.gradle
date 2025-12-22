@@ -28,7 +28,7 @@ idea {
 def fabricModules = [
         "fabric-content-registries-v0",
         "fabric-data-generation-api-v1",
-        "fabric-loot-api-v3",
+        "fabric-loot-api-v2",
         "fabric-model-loading-api-v1",
         "fabric-registry-sync-v0",
         "fabric-renderer-api-v1",
@@ -212,14 +212,13 @@ tasks.register('validateMixinNames', ValidateMixinNameTask) {
 
 tasks.named("compileJava") {
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 java {
     withSourcesJar()
-    // loom requires java >= 21
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 jar {

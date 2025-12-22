@@ -1,6 +1,5 @@
 package com.github.salandora.sophisticatedlibrary.transfer.api.v1;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -47,10 +46,10 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 
 	@Override
 	public int getSlotLimit(int slot) {
-		return Item.ABSOLUTE_MAX_STACK_SIZE;
+		return Item.MAX_STACK_SIZE;
 	}
 
-	public int getStackLimit(int slot, ItemStack stack) {
+	protected int getStackLimit(int slot, ItemStack stack) {
 		return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
 	}
 
@@ -74,7 +73,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 		ItemStack existing = stacks.get(slot);
 		int limit = getStackLimit(slot, stack);
 		if (!existing.isEmpty()) {
-			if (!ItemStack.isSameItemSameComponents(stack, existing)) {
+			if (!ItemStack.isSameItemSameTags(stack, existing)) {
 				return stack;
 			}
 
@@ -130,14 +129,14 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 		return existing.copyWithCount(extract);
 	}
 
-	public CompoundTag serializeNBT(HolderLookup.Provider registries) {
+	public CompoundTag serializeNBT() {
 		ListTag listTag = new ListTag();
 		for (int i = 0; i < stacks.size(); i++) {
 			ItemStack itemStack = stacks.get(i);
 			if (!itemStack.isEmpty()) {
 				CompoundTag itemTag = new CompoundTag();
 				itemTag.putInt("Slot", i);
-				listTag.add(itemStack.save(registries, itemTag));
+				listTag.add(itemStack.save(itemTag));
 			}
 		}
 
@@ -147,14 +146,14 @@ public class ItemStackHandler implements IItemHandlerModifiable {
 		return saveTag;
 	}
 
-	public void deserializeNBT(HolderLookup.Provider registries, CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag nbt) {
 		setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.size());
 		ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
 		for (int i = 0; i < tagList.size(); i++) {
 			CompoundTag itemTag = tagList.getCompound(i);
 			int slot = itemTag.getInt("Slot");
 			if (slot >= 0 && slot < getSlotCount()) {
-				ItemStack.parse(registries, itemTag).ifPresent(stack -> stacks.set(slot, stack));
+				stacks.set(slot, ItemStack.of(itemTag));
 			}
 		}
 	}

@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ShovelItem.class)
 public class ShovelItemMixin extends DiggerItem {
-	protected ShovelItemMixin(Tier tier, TagKey<Block> blocks, Properties properties) {
-		super(tier, blocks, properties);
+	protected ShovelItemMixin(float attackDamageModifier, float attackSpeedModifier, Tier tier, TagKey<Block> blocks, Properties properties) {
+		super(attackDamageModifier, attackSpeedModifier, tier, blocks, properties);
 	}
 
 	@Override

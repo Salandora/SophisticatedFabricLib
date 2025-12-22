@@ -1,52 +1,18 @@
 package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.fluid.base.SingleFluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.material.Fluid;
-
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public final class FluidStack extends SingleFluidStorage {
 	public static final FluidStack EMPTY = new FluidStack(FluidVariant.blank(), 0);
-
-	public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(() ->
-			RecordCodecBuilder.create(
-			instance -> instance.group(
-					FluidVariant.CODEC.fieldOf("FluidVariant").forGetter(FluidStack::getVariant),
-					Codec.LONG.fieldOf("Amount").forGetter(FluidStack::getAmount)
-			).apply(instance, FluidStack::new)
-	));
-
-	public static final Codec<FluidStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
-			.xmap(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
-
-
-	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = StreamCodec.composite(
-			FluidVariant.PACKET_CODEC, FluidStack::getVariant,
-			ByteBufCodecs.VAR_LONG, FluidStack::getAmount,
-			FluidStack::new
-	);
-
-	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> OPTIONAL_STREAM_CODEC = STREAM_CODEC
-			.apply(ByteBufCodecs::optional)
-			.map(optional -> optional.orElse(FluidStack.EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
-
-	public static boolean isSameFluidSameComponents(FluidStack first, FluidStack second) {
-		return first.isResourceBlank() && second.isResourceBlank() || first.variant == second.variant;
-	}
 
 	public FluidStack(StorageView<FluidVariant> view) {
 		this(view.getResource(), view.getAmount());
@@ -60,6 +26,10 @@ public final class FluidStack extends SingleFluidStorage {
 		this(FluidVariant.of(fluid), amount);
 	}
 
+	public FluidStack(FluidStack stack, long amount) {
+		this(stack.getVariant(), amount);
+	}
+
 	public FluidStack(FluidVariant variant, long amount) {
 		this.variant = variant;
 		this.amount = amount;
@@ -68,7 +38,7 @@ public final class FluidStack extends SingleFluidStorage {
 	private FluidStack() {
 	}
 
-	public Component getHoverName() {
+	public Component getDisplayName() {
 		return FluidVariantAttributes.getName(this.variant);
 	}
 
@@ -97,22 +67,21 @@ public final class FluidStack extends SingleFluidStorage {
 		return new FluidStack(this.variant, amount);
 	}
 
-	public CompoundTag saveOptional(HolderLookup.Provider lookup) {
+	public CompoundTag writeToNBT(CompoundTag tag) {
 		if (this.isEmpty()) {
-			return new CompoundTag();
+			return tag;
 		}
 
-		CompoundTag tag = new CompoundTag();
-		writeNbt(tag, lookup);
+		writeNbt(tag);
 		return tag;
 	}
 
-	public static FluidStack parseOptional(HolderLookup.Provider lookup, CompoundTag tag) {
+	public static FluidStack loadFluidStackFromNBT(CompoundTag tag) {
 		if (tag.isEmpty()) {
 			return EMPTY;
 		}
 		FluidStack stack = new FluidStack();
-		stack.readNbt(tag, lookup);
+		stack.readNbt(tag);
 		return stack;
 	}
 
@@ -130,5 +99,49 @@ public final class FluidStack extends SingleFluidStorage {
 
 	public void shrink(long removed) {
 		this.grow(-removed);
+	}
+
+	public boolean isFluidEqual(@NotNull FluidStack other) {
+		if (this == other) {
+			return true;
+		}
+
+		return isFluidEqual(other.getVariant());
+	}
+
+	public boolean isFluidEqual(FluidVariant other) {
+		return isFluidEqual(getVariant(), other);
+	}
+
+	public static boolean isFluidEqual(FluidVariant a, FluidVariant b) {
+		if (a == b) {
+			return true;
+		}
+
+		if (b == null) {
+			return false;
+		}
+
+		return a.isOf(b.getFluid()) && a.getNbt().equals(b.getNbt());
+	}
+
+	@Override
+	public int hashCode() {
+		long code = 1;
+		code = 31 * code + getFluid().hashCode();
+		code = 31 * code + amount;
+		if (variant.hasNbt()) {
+			code = 31 * code + variant.getNbt().hashCode();
+		}
+
+		return (int) code;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof FluidStack other)) {
+			return false;
+		}
+		return isFluidEqual(other);
 	}
 }

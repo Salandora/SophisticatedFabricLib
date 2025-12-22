@@ -16,7 +16,7 @@ public class SophisticatedLibrary implements ModInitializer {
     }
 
     public static ResourceLocation id(String regName) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, regName);
+        return new ResourceLocation(MOD_ID, regName);
     }
 
     public static <T> ResourceKey<Registry<T>> key(String path) {

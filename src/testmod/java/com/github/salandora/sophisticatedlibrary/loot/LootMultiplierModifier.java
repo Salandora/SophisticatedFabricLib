@@ -3,7 +3,7 @@ package com.github.salandora.sophisticatedlibrary.loot;
 import com.github.salandora.sophisticatedlibrary.loot.api.v1.IGlobalLootModifier;
 import com.github.salandora.sophisticatedlibrary.loot.api.v1.LootModifier;
 import com.google.common.base.Suppliers;
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.ExtraCodecs;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LootMultiplierModifier extends LootModifier {
-	public static final Supplier<MapCodec<LootMultiplierModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst)
+	public static final Supplier<Codec<LootMultiplierModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
 			.and(ExtraCodecs.POSITIVE_INT.fieldOf("multiplication_factor").forGetter(m -> m.multiplicationFactor))
 			.apply(inst, LootMultiplierModifier::new)));
 
@@ -39,7 +39,7 @@ public class LootMultiplierModifier extends LootModifier {
 	}
 
 	@Override
-	public MapCodec<? extends IGlobalLootModifier> codec() {
+	public Codec<? extends IGlobalLootModifier> codec() {
 		return CODEC.get();
 	}
 }

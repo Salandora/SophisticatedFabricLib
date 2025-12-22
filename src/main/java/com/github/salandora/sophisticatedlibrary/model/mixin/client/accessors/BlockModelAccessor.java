@@ -28,7 +28,7 @@ public interface BlockModelAccessor {
 	Map<String, Either<Material, String>> textureMap();
 
 	@Invoker("bakeFace")
-	static BakedQuad callBakeFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction facing, ModelState state) {
+	static BakedQuad callBakeFace(BlockElement part, BlockElementFace partFace, TextureAtlasSprite sprite, Direction direction, ModelState transform, ResourceLocation location) {
 		throw new UnsupportedOperationException();
 	}
 }

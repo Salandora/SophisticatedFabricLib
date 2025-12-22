@@ -15,6 +15,11 @@ public class SophisticatedCommon implements ModInitializer {
 				world.getServer().tell(new TickTask(world.getServer().getTickCount(), sbe::sophisticatedLibrary_onLoad));
 			}
 		});
+		ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((blockEntity, world) -> {
+			if (blockEntity instanceof SophisticatedBlockEntity sbe) {
+				sbe.sophisticatedLibrary_invalidateCaps();
+			}
+		});
 		ServerChunkEvents.CHUNK_UNLOAD.register((world, chunk) ->
 				chunk.getBlockEntities().forEach((pos, blockEntity) -> {
 					if (blockEntity instanceof SophisticatedBlockEntity sbe) {
