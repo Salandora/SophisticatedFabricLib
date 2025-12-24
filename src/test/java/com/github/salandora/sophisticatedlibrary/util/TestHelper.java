@@ -1,13 +1,14 @@
 package com.github.salandora.sophisticatedlibrary.util;
 
-import com.github.salandora.sophisticatedlibrary.transfer.ItemStackHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.ItemStackHandler;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
-import org.apache.commons.lang3.stream.Streams;
+
+import java.util.stream.IntStream;
 
 public class TestHelper {
 	public static final FluidVariant WATER = FluidVariant.of(Fluids.WATER);
@@ -32,7 +33,8 @@ public class TestHelper {
 	}
 
 	public static boolean containsItem(ItemStackHandler storage, ItemStack stack) {
-		return Streams.of(storage)
-				.anyMatch(view -> view.getResource().matches(stack));
+		return IntStream.range(0, storage.getSlotCount())
+				.mapToObj(storage::getStackInSlot)
+				.anyMatch(slotStack -> ItemStack.isSameItemSameComponents(slotStack, stack));
 	}
 }

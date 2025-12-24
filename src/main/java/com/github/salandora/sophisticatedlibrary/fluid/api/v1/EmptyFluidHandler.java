@@ -1,27 +1,46 @@
 package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-
-import java.util.Collections;
-import java.util.Iterator;
-
 public class EmptyFluidHandler implements IFluidHandler {
 	public static EmptyFluidHandler INSTANCE = new EmptyFluidHandler();
 
 	@Override
-	public long insert(FluidVariant resource, long maxAmount, TransactionContext transaction) {
+	public int getTanks() {
 		return 0;
 	}
 
 	@Override
-	public long extract(FluidVariant resource, long maxAmount, TransactionContext transaction) {
+	public FluidStack getFluidInTank(int tank) {
+		return FluidStack.EMPTY;
+	}
+
+	// Fabric: Added for internal use to reset the content when a Transaction was cancelled
+	@Override
+	public void setFluidInTank(int tank, FluidStack fluidStack) {
+		// noop
+	}
+
+	@Override
+	public long getTankCapacity(int tank) {
 		return 0;
 	}
 
 	@Override
-	public Iterator<StorageView<FluidVariant>> iterator() {
-		return Collections.emptyIterator();
+	public boolean isFluidValid(int tank, FluidStack fluidStack) {
+		return false;
+	}
+
+	@Override
+	public long fill(FluidStack fluidStack, FluidAction action) {
+		return 0;
+	}
+
+	@Override
+	public FluidStack drain(FluidStack drainStack, FluidAction action) {
+		return FluidStack.EMPTY;
+	}
+
+	@Override
+	public FluidStack drain(long maxDrain, FluidAction action) {
+		return FluidStack.EMPTY;
 	}
 }

@@ -1,45 +1,24 @@
-package com.github.salandora.sophisticatedlibrary.transfer;
+package com.github.salandora.sophisticatedlibrary.transfer.api.v1;
 
 import com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.component.SophisticatedMutableDataComponentHolder;
 import com.google.common.base.Preconditions;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	protected final SophisticatedMutableDataComponentHolder parent;
 	protected final DataComponentType<ItemContainerContents> component;
 	protected final int size;
 
-	private final List<SingleSlotStorage<ItemVariant>> parts;
-
 	public ComponentItemHandler(SophisticatedMutableDataComponentHolder parent, DataComponentType<ItemContainerContents> component, int size) {
 		this.parent = parent;
 		this.component = component;
 		this.size = size;
 		Preconditions.checkArgument(size <= 256, "The max size of ItemContainerContents is 256 slots.");
-
-		List<SingleSlotStorage<ItemVariant>> list = new ArrayList<>();
-		while (list.size() < size) {
-			list.add(new ComponentItemHandlerSlot(this, list.size()));
-		}
-		this.parts = Collections.unmodifiableList(list);
-	}
-
-	@Override
-	public @UnmodifiableView List<SingleSlotStorage<ItemVariant>> getSlots() {
-		return this.parts;
 	}
 
 	@Override
@@ -66,8 +45,7 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 		}
 	}
 
-	@NotNull
-	public ItemStack insertItem(int slot, @NotNull ItemStack toInsert, boolean simulate) {
+	public ItemStack insertItem(int slot, ItemStack toInsert, boolean simulate) {
 		this.validateSlotIndex(slot);
 
 		if (toInsert.isEmpty()) {
@@ -103,7 +81,6 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 		return toInsert.copyWithCount(toInsert.getCount() - inserted);
 	}
 
-	@NotNull
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		this.validateSlotIndex(slot);
 

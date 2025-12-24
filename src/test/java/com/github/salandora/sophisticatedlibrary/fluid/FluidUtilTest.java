@@ -2,17 +2,16 @@ package com.github.salandora.sophisticatedlibrary.fluid;
 
 import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidActionResult;
 import com.github.salandora.sophisticatedlibrary.fluid.api.v1.FluidUtil;
-import com.github.salandora.sophisticatedlibrary.transfer.ItemStackHandler;
+import com.github.salandora.sophisticatedlibrary.fluid.api.v1.IFluidHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.IItemHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.ItemStackHandler;
 import com.github.salandora.sophisticatedlibrary.util.TestFluidStorage;
 import com.github.salandora.sophisticatedlibrary.util.TestHelper;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -77,14 +76,9 @@ public class FluidUtilTest {
 	@MethodSource("fillCases")
 	void testTryFillContainer(TestCase test) {
 		TestFluidStorage source = TestHelper.filledStorage(5 * FluidConstants.BUCKET);
-		FluidActionResult result;
-
 		ItemStack original = test.input().copy();
 
-		try (Transaction outer = Transaction.openOuter()) {
-			result = FluidUtil.tryFillContainer(test.input(), source, FluidConstants.BUCKET, null, outer);
-			if (result.isSuccess() && test.commit()) outer.commit();
-		}
+		FluidActionResult result = FluidUtil.tryFillContainer(test.input(), source, FluidConstants.BUCKET, null, test.commit());
 
 		assertTrue(result.isSuccess());
 		assertItemStack(original, test.input());
@@ -111,14 +105,9 @@ public class FluidUtilTest {
 	@MethodSource("emptyCases")
 	void testTryEmptyContainer(TestCase test) {
 		TestFluidStorage dest = TestHelper.emptyStorage();
-		FluidActionResult result;
-
 		ItemStack original = test.input().copy();
 
-		try (Transaction outer = Transaction.openOuter()) {
-			result = FluidUtil.tryEmptyContainer(test.input(), dest, FluidConstants.BUCKET, null, outer);
-			if (result.isSuccess() && test.commit()) outer.commit();
-		}
+		FluidActionResult result = FluidUtil.tryEmptyContainer(test.input(), dest, FluidConstants.BUCKET, null, test.commit());
 
 		assertTrue(result.isSuccess());
 		assertItemStack(original, test.input());
@@ -187,11 +176,11 @@ public class FluidUtilTest {
 	}
 
 
-	public record OfferDropTestCase(String name, DropTestOp op, Storage<FluidVariant> storage, ItemStack container, Item expectedResultItem) {}
+	public record OfferDropTestCase(String name, DropTestOp op, IFluidHandler storage, ItemStack container, Item expectedResultItem) {}
 
 	@FunctionalInterface
 	interface DropTestOp {
-		FluidActionResult apply(ItemStack container, Storage<FluidVariant> storage, Storage<ItemVariant> inventory, long maxTransfer, Player player, boolean doTransfer);
+		FluidActionResult apply(ItemStack container, IFluidHandler storage, IItemHandler inventory, long maxTransfer, Player player, boolean doTransfer);
 	}
 
 	static Stream<OfferDropTestCase> dropTestCases() {
@@ -214,6 +203,9 @@ public class FluidUtilTest {
 		when(level.isClientSide()).thenReturn(false);
 		when(player.level()).thenReturn(level);
 
+		RandomSource random = RandomSource.create(0xDEADBEEFL);
+		when(player.getRandom()).thenReturn(random);
+
 		return player;
 	}
 
@@ -229,6 +221,7 @@ public class FluidUtilTest {
 
 		assertTrue(result.isSuccess(), "Transfer should succeed");
 		assertTrue(TestHelper.containsItem(player.getInventory(), testCase.expectedResultItem()), "Mock player should receive dropped item: " + testCase.expectedResultItem());
+
 	}
 
 	@ParameterizedTest

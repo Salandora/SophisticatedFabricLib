@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

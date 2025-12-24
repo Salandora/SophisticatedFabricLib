@@ -8,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -58,7 +57,7 @@ public class DeferredHolder<T, U extends T> implements Holder<T>, Supplier<U> {
 	}
 
 	@Override
-	public @NotNull U value() {
+	public U value() {
 		this.bind(true);
 		if (this.holder == null) {
 			throw new NullPointerException("Holder is null DeferredHolder(" + this.key + ")");

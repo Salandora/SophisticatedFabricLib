@@ -61,7 +61,7 @@ public interface SophisticatedBlock {
 				if (!simulate) {
 					CampfireBlock.dowse(context.getPlayer(), context.getLevel(), context.getClickedPos(), state);
 				}
-				return state.setValue(CampfireBlock.LIT, Boolean.valueOf(false));
+				return state.setValue(CampfireBlock.LIT, false);
 			}
 		}
 

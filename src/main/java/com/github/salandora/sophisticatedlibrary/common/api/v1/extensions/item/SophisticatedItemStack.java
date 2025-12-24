@@ -1,6 +1,9 @@
 package com.github.salandora.sophisticatedlibrary.common.api.v1.extensions.item;
 
 import com.github.salandora.sophisticatedlibrary.common.api.v1.ItemAbility;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.MutableContainerItemContext;
+import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,5 +75,11 @@ public interface SophisticatedItemStack {
 
 	default boolean sophisticatedLibrary_makesPiglinsNeutral(LivingEntity wearer) {
 		return self().getItem().sophisticatedLibrary_makesPiglinsNeutral(self(), wearer);
+	}
+
+	@Nullable
+	default <T> T sophisticatedLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
+		MutableContainerItemContext context = new MutableContainerItemContext(self());
+		return context.find(lookup);
 	}
 }

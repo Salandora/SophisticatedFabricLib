@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LootMultiplierModifier extends LootModifier {
-	public static Supplier<MapCodec<LootMultiplierModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst)
+	public static final Supplier<MapCodec<LootMultiplierModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst)
 			.and(ExtraCodecs.POSITIVE_INT.fieldOf("multiplication_factor").forGetter(m -> m.multiplicationFactor))
 			.apply(inst, LootMultiplierModifier::new)));
 

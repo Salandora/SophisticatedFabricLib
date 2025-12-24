@@ -1,18 +1,10 @@
-package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper;
 
-import com.github.salandora.sophisticatedlibrary.transfer.EmptyItemHandler;
-import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.EmptyItemHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.IItemHandlerModifiable;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class CombinedInvWrapper implements IItemHandlerModifiable {
-	private final List<SingleSlotStorage<ItemVariant>> parts;
     protected final IItemHandlerModifiable[] itemHandler; // the handlers
     protected final int[] baseIndex;
     protected final int slotCount;
@@ -26,17 +18,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable {
             baseIndex[i] = index;
         }
         this.slotCount = index;
-
-		this.parts = Arrays
-				.stream(itemHandler)
-				.flatMap(handler -> handler.getSlots().stream())
-				.toList();
     }
-
-	@Override
-	public @UnmodifiableView List<SingleSlotStorage<ItemVariant>> getSlots() {
-		return this.parts;
-	}
 
     // returns the handler index for the slot
     protected int getIndexForSlot(int slot) {
@@ -105,7 +87,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);

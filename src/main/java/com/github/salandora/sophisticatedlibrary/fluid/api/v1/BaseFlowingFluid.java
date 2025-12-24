@@ -144,9 +144,9 @@ public abstract class BaseFlowingFluid extends FlowingFluid {
 	}
 
 	public static class Properties {
-		private Supplier<? extends FluidType> fluidType;
-		private Supplier<? extends Fluid> source;
-		private Supplier<? extends Fluid> flowing;
+		private final Supplier<? extends FluidType> fluidType;
+		private final Supplier<? extends Fluid> source;
+		private final Supplier<? extends Fluid> flowing;
 		private Supplier<? extends Item> bucket;
 		private Supplier<? extends LiquidBlock> block;
 		private int slopeFindDistance = 4;

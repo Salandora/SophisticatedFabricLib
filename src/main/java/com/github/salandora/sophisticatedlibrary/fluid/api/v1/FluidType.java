@@ -1,11 +1,14 @@
 package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidType implements FluidVariantAttributeHandler {
+	public static final int BUCKET_VOLUME = (int) FluidConstants.BUCKET;
+
 	private final int luminance;
 	private final int density;
 	private final int viscosity;

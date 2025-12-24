@@ -30,10 +30,10 @@
     "sophisticatedlibrary.loot.mixins.json",
     "sophisticatedlibrary.model.mixins.json"
   ],
+  "accessWidener": "sophisticatedlibrary.accesswidener",
   "depends": {
     "minecraft": "${minecraft_version}",
-    "fabricloader": ">=${loader_version}",
-    "fabric-api": ">=${fabric_version}"
+    "fabricloader": ">=${loader_version}"
   },
   "custom": {
     "loom:injected_interfaces": {

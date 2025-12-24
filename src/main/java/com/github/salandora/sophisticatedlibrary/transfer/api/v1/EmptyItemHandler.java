@@ -1,21 +1,9 @@
-package com.github.salandora.sophisticatedlibrary.transfer;
+package com.github.salandora.sophisticatedlibrary.transfer.api.v1;
 
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.Collections;
-import java.util.List;
 
 public class EmptyItemHandler implements IItemHandlerModifiable {
 	public static final EmptyItemHandler INSTANCE = new EmptyItemHandler();
-
-	@Override
-	@UnmodifiableView
-	public List<SingleSlotStorage<ItemVariant>> getSlots() {
-		return Collections.emptyList();
-	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {

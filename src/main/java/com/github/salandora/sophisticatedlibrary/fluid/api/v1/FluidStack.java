@@ -19,7 +19,7 @@ import net.minecraft.world.level.material.Fluid;
 
 import java.util.Optional;
 
-public class FluidStack extends SingleFluidStorage {
+public final class FluidStack extends SingleFluidStorage {
 	public static final FluidStack EMPTY = new FluidStack(FluidVariant.blank(), 0);
 
 	public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(() ->
@@ -65,7 +65,7 @@ public class FluidStack extends SingleFluidStorage {
 		this.amount = amount;
 	}
 
-	protected FluidStack() {
+	private FluidStack() {
 	}
 
 	public Component getHoverName() {
@@ -91,6 +91,10 @@ public class FluidStack extends SingleFluidStorage {
 
 	public FluidStack copy() {
 		return new FluidStack(this.variant, this.amount);
+	}
+
+	public FluidStack copyWithAmount(long amount) {
+		return new FluidStack(this.variant, amount);
 	}
 
 	public CompoundTag saveOptional(HolderLookup.Provider lookup) {

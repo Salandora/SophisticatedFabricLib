@@ -1,15 +1,8 @@
-package com.github.salandora.sophisticatedlibrary.transfer.wrapper;
+package com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper;
 
-import com.github.salandora.sophisticatedlibrary.transfer.IItemHandlerModifiable;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.IItemHandlerModifiable;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.List;
 
 public class InvWrapper implements IItemHandlerModifiable {
 	public static InvWrapper of(Container container) {
@@ -17,17 +10,9 @@ public class InvWrapper implements IItemHandlerModifiable {
 	}
 
 	private final Container wrappedInventory;
-	private final InventoryStorage wrappedInventoryStorage;
 
 	private InvWrapper(Container inventory) {
 		this.wrappedInventory = inventory;
-		this.wrappedInventoryStorage = InventoryStorage.of(inventory, null);
-	}
-
-	@Override
-	@UnmodifiableView
-	public List<SingleSlotStorage<ItemVariant>> getSlots() {
-		return this.wrappedInventoryStorage.getSlots();
 	}
 
 	@Override
@@ -62,11 +47,10 @@ public class InvWrapper implements IItemHandlerModifiable {
 					copy.grow(stackInSlot.getCount());
 					this.wrappedInventory.setItem(slot, copy);
 					this.wrappedInventory.setChanged();
-					return stack;
 				} else {
 					stack.shrink(limit);
-					return stack;
 				}
+				return stack;
 			}
 		} else {
 			if (!this.wrappedInventory.canPlaceItem(slot, stack)) {
@@ -80,11 +64,10 @@ public class InvWrapper implements IItemHandlerModifiable {
 				if (!simulate) {
 					this.wrappedInventory.setItem(slot, stack.split(limit));
 					this.wrappedInventory.setChanged();
-					return stack;
 				} else {
 					stack.shrink(limit);
-					return stack;
 				}
+				return stack;
 			} else {
 				if (!simulate) {
 					this.wrappedInventory.setItem(slot, stack);
@@ -161,15 +144,5 @@ public class InvWrapper implements IItemHandlerModifiable {
 	@Override
 	public int hashCode() {
 		return this.wrappedInventory.hashCode();
-	}
-
-	@Override
-	public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		return this.wrappedInventoryStorage.insert(resource, maxAmount, transaction);
-	}
-
-	@Override
-	public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-		return this.wrappedInventoryStorage.extract(resource, maxAmount, transaction);
 	}
 }

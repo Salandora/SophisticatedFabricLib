@@ -1,39 +1,31 @@
 package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
 
-import com.github.salandora.sophisticatedlibrary.transfer.MutableContainerItemContext;
-import com.github.salandora.sophisticatedlibrary.transfer.TransferUtil;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.IItemHandler;
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.TransferUtil;
+import com.github.salandora.sophisticatedlibrary.util.Capabilities;
 import com.mojang.datafixers.util.Function5;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
@@ -45,40 +37,45 @@ public class FluidUtil {
     }
 
     public static boolean isFluidStorage(ItemStack stack) {
-        return ContainerItemContext.withConstant(stack).find(FluidStorage.ITEM) != null;
+		return ContainerItemContext.withConstant(stack).find(Capabilities.FluidHandler.ITEM) != null;
     }
 
-    public static boolean placeFluid(@Nullable Player player, @NotNull Level level, @NotNull BlockPos pos, Storage<FluidVariant> source, FluidVariant resource, long maxAmount) {
-        if (!level.isLoaded(pos)) {
-            return false;
-        }
+	public static Optional<IFluidHandlerItem> getFluidHandler(ItemStack stack) {
+		return Optional.ofNullable(stack.sophisticatedLibrary_getCapability(Capabilities.FluidHandler.ITEM));
+	}
 
-        Fluid fluid = resource.getFluid();
-        if (fluid == Fluids.EMPTY) {
-            return false;
-        }
+	public static Optional<IFluidHandler> getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
+		return Optional.ofNullable(Capabilities.FluidHandler.SIDED.find(level, pos, side));
+	}
 
-        // check that we can place the fluid at the destination
-        BlockState state = level.getBlockState(pos);
-        boolean waterlog = state.hasProperty(WATERLOGGED);
-        if (!waterlog && !state.canBeReplaced()) {
-            return false;
-        }
-        if (waterlog && fluid != Fluids.WATER) {
-            return false;
-        }
+	public static boolean tryPlaceFluid(@Nullable Player player, Level level, InteractionHand hand, BlockPos pos, IFluidHandler source, FluidStack resource) {
+		if (!level.isLoaded(pos)) {
+			return false;
+		}
 
-        FluidState fluidState = state.getFluidState();
-        if (!fluidState.isEmpty() && fluidState.getType() != fluid) {
-            return false;
-        }
+		Fluid fluid = resource.getFluid();
+		if (fluid == Fluids.EMPTY) {
+			return false;
+		}
 
-        try (Transaction extraction = Transaction.openOuter()) {
-			long result = source.extract(resource, maxAmount, extraction);
-			if (result == 0) {
-				return false;
-			}
-			extraction.commit();
+		// check that we can place the fluid at the destination
+		BlockState state = level.getBlockState(pos);
+		boolean waterlog = state.hasProperty(WATERLOGGED);
+		if (!waterlog && !state.canBeReplaced()) {
+			return false;
+		}
+		if (waterlog && fluid != Fluids.WATER) {
+			return false;
+		}
+
+		FluidState fluidState = state.getFluidState();
+		if (!fluidState.isEmpty() && fluidState.getType() != fluid) {
+			return false;
+		}
+
+		FluidStack drained = source.drain(resource, IFluidHandler.FluidAction.EXECUTE);
+		if (drained.isEmpty()) {
+			return false;
 		}
 
 		if (level.dimensionType().ultraWarm() && fluid.defaultFluidState().is(FluidTags.WATER)) {
@@ -100,165 +97,130 @@ public class FluidUtil {
 		}
 
 		if (level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), 3) || fluidState.isSource()) {
-			playFluidSound(player, level, pos, resource, false);
+			level.playSound(player, pos, FluidVariantAttributes.getEmptySound(resource.getVariant()), SoundSource.BLOCKS, 1.0f, 1.0f);
+			level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
 			return true;
 		}
 
 		return false;
-    }
+	}
 
-    public static void playFluidSound(@Nullable Player player, LevelAccessor level, BlockPos pos, FluidVariant resource, boolean fill) {
-        SoundEvent sound = fill ? FluidVariantAttributes.getFillSound(resource) : FluidVariantAttributes.getEmptySound(resource);
-        level.playSound(player, pos, sound, SoundSource.BLOCKS, 1.0f, 1.0f);
-        level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
-    }
 
-    private static boolean moveWithSound(Storage<FluidVariant> from, Storage<FluidVariant> to, long maxAmount, @Nullable Player player, boolean fill, Item handItem, @Nullable Transaction maybeParent) {
-        for (StorageView<FluidVariant> view : from) {
-            if (view.isResourceBlank()) continue;
-            FluidVariant resource = view.getResource();
-            long maxExtracted;
-
-            // check how much can be extracted
-            try (Transaction extractionTestTransaction = Transaction.openNested(maybeParent)) {
-                maxExtracted = view.extract(resource, maxAmount, extractionTestTransaction);
-            }
-
-            try (Transaction transferTransaction = Transaction.openNested(maybeParent)) {
-                // check how much can be inserted
-                long accepted = to.insert(resource, maxExtracted, transferTransaction);
-
-                // extract it, or rollback if the amounts don't match
-                if (accepted > 0 && view.extract(resource, accepted, transferTransaction) == accepted) {
-                    transferTransaction.commit();
-
-                    SoundEvent sound = fill ? FluidVariantAttributes.getFillSound(resource) : FluidVariantAttributes.getEmptySound(resource);
-
-                    if (resource.isOf(Fluids.WATER)) {
-                        if (fill && handItem == Items.GLASS_BOTTLE) sound = SoundEvents.BOTTLE_FILL;
-                        if (!fill && handItem == Items.POTION) sound = SoundEvents.BOTTLE_EMPTY;
-                    }
-
-                    if (player != null) {
-						player.playNotifySound(sound, SoundSource.BLOCKS, 1, 1);
-					}
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-	private static FluidActionResult tryTransferFluid(ItemStack container, Storage<FluidVariant> handlerA, long maxAmount, @Nullable Player player, boolean fill, @Nullable Transaction maybeParent) {
-		ItemStack containerCopy = container.copyWithCount(1); // do not modify the input
-
-		ContainerItemContext context = new MutableContainerItemContext(containerCopy);
-		Storage<FluidVariant> handlerB = context.find(FluidStorage.ITEM);
-		if (handlerB == null) {
-			return  FluidActionResult.FAILURE;
+	private static FluidStack tryTransferFluid(IFluidHandler to, IFluidHandler from, FluidStack extractable, boolean doTransfer) {
+		long accepted = to.fill(extractable, IFluidHandler.FluidAction.SIMULATE);
+		if (accepted > 0) {
+			extractable.setAmount(accepted);
+			if (doTransfer) {
+				FluidStack extracted = from.drain(extractable, IFluidHandler.FluidAction.EXECUTE);
+				if (!extracted.isEmpty()) {
+					extracted.setAmount(to.fill(extracted, IFluidHandler.FluidAction.EXECUTE));
+					return extracted;
+				}
+			}
+			return extractable;
 		}
 
-		try (Transaction nested = Transaction.openNested(maybeParent)) {
-			boolean success = moveWithSound(
-					fill ? handlerA : handlerB,
-					fill ? handlerB : handlerA,
-					maxAmount,
-					player,
-					fill,
-					context.getItemVariant().getItem(),
-					nested
-			);
-			if (success) {
-				nested.commit();
-				return new FluidActionResult(context.getItemVariant(), context.getAmount());
+		return FluidStack.EMPTY;
+	}
+    public static FluidStack tryFluidTransfer(IFluidHandler to, IFluidHandler from, long maxAmount, boolean doTransfer) {
+		FluidStack extractable = from.drain(maxAmount, IFluidHandler.FluidAction.SIMULATE);
+		if (!extractable.isEmpty()) {
+			return tryTransferFluid(to, from, extractable, doTransfer);
+		}
+		return FluidStack.EMPTY;
+    }
+	public static FluidStack tryFluidTransfer(IFluidHandler to, IFluidHandler from, FluidStack resource, boolean doTransfer) {
+		FluidStack extractable = from.drain(resource, IFluidHandler.FluidAction.SIMULATE);
+		if (!extractable.isEmpty() && FluidStack.isSameFluidSameComponents(resource, extractable)) {
+			return tryTransferFluid(to, from, extractable, doTransfer);
+		}
+		return FluidStack.EMPTY;
+	}
+
+
+	private static FluidActionResult tryTransferFluid(ItemStack container, IFluidHandler handlerA, long maxAmount, @Nullable Player player, boolean fill, boolean doTransfer) {
+		ItemStack containerCopy = container.copyWithCount(1); // do not modify the input
+		return getFluidHandler(containerCopy)
+				.map(handlerB -> {
+					IFluidHandler to = fill ? handlerB : handlerA;
+					IFluidHandler from = fill ? handlerA : handlerB;
+
+					FluidStack simulated = tryFluidTransfer(to, from, maxAmount,false);
+					if (!simulated.isEmpty()) {
+						if (doTransfer) {
+							tryFluidTransfer(to, from, maxAmount,true);
+							if (player != null) {
+								SoundEvent sound = fill ? FluidVariantAttributes.getFillSound(simulated.getVariant()) : FluidVariantAttributes.getEmptySound(simulated.getVariant());
+								player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.BLOCKS, 1, 1);
+							}
+						} else {
+							// Act on the handler so we get the correct container item back
+							if (fill) {
+								handlerB.fill(simulated, IFluidHandler.FluidAction.EXECUTE);
+							} else {
+								handlerB.drain(simulated, IFluidHandler.FluidAction.EXECUTE);
+							}
+						}
+						return new FluidActionResult(handlerB.getContainer());
+					}
+					return FluidActionResult.FAILURE;
+				})
+				.orElse(FluidActionResult.FAILURE);
+	}
+	public static FluidActionResult tryFillContainer(ItemStack container, IFluidHandler source, long maxAmount, @Nullable Player player, boolean doFill) {
+		return tryTransferFluid(container, source, maxAmount, player, true, doFill);
+	}
+	public static FluidActionResult tryEmptyContainer(ItemStack container, IFluidHandler destination, long maxAmount, @Nullable Player player, boolean doDrain) {
+		return tryTransferFluid(container, destination, maxAmount, player, false, doDrain);
+	}
+
+
+	private static FluidActionResult tryTransferAndStow(ItemStack container, IFluidHandler fluidSource,
+														IItemHandler inventory, long maxAmount, @Nullable Player player,
+														boolean doTransfer, Function5<ItemStack, IFluidHandler, Long, Player, Boolean, FluidActionResult> func) {
+		if (container.isEmpty()) {
+			return FluidActionResult.FAILURE;
+		}
+
+		if (player != null && player.getAbilities().instabuild) {
+			FluidActionResult filledReal = func.apply(container, fluidSource, maxAmount, player, doTransfer);
+			if (filledReal.isSuccess()) {
+				return new FluidActionResult(container);
+			}
+		} else if (container.getCount() == 1) {
+			FluidActionResult filledReal = func.apply(container, fluidSource, maxAmount, player, doTransfer);
+			if (filledReal.isSuccess()) {
+				return filledReal;
+			}
+		} else {
+			FluidActionResult filledSimulated = func.apply(container, fluidSource, maxAmount, player, false);
+			if (filledSimulated.isSuccess()) {
+				// check if we can give the itemStack to the inventory
+				ItemStack remainder = TransferUtil.insertItemStacked(inventory, filledSimulated.getResult(), true);
+				if (remainder.isEmpty() || player != null) {
+					FluidActionResult filledReal = func.apply(container, fluidSource, maxAmount, player, doTransfer);
+					remainder = TransferUtil.insertItemStacked(inventory, filledReal.getResult(), !doTransfer);
+
+					// give it to the player or drop it at their feet
+					if (!remainder.isEmpty() && player != null && doTransfer) {
+						TransferUtil.giveOrDropToPlayer(player, filledReal.getResult());
+					}
+
+					ItemStack containerCopy = container.copy();
+					containerCopy.shrink(1);
+					return new FluidActionResult(containerCopy);
+				}
 			}
 		}
 
 		return FluidActionResult.FAILURE;
 	}
-
-	public static FluidActionResult tryFillContainer(ItemStack container, Storage<FluidVariant> fluidSource, long maxAmount, @Nullable Player player, @Nullable Transaction maybeParent) {
-		return tryTransferFluid(container, fluidSource, maxAmount, player, true, maybeParent);
+	public static FluidActionResult tryFillContainerAndStow(ItemStack container, IFluidHandler fluidSource,
+															IItemHandler inventory, long maxAmount, @Nullable Player player, boolean doFill) {
+		return tryTransferAndStow(container, fluidSource, inventory, maxAmount, player, doFill, FluidUtil::tryFillContainer);
 	}
-	public static FluidActionResult tryEmptyContainer(ItemStack container, Storage<FluidVariant> fluidDestination, long maxAmount, @Nullable Player player, @Nullable Transaction maybeParent) {
-		return tryTransferFluid(container, fluidDestination, maxAmount, player, false, maybeParent);
-	}
-
-	private static FluidActionResult tryTransferAndStow(ItemStack container, Storage<FluidVariant> fluidSource,
-														Storage<ItemVariant> inventory, long maxAmount, @Nullable Player player,
-														@Nullable Transaction maybeParent, Function5<ItemStack, Storage<FluidVariant>, Long, Player, Transaction, FluidActionResult> func) {
-		if (container.isEmpty()) {
-			return FluidActionResult.FAILURE;
-		}
-
-		try (Transaction nested = Transaction.openNested(maybeParent)) {
-			if (player != null && player.getAbilities().instabuild) {
-				FluidActionResult filledReal = func.apply(container, fluidSource, maxAmount, player, nested);
-				if (filledReal.isSuccess()) {
-					nested.commit();
-					return new FluidActionResult(container);
-				}
-			} else if (container.getCount() == 1) {
-				FluidActionResult filledReal = func.apply(container, fluidSource, maxAmount, player, nested);
-				if (filledReal.isSuccess()) {
-					nested.commit();
-					return filledReal;
-				}
-			} else {
-				FluidActionResult filledSimulated = TransferUtil.simulate(simulate -> func.apply(container, fluidSource, maxAmount, player, simulate), nested);
-				if (filledSimulated.isSuccess()) {
-					// check if we can give the itemStack to the inventory
-					long inserted = StorageUtil.simulateInsert(inventory, filledSimulated.getVariant(), filledSimulated.getCount(), nested);
-					if (inserted > 0 || player != null) {
-						FluidActionResult filledReal;
-						try (Transaction insertTransaction = nested.openNested()) {
-							filledReal = func.apply(container, fluidSource, maxAmount, player, insertTransaction);
-							inserted = StorageUtil.tryInsertStacking(inventory, filledReal.getVariant(), filledReal.getCount(), insertTransaction);
-							insertTransaction.commit();
-						}
-
-						// give it to the player or drop it at their feet
-						if ((filledReal.getCount() - inserted) > 0 && player != null) {
-							try (Transaction transferTransaction = nested.openNested()) {
-								PlayerInventoryStorage.of(player).offerOrDrop(filledReal.getVariant(), filledReal.getCount() - inserted, transferTransaction);
-								transferTransaction.commit();
-							}
-						}
-
-						nested.commit();
-
-						ItemStack containerCopy = container.copy();
-						containerCopy.shrink(1);
-						return new FluidActionResult(containerCopy);
-					}
-				}
-			}
-
-			return FluidActionResult.FAILURE;
-		}
-	}
-
-	public static FluidActionResult tryFillContainerAndStow(ItemStack container, Storage<FluidVariant> fluidSource,
-															Storage<ItemVariant> inventory, long maxAmount, @Nullable Player player, boolean doFill) {
-		try (Transaction ctx = Transaction.openOuter()) {
-			FluidActionResult result = tryTransferAndStow(container, fluidSource, inventory, maxAmount, player, ctx, FluidUtil::tryFillContainer);
-			if (result.isSuccess() && doFill) {
-				ctx.commit();
-			}
-			return result;
-		}
-	}
-
-	public static FluidActionResult tryEmptyContainerAndStow(ItemStack container, Storage<FluidVariant> fluidDestination,
-															 Storage<ItemVariant> inventory, long maxAmount, @Nullable Player player, boolean doDrain) {
-		try (Transaction ctx = Transaction.openOuter()) {
-			FluidActionResult result = tryTransferAndStow(container, fluidDestination, inventory, maxAmount, player, ctx, FluidUtil::tryEmptyContainer);
-			if (result.isSuccess() && doDrain) {
-				ctx.commit();
-			}
-			return result;
-		}
+	public static FluidActionResult tryEmptyContainerAndStow(ItemStack container, IFluidHandler fluidDestination,
+															 IItemHandler inventory, long maxAmount, @Nullable Player player, boolean doDrain) {
+		return tryTransferAndStow(container, fluidDestination, inventory, maxAmount, player, doDrain, FluidUtil::tryEmptyContainer);
 	}
 }

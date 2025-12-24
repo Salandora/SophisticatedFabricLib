@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.MutableContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -58,7 +59,7 @@ public class MutableContainerItemContextTest {
 	@MethodSource("insertCases")
 	void testInsert(TestCase c) {
 		MutableContainerItemContext ctx = new MutableContainerItemContext(c.input());
-		Storage<FluidVariant> storage = FluidStorage.ITEM.find(c.input(), ctx);
+		Storage<FluidVariant> storage = ctx.find(FluidStorage.ITEM);
 		assertNotNull(storage);
 
 		try (Transaction tx = Transaction.openOuter()) {

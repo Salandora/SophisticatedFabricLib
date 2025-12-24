@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.common.mixin.common;
 
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.wrapper.fabric.FabricItemHandlerWrapper;
 import com.github.salandora.sophisticatedlibrary.util.Capabilities;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -50,7 +51,7 @@ public class HopperBlockEntityMixin_EntityItemHandler {
 
 		Collections.shuffle(list);
 		for (Entity entity : list) {
-			Storage<ItemVariant> target = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, direction.getOpposite());
+			Storage<ItemVariant> target = FabricItemHandlerWrapper.of(Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, direction.getOpposite()));
 			if (target != null) {
 				long moved = StorageUtil.move(
 						InventoryStorage.of(blockEntity, direction),
@@ -86,7 +87,7 @@ public class HopperBlockEntityMixin_EntityItemHandler {
 
 		Collections.shuffle(list);
 		for (Entity entity : list) {
-			Storage<ItemVariant> source = Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, Direction.DOWN);
+			Storage<ItemVariant> source = FabricItemHandlerWrapper.of(Capabilities.ItemHandler.ENTITY_AUTOMATION.find(entity, Direction.DOWN));
 			if (source != null) {
 				long moved = StorageUtil.move(
 						source,

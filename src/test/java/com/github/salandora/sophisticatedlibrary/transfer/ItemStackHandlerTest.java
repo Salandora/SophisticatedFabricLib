@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedlibrary.transfer;
 
+import com.github.salandora.sophisticatedlibrary.transfer.api.v1.ItemStackHandler;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
