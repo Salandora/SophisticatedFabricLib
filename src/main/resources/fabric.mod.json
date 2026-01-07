@@ -1,66 +1,66 @@
 {
   "schemaVersion": 1,
-  "id": "sophisticatedlibrary",
+  "id": "sophisticatedfabriclib",
   "version": "${version}",
-  "name": "SophisticatedLibrary",
-  "description": "A library mod for the sophisticated mods",
+  "name": "SophisticatedFabricLib",
+  "description": "A fabric library for the sophisticated mods",
   "license": "GNU General Public License v3.0",
   "authors": ["Salandora"],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-library-fabric",
-    "issues": "https://github.com/Salandora/SophisticatedLibrary/issues",
-    "sources": "https://github.com/Salandora/SophisticatedLibrary"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-fabric-lib",
+    "issues": "https://github.com/Salandora/SophisticatedFabricLib/issues",
+    "sources": "https://github.com/Salandora/SophisticatedFabricLib"
   },
-  "icon": "assets/sophisticatedlibrary/icon.png",
+  "icon": "assets/sophisticatedfabriclib/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.github.salandora.sophisticatedlibrary.model.SophisticatedModelClient"
+      "com.github.salandora.sophisticatedfabriclib.model.SophisticatedModelClient"
     ],
     "main": [
-      "com.github.salandora.sophisticatedlibrary.SophisticatedLibrary",
-      "com.github.salandora.sophisticatedlibrary.common.SophisticatedCommon",
-      "com.github.salandora.sophisticatedlibrary.model.SophisticatedModel",
-      "com.github.salandora.sophisticatedlibrary.loot.SophisticatedLoot"
+      "com.github.salandora.sophisticatedfabriclib.SophisticatedFabricLib",
+      "com.github.salandora.sophisticatedfabriclib.common.SophisticatedCommon",
+      "com.github.salandora.sophisticatedfabriclib.model.SophisticatedModel",
+      "com.github.salandora.sophisticatedfabriclib.loot.SophisticatedLoot"
     ]
   },
   "mixins": [
-    "sophisticatedlibrary.mixins.json",
-    "sophisticatedlibrary.event.mixins.json",
-    "sophisticatedlibrary.loot.mixins.json",
-    "sophisticatedlibrary.model.mixins.json"
+    "sophisticatedfabriclib.mixins.json",
+    "sophisticatedfabriclib.event.mixins.json",
+    "sophisticatedfabriclib.loot.mixins.json",
+    "sophisticatedfabriclib.model.mixins.json"
   ],
-  "accessWidener": "sophisticatedlibrary.accesswidener",
+  "accessWidener": "sophisticatedfabriclib.accesswidener",
   "depends": {
     "minecraft": "${minecraft_version}",
     "fabricloader": ">=${loader_version}"
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_47": ["com/github/salandora/sophisticatedlibrary/loot/api/v1/extensions/SophisticatedLootContext"],
-      "net/minecraft/class_465": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/client/gui/screens/inventory/SophisticatedAbstractContainerScreen"],
-      "net/minecraft/class_727": ["com/github/salandora/sophisticatedlibrary/model/api/v1/extensions/client/particle/SophisticatedTerrainParticle"],
-      "net/minecraft/class_1297": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedEntity"],
-      "net/minecraft/class_1657": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedPlayer"],
-      "net/minecraft/class_1735": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/inventory/SophisticatedSlot"],
-      "net/minecraft/class_1792": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/item/SophisticatedItem"],
+      "net/minecraft/class_47": ["com/github/salandora/sophisticatedfabriclib/loot/api/v1/extensions/SophisticatedLootContext"],
+      "net/minecraft/class_465": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/client/gui/screens/inventory/SophisticatedAbstractContainerScreen"],
+      "net/minecraft/class_727": ["com/github/salandora/sophisticatedfabriclib/model/api/v1/extensions/client/particle/SophisticatedTerrainParticle"],
+      "net/minecraft/class_1297": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedEntity"],
+      "net/minecraft/class_1657": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedPlayer"],
+      "net/minecraft/class_1735": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/inventory/SophisticatedSlot"],
+      "net/minecraft/class_1792": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/item/SophisticatedItem"],
       "net/minecraft/class_1799": [
-        "com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/item/SophisticatedItemStack",
-        "com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedMutableDataComponentHolder"
+        "com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/item/SophisticatedItemStack",
+        "com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/component/SophisticatedMutableDataComponentHolder"
       ],
-      "net/minecraft/class_1856": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedIngredient"],
-      "net/minecraft/class_2241": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBaseRailBlock"],
-      "net/minecraft/class_2248": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBlock"],
-      "net/minecraft/class_2311": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2397": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2476": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2526": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2541": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2560": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_2680": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/block/SophisticatedBlockState"],
-      "net/minecraft/class_5147": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/entity/SophisticatedShearable"],
-      "net/minecraft/class_9322": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedDataComponentHolder"],
-      "net/minecraft/class_9288": ["com/github/salandora/sophisticatedlibrary/common/api/v1/extensions/component/SophisticatedItemContainerContents"]
+      "net/minecraft/class_1856": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/block/SophisticatedIngredient"],
+      "net/minecraft/class_2241": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/block/SophisticatedBaseRailBlock"],
+      "net/minecraft/class_2248": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/block/SophisticatedBlock"],
+      "net/minecraft/class_2311": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2397": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2476": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2526": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2541": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2560": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_2680": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/block/SophisticatedBlockState"],
+      "net/minecraft/class_5147": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/entity/SophisticatedShearable"],
+      "net/minecraft/class_9322": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/component/SophisticatedDataComponentHolder"],
+      "net/minecraft/class_9288": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/component/SophisticatedItemContainerContents"]
     },
     "modmenu": {
       "badges": ["library"],

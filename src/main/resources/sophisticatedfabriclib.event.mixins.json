@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.salandora.sophisticatedfabriclib.event.mixin.v1",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "common.Entity_EntityTick",
+    "common.ItemEntityMixin_PickupItem",
+    "common.MobMixin_FinalizeSpawn",
+    "common.PersistentEntitySectionManagerMixin_JoinWorld",
+    "common.ResultSlotMixin_ItemCrafted",
+    "common.ServerLevel_EntityTick",
+    "common.ServerLevelMixin_JoinWorld"
+  ],
+  "client": [
+    "client.ClientLevelMixin_EntityTick",
+    "client.ClientLevelMixin_JoinWorld",
+    "client.ClientLevelMixin_LevelLoad",
+    "client.ClientPacketListenerMixin_UpdateRecipes",
+    "client.MouseHandlerMixin_MouseScrolled"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.salandora.sophisticatedfabriclib.loot.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LootContextMixin",
+    "LootTableMixin",
+    "LootTableMixin$BuilderMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

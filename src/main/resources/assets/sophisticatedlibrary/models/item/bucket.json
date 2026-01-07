@@ -1,7 +1,0 @@
-{
-  "parent": "sophisticatedlibrary:item/default",
-  "textures": {
-    "base": "item/bucket",
-    "fluid": "sophisticatedlibrary:item/mask/bucket_fluid"
-  }
-}

@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "sophisticatedlibrary-testmod",
+  "id": "sophisticatedfabriclib-testmod",
   "version": "1.0.0",
-  "name": "Sophisticated Library Test mod",
+  "name": "Sophisticated Fabric Lib Test mod",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.salandora.sophisticatedlibrary.registry.DeferredRegistryTest",
-      "com.github.salandora.sophisticatedlibrary.loot.GlobalLootModifierHelper"
+      "com.github.salandora.sophisticatedfabriclib.registry.DeferredRegistryTest",
+      "com.github.salandora.sophisticatedfabriclib.loot.GlobalLootModifierHelper"
     ],
     "fabric-datagen": [
-      "com.github.salandora.sophisticatedlibrary.datagen.DataGeneratorTestEntrypoint"
+      "com.github.salandora.sophisticatedfabriclib.datagen.DataGeneratorTestEntrypoint"
     ]
   }
 }

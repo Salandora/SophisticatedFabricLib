@@ -1,0 +1,53 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  },
+  "package": "com.github.salandora.sophisticatedfabriclib.common.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "common.BaseRailBlockMixin",
+    "common.BlockMixin",
+    "common.BlockStateMixin",
+    "common.DataComponentHolderMixin",
+    "common.EnderDragonMixin_canEntityDestroy",
+    "common.EntityMixin_CustomData",
+    "common.EntityMixin_Drops",
+    "common.EntityMixin_RunningEffect",
+    "common.ExplosionDamageCalculatorMixin_ExplosionResistance",
+    "common.HopperBlockEntityMixin_EntityItemHandler",
+    "common.IngredientMixin",
+    "common.ItemContainerContentsMixin",
+    "common.ItemMixin",
+    "common.ItemStackMixin",
+    "common.ItemStackMixin_MutableDataComponentHolder",
+    "common.LivingEntityMixin_Drops",
+    "common.LivingEntityMixin_LandingEffect",
+    "common.PiglinAI_makesPiglinsNeutral",
+    "common.PlayerMixin",
+    "common.ServerPlayerMixin_DroppedByPlayer",
+    "common.ShearableBlocksMixin_Shearable",
+    "common.SlotMixin_Background",
+    "common.WitherBossMixin_canEntityDestroy",
+    "common.WitherSkullMixin_canEntityDestroy",
+    "common.accessors.AxeItemAccessor",
+    "common.accessors.ShovelItemAccessor",
+    "common.tools.AxeItemMixin",
+    "common.tools.HoeItemMixin",
+    "common.tools.PickaxeItemMixin",
+    "common.tools.ShearsItemMixin",
+    "common.tools.ShovelItemMixin"
+  ],
+  "client": [
+    "client.AbstractContainerScreenMixin",
+    "client.ItemInHandRendererMixin_shouldCauseReequipAnimation",
+    "client.ParticleEngineMixin_addEffects"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
