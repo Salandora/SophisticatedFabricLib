@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.salandora.sophisticatedfabriclib.model.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "client.ParticleEngineMixin_UpdateSprite",
+    "client.ScreenEffectRendererMixin_UpdateSprite",
+    "client.TerrainParticleMixin_UpdateSprite",
+    "client.accessors.BlockModelAccessor",
+    "client.accessors.ItemModelGeneratorAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

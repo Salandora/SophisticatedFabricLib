@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "sophisticatedlibrary-gametest",
+  "id": "sophisticatedfabriclib-gametest",
   "version": "1.0.0",
-  "name": "Sophisticated Library Test mod",
+  "name": "Sophisticated Fabric Lib Gametest mod",
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": [
-      "com.github.salandora.sophisticatedlibrary.GlobalLootModifierTest"
+      "com.github.salandora.sophisticatedfabriclib.GlobalLootModifierTest"
     ]
   }
 }
