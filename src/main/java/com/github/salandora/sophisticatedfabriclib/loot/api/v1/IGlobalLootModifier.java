@@ -1,3 +1,9 @@
+/*
+ * This code comes from: https://github.com/neoforged/NeoForge/blob/1.21.1/src/main/java/net/neoforged/neoforge/common/loot/IGlobalLootModifier.java
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package com.github.salandora.sophisticatedfabriclib.loot.api.v1;
 
 import com.github.salandora.sophisticatedfabriclib.loot.SophisticatedLoot;
