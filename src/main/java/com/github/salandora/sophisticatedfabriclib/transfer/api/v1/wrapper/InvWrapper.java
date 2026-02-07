@@ -1,3 +1,9 @@
+/*
+ * This code comes from: https://github.com/neoforged/NeoForge/blob/1.21.1/src/main/java/net/neoforged/neoforge/items/wrapper/InvWrapper.java
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package com.github.salandora.sophisticatedfabriclib.transfer.api.v1.wrapper;
 
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.IItemHandlerModifiable;

@@ -1,8 +1,13 @@
+/*
+ * This code comes from: https://github.com/neoforged/NeoForge/blob/1.21.1/src/main/java/net/neoforged/neoforge/items/ComponentItemHandler.java
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package com.github.salandora.sophisticatedfabriclib.transfer.api.v1;
 
 import com.github.salandora.sophisticatedfabriclib.common.api.v1.extensions.component.SophisticatedMutableDataComponentHolder;
 import com.google.common.base.Preconditions;
-import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
@@ -171,26 +176,6 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	protected final void validateSlotIndex(int slot) {
 		if (slot < 0 || slot >= getSlotCount()) {
 			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlotCount() + ")");
-		}
-	}
-
-	public static class ComponentItemHandlerSlot extends SingleStackStorage {
-		private final IItemHandler storage;
-		private final int slot;
-
-		private ComponentItemHandlerSlot(IItemHandler storage, int slot) {
-			this.storage = storage;
-			this.slot = slot;
-		}
-
-		@Override
-		protected ItemStack getStack() {
-			return this.storage.getStackInSlot(this.slot);
-		}
-
-		@Override
-		protected void setStack(ItemStack stack) {
-			this.storage.setStackInSlot(this.slot, stack);
 		}
 	}
 }
