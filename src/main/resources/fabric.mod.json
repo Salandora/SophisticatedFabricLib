@@ -63,12 +63,7 @@
       "net/minecraft/class_9288": ["com/github/salandora/sophisticatedfabriclib/common/api/v1/extensions/component/SophisticatedItemContainerContents"]
     },
     "modmenu": {
-      "badges": ["library"],
-      "parent": {
-        "id": "sophisticatedmods",
-        "name": "Sophisticated Mods",
-        "description": "Group of P3pp3rf1y's Sophisticated Mods"
-      }
+      "badges": ["library"]
     }
   }
 }
