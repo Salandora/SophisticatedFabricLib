@@ -1,6 +1,9 @@
 package com.github.salandora.sophisticatedfabriclib.util;
 
 import com.github.salandora.sophisticatedfabriclib.SophisticatedFabricLib;
+import com.github.salandora.sophisticatedfabriclib.energy.api.v1.IEnergyStorage;
+import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.EnergyStorageWrapper;
+import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.IEnergyStorageWrapper;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandlerItem;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.IItemHandler;
@@ -121,6 +124,46 @@ public class Capabilities {
 				}
 
 				return FabricFluidStorageWrapper.of(storage);
+			});
+		}
+	}
+
+	public static class EnergyStorage {
+		/**
+		 * Can be used to register IEnergyStorage directly or through a fallback to {@link team.reborn.energy.api.EnergyStorage#ITEM} with a wrapper
+		 */
+		public static final ItemApiLookup<IEnergyStorage, ContainerItemContext> ITEM = ItemApiLookup.get(SophisticatedFabricLib.id("item_energy_storage"), IEnergyStorage.class, ContainerItemContext.class);
+
+		/**
+		 * Can be used to get an IEnergyStorage directly or through fallback to {@link team.reborn.energy.api.EnergyStorage#SIDED} with a wrapper
+		 */
+		public static final BlockApiLookup<IEnergyStorage, Direction> SIDED = BlockApiLookup.get(SophisticatedFabricLib.id("block_energy_storage"), IEnergyStorage.class, Direction.class);
+
+		static {
+			ITEM.registerFallback((stack, ctx) -> {
+				var storage = team.reborn.energy.api.EnergyStorage.ITEM.find(stack, ctx);
+				if (storage == null) {
+					return null;
+				}
+
+				if (storage instanceof IEnergyStorageWrapper wrapper) {
+					return wrapper.getEnergyStorage();
+				}
+
+				return EnergyStorageWrapper.of(storage, ctx);
+			});
+
+			SIDED.registerFallback((level, pos, state, be, dir) -> {
+				var storage = team.reborn.energy.api.EnergyStorage.SIDED.find(level, pos, state, be, dir);
+				if (storage == null) {
+					return null;
+				}
+
+				if (storage instanceof IEnergyStorageWrapper wrapper) {
+					return wrapper.getEnergyStorage();
+				}
+
+				return EnergyStorageWrapper.of(storage);
 			});
 		}
 	}
