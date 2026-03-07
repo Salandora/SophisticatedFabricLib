@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SophisticatedFabricLib implements ModInitializer {
-    public static final String MOD_ID = "sophisticatedlibrary";
+    public static final String MOD_ID = "sophisticatedfabriclib";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override

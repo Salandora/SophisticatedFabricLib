@@ -1,5 +1,5 @@
 /*
-package com.github.salandora.sophisticatedlibrary.fluid.api.v1;
+package com.github.salandora.sophisticatedfabriclib.fluid.api.v1;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentHolder;

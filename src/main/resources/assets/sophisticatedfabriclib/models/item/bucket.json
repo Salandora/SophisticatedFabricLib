@@ -1,7 +1,7 @@
 {
-  "parent": "sophisticatedlibrary:item/default",
+  "parent": "sophisticatedfabriclib:item/default",
   "textures": {
     "base": "item/bucket",
-    "fluid": "sophisticatedlibrary:item/mask/bucket_fluid"
+    "fluid": "sophisticatedfabriclib:item/mask/bucket_fluid"
   }
 }
