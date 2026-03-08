@@ -18,7 +18,7 @@ public class EntityMixin_CustomData implements SophisticatedEntity {
 	private static final String OLD_SOPHISTICATEDCOREDATA_NBT_KEY = "SophisticatedCoreData";
 
 	@Unique
-	private static final String SOPHISTICATEDLIBRARYDATA_NBT_KEY = "SophisticatedLibraryData";
+	private static final String SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY = "SophisticatedFabricLibraryData";
 
 	@Unique
 	private CompoundTag sophisticatedLibrary$customData;
@@ -34,14 +34,14 @@ public class EntityMixin_CustomData implements SophisticatedEntity {
 	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void sophisticatedCore$saveAdditionalData(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
 		if (this.sophisticatedLibrary$customData != null && !this.sophisticatedLibrary$customData.isEmpty()) {
-			compound.put(SOPHISTICATEDLIBRARYDATA_NBT_KEY, this.sophisticatedLibrary$customData);
+			compound.put(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY, this.sophisticatedLibrary$customData);
 		}
 	}
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void sophisticatedCore$readAdditionalData(CompoundTag compound, CallbackInfo ci) {
-		if (compound.contains(SOPHISTICATEDLIBRARYDATA_NBT_KEY)) {
-			this.sophisticatedLibrary$customData = compound.getCompound(SOPHISTICATEDLIBRARYDATA_NBT_KEY);
+		if (compound.contains(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY)) {
+			this.sophisticatedLibrary$customData = compound.getCompound(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY);
 		} else if (compound.contains(OLD_SOPHISTICATEDCOREDATA_NBT_KEY)) {
 			// TODO: Deprecated key, this is here for conversion, remove in future
 			this.sophisticatedLibrary$customData = compound.getCompound(OLD_SOPHISTICATEDCOREDATA_NBT_KEY);
