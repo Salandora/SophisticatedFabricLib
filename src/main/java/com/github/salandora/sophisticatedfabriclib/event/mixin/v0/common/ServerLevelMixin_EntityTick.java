@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ServerLevel.class)
-public class ServerLevel_EntityTick {
+public class ServerLevelMixin_EntityTick {
 	@WrapOperation(
 			method = "tickNonPassenger",
 			at = @At(

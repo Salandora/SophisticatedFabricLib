@@ -10,7 +10,7 @@
     "common.MobMixin_FinalizeSpawn",
     "common.PersistentEntitySectionManagerMixin_JoinWorld",
     "common.ResultSlotMixin_ItemCrafted",
-    "common.ServerLevel_EntityTick",
+    "common.ServerLevelMixin_EntityTick",
     "common.ServerLevelMixin_JoinWorld"
   ],
   "client": [
