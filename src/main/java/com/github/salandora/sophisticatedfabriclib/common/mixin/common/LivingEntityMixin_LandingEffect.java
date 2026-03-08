@@ -1,6 +1,7 @@
 package com.github.salandora.sophisticatedfabriclib.common.mixin.common;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -12,21 +13,25 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = LivingEntity.class, priority = 500)
 public abstract class LivingEntityMixin_LandingEffect {
-	@WrapWithCondition(
+	@WrapOperation(
 			method = "checkFallDamage",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
 			)
 	)
-	public boolean sophisticatedLibrary$addLandingEffects(ServerLevel level,
-														  ParticleOptions type,
-														  double posX, double posY, double posZ,
-														  int particleCount,
-														  double xOffset, double yOffset, double zOffset,
-														  double speed,
-														  @Local(argsOnly = true) BlockState state,
-														  @Local(argsOnly = true) BlockPos pos) {
-		return !state.sophisticatedLibrary_addLandingEffects(level, pos, state, (LivingEntity) (Object) this, particleCount);
+	public int sophisticatedLibrary$addLandingEffects(ServerLevel level,
+													  ParticleOptions type,
+													  double posX, double posY, double posZ,
+													  int particleCount,
+													  double xOffset, double yOffset, double zOffset,
+													  double speed,
+													  Operation<Integer> original, @Local(argsOnly = true) BlockState state,
+													  @Local(argsOnly = true) BlockPos pos) {
+		if (!state.sophisticatedLibrary_addLandingEffects(level, pos, state, (LivingEntity) (Object) this, particleCount)) {
+			return original.call(level, type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
+		} else {
+			return 0;
+		}
 	}
 }
