@@ -36,7 +36,7 @@ public class FluidUtil {
     }
 
 	public static LazyOptional<IFluidHandlerItem> getFluidHandler(ItemStack stack) {
-		return stack.sophisticatedLibrary_getCapability(Capabilities.FluidHandler.ITEM);
+		return stack.sophisticatedFabricLibrary_getCapability(Capabilities.FluidHandler.ITEM);
 	}
 
 	public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {

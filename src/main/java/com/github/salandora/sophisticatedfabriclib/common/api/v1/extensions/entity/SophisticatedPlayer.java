@@ -21,11 +21,11 @@ public interface SophisticatedPlayer {
 		return (Player)this;
 	}
 
-	default OptionalInt sophisticatedLibrary_openMenu(MenuProvider menuProvider, BlockPos pos) {
-		return this.sophisticatedLibrary_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
+	default OptionalInt sophisticatedFabricLibrary_openMenu(MenuProvider menuProvider, BlockPos pos) {
+		return this.sophisticatedFabricLibrary_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
 	}
 
-	default OptionalInt sophisticatedLibrary_openMenu(MenuProvider menu, Consumer<FriendlyByteBuf> context) {
+	default OptionalInt sophisticatedFabricLibrary_openMenu(MenuProvider menu, Consumer<FriendlyByteBuf> context) {
 		var screenHandlerFactory = new ExtendedScreenHandlerFactory() {
 			@Override
 			public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
@@ -51,11 +51,11 @@ public interface SophisticatedPlayer {
 		return this.self().openMenu(screenHandlerFactory);
 	}
 
-	default <T> LazyOptional<T> sophisticatedLibrary_getCapability(EntityApiLookup<T, ?> lookup) {
-		return sophisticatedLibrary_getCapability(lookup, null);
+	default <T> LazyOptional<T> sophisticatedFabricLibrary_getCapability(EntityApiLookup<T, ?> lookup) {
+		return sophisticatedFabricLibrary_getCapability(lookup, null);
 	}
 
-	default <T, C> LazyOptional<T> sophisticatedLibrary_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
+	default <T, C> LazyOptional<T> sophisticatedFabricLibrary_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
 		return LazyOptional.of(() -> lookup.find(self(), context));
 	}
 }

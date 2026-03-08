@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Mob.class)
 public class MobMixin_FinalizeSpawn {
     @Inject(method = "finalizeSpawn", at = @At("RETURN"))
-    private void sophisticatedLibrary$afterFinalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, SpawnGroupData spawnData, CompoundTag dataTag, CallbackInfoReturnable<SpawnGroupData> cir) {
+    private void sophisticatedFabricLibrary$afterFinalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, SpawnGroupData spawnData, CompoundTag dataTag, CallbackInfoReturnable<SpawnGroupData> cir) {
         MobSpawnEvents.AFTER_FINALIZE_SPAWN.invoker().onAfterFinalizeSpawn(new MobSpawnEvents.FinalizeSpawn((Mob) (Object) this, level, difficulty, spawnType, spawnData, dataTag));
     }
 }

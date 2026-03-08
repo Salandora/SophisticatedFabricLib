@@ -20,23 +20,23 @@ public abstract class AbstractContainerScreenMixin implements SophisticatedAbstr
 	@Shadow protected int imageWidth;
 
 	@Override
-	public int sophisticatedLibrary_getXSize() {
+	public int sophisticatedFabricLibrary_getXSize() {
 		return imageWidth;
 	}
 
 	@Override
-	public int sophisticatedLibrary_getGuiLeft() {
+	public int sophisticatedFabricLibrary_getGuiLeft() {
 		return leftPos;
 	}
 
 	@Override
-	public int sophisticatedLibrary_getGuiTop() {
+	public int sophisticatedFabricLibrary_getGuiTop() {
 		return topPos;
 	}
 
 	@Override
 	@Nullable
-	public Slot sophisticatedLibrary_getSlotUnderMouse() {
+	public Slot sophisticatedFabricLibrary_getSlotUnderMouse() {
 		return hoveredSlot;
 	}
 }

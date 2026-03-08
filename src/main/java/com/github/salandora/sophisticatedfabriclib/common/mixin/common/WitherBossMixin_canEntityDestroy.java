@@ -24,7 +24,7 @@ public abstract class WitherBossMixin_canEntityDestroy extends Entity {
 					target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;canDestroy(Lnet/minecraft/world/level/block/state/BlockState;)Z"
 			)
 	)
-	public boolean sophisticatedLibrary$customServerAiStep(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
-		return original && !blockState.sophisticatedLibrary_canEntityDestroy(this.level(), blockPos, this);
+	public boolean sophisticatedFabricLibrary$customServerAiStep(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
+		return original && !blockState.sophisticatedFabricLibrary_canEntityDestroy(this.level(), blockPos, this);
 	}
 }

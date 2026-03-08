@@ -24,7 +24,7 @@ public abstract class EnderDragonMixin_canEntityDestroy extends Mob {
 					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z"
 			)
 	)
-	public boolean sophisticatedLibrary$checkWalls(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
-		return original && !blockState.sophisticatedLibrary_canEntityDestroy(this.level(), blockPos, this);
+	public boolean sophisticatedFabricLibrary$checkWalls(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
+		return original && !blockState.sophisticatedFabricLibrary_canEntityDestroy(this.level(), blockPos, this);
 	}
 }

@@ -19,7 +19,7 @@ public class PlayerInventoryMixin_onArmorTick {
     @Shadow @Final public Player player;
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
-    private void sophisticatedLibrary$onArmorTick(CallbackInfo ci) {
-        armor.forEach(a -> a.sophisticatedLibrary_onArmorTick(player.level(), player));
+    private void sophisticatedFabricLibrary$onArmorTick(CallbackInfo ci) {
+        armor.forEach(a -> a.sophisticatedFabricLibrary_onArmorTick(player.level(), player));
     }
 }

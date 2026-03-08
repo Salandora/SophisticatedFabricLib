@@ -30,7 +30,7 @@ public class MouseHandlerMixin_MouseScrolled {
 			),
 			cancellable = true
 	)
-    private void  sophisticatedLibrary$onScroll(long handle, double xOffset, double yOffset, CallbackInfo ci, @Local(ordinal = 2) double delta) {
+    private void  sophisticatedFabricLibrary$onScroll(long handle, double xOffset, double yOffset, CallbackInfo ci, @Local(ordinal = 2) double delta) {
         if (handle == this.minecraft.getWindow().getWindow()) {
             var result = ClientRawInputEvent.MOUSE_SCROLLED.invoker().mouseScrolled(minecraft, delta);
             if (result != InteractionResult.PASS)

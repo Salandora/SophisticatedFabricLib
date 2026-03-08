@@ -20,7 +20,7 @@ public abstract class LivingEntityMixin_LandingEffect {
 					target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
 			)
 	)
-	public int sophisticatedLibrary$addLandingEffects(ServerLevel level,
+	public int sophisticatedFabricLibrary$addLandingEffects(ServerLevel level,
 													  ParticleOptions type,
 													  double posX, double posY, double posZ,
 													  int particleCount,
@@ -28,7 +28,7 @@ public abstract class LivingEntityMixin_LandingEffect {
 													  double speed,
 													  Operation<Integer> original, @Local(argsOnly = true) BlockState state,
 													  @Local(argsOnly = true) BlockPos pos) {
-		if (!state.sophisticatedLibrary_addLandingEffects(level, pos, state, (LivingEntity) (Object) this, particleCount)) {
+		if (!state.sophisticatedFabricLibrary_addLandingEffects(level, pos, state, (LivingEntity) (Object) this, particleCount)) {
 			return original.call(level, type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
 		}
 		return particleCount;

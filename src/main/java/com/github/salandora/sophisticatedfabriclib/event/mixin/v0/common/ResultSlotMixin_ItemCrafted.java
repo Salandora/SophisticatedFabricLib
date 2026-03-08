@@ -19,12 +19,12 @@ public class ResultSlotMixin_ItemCrafted {
 	@Shadow @Final private Player player;
 
 	@Inject(method = "onTake", at = @At("HEAD"))
-	public void sophisticatedLibrary$onTake(Player player, ItemStack stack, CallbackInfo callbackInfo) {
+	public void sophisticatedFabricLibrary$onTake(Player player, ItemStack stack, CallbackInfo callbackInfo) {
 		PlayerEvents.ITEM_CRAFTED.invoker().onItemCrafted(player, stack, craftSlots);
 	}
 
 	@Inject(method = "onQuickCraft", at = @At("HEAD"))
-	public void sophisticatedLibrary$onQuickCraft(ItemStack stack, int amount, CallbackInfo ci) {
+	public void sophisticatedFabricLibrary$onQuickCraft(ItemStack stack, int amount, CallbackInfo ci) {
 		PlayerEvents.ITEM_CRAFTED.invoker().onItemCrafted(player, stack, craftSlots);
 	}
 }

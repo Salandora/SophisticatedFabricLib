@@ -12,18 +12,18 @@ public class SophisticatedCommon implements ModInitializer {
 		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((blockEntity, world) -> {
 			if (blockEntity instanceof SophisticatedBlockEntity sbe) {
 				// Force the onLoad to the next tick or else the game will indefinitely hang as it can't get the chunk
-				world.getServer().tell(new TickTask(world.getServer().getTickCount(), sbe::sophisticatedLibrary_onLoad));
+				world.getServer().tell(new TickTask(world.getServer().getTickCount(), sbe::sophisticatedFabricLibrary_onLoad));
 			}
 		});
 		ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((blockEntity, world) -> {
 			if (blockEntity instanceof SophisticatedBlockEntity sbe) {
-				sbe.sophisticatedLibrary_invalidateCaps();
+				sbe.sophisticatedFabricLibrary_invalidateCaps();
 			}
 		});
 		ServerChunkEvents.CHUNK_UNLOAD.register((world, chunk) ->
 				chunk.getBlockEntities().forEach((pos, blockEntity) -> {
 					if (blockEntity instanceof SophisticatedBlockEntity sbe) {
-						sbe.sophisticatedLibrary_onChunkUnloaded();
+						sbe.sophisticatedFabricLibrary_onChunkUnloaded();
 					}
 				}));
     }

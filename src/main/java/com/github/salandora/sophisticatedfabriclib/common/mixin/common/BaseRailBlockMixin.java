@@ -18,7 +18,7 @@ public abstract class BaseRailBlockMixin implements SophisticatedBaseRailBlock {
 	public abstract Property<RailShape> getShapeProperty();
 
 	@Override
-	public RailShape sophisticatedlibrary_getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable AbstractMinecart cart) {
+	public RailShape sophisticatedFabricLibrary_getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable AbstractMinecart cart) {
 		return state.getValue(this.getShapeProperty());
 	}
 }

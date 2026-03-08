@@ -8,5 +8,5 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import org.jetbrains.annotations.Nullable;
 
 public interface SophisticatedBaseRailBlock {
-	RailShape sophisticatedlibrary_getRailDirection(BlockState var1, BlockGetter var2, BlockPos var3, @Nullable AbstractMinecart var4);
+	RailShape sophisticatedFabricLibrary_getRailDirection(BlockState var1, BlockGetter var2, BlockPos var3, @Nullable AbstractMinecart var4);
 }

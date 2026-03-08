@@ -25,7 +25,7 @@ public class EntityMixin_RunningEffect {
 			method = "spawnSprintParticle",
 			at = @At(value = "MIXINEXTRAS:EXPRESSION")
 	)
-	private boolean sophisticatedLibrary$addRunningEffects(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
-		return !blockState.sophisticatedLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this) && original;
+	private boolean sophisticatedFabricLibrary$addRunningEffects(boolean original, @Local BlockPos blockPos, @Local BlockState blockState) {
+		return !blockState.sophisticatedFabricLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this) && original;
 	}
 }

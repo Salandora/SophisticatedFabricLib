@@ -19,7 +19,7 @@ public abstract class ItemEntityMixin_PickupItem {
     public abstract ItemStack getItem();
 
     @Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getCount()I"), cancellable = true)
-    private void sophisticatedLibrary$pickupItem(Player player, CallbackInfo ci, @Share("cachedStack") LocalRef<ItemStack> cachedStack) {
+    private void sophisticatedFabricLibrary$pickupItem(Player player, CallbackInfo ci, @Share("cachedStack") LocalRef<ItemStack> cachedStack) {
         cachedStack.set(getItem().copy());
         var canPickup = ItemEntityEvents.CAN_PICKUP.invoker().canPickup(player, (ItemEntity) (Object) this, getItem());
         if (canPickup != InteractionResult.PASS) {
@@ -28,7 +28,7 @@ public abstract class ItemEntityMixin_PickupItem {
     }
 
 	@Inject(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;take(Lnet/minecraft/world/entity/Entity;I)V"))
-	private void sophisticatedLibrary$postPickupItem(Player player, CallbackInfo ci, @Share("cachedStack") LocalRef<ItemStack> cachedStack) {
+	private void sophisticatedFabricLibrary$postPickupItem(Player player, CallbackInfo ci, @Share("cachedStack") LocalRef<ItemStack> cachedStack) {
 		if (cachedStack.get() != null) {
 			ItemEntityEvents.POST_PICKUP.invoker().postPickup(player, (ItemEntity) (Object) this, cachedStack.get());
 		}

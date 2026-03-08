@@ -17,7 +17,7 @@ public class PickaxeItemMixin extends DiggerItem {
 	}
 
 	@Override
-	public boolean sophisticatedLibrary_canPerformAction(ItemStack stack, ItemAbility itemAbility) {
+	public boolean sophisticatedFabricLibrary_canPerformAction(ItemStack stack, ItemAbility itemAbility) {
 		return ItemAbilities.DEFAULT_PICKAXE_ACTIONS.contains(itemAbility);
 	}
 }

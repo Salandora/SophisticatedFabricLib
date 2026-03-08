@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin_Drops extends Entity {
     protected int lastHurtByPlayerTime;
 
 	@Unique
-	private int sophisticatedLibrary$lootingLevel;
+	private int sophisticatedFabricLibrary$lootingLevel;
 
     public LivingEntityMixin_Drops(EntityType<?> entityType, Level world) {
         super(entityType, world);
@@ -35,8 +35,8 @@ public abstract class LivingEntityMixin_Drops extends Entity {
 			method = "dropAllDeathLoot",
 			at = @At("HEAD")
 	)
-    private void sophisticatedLibrary$captureDrops(DamageSource damageSource, CallbackInfo ci) {
-        this.sophisticatedLibrary_captureDrops(new ArrayList<>());
+    private void sophisticatedFabricLibrary$captureDrops(DamageSource damageSource, CallbackInfo ci) {
+        this.sophisticatedFabricLibrary_captureDrops(new ArrayList<>());
     }
 
 	@ModifyVariable(
@@ -47,8 +47,8 @@ public abstract class LivingEntityMixin_Drops extends Entity {
 					opcode = Opcodes.GETFIELD
 			)
 	)
-	private int sophisticatedLibrary$getLootingLevel(int lootingLevel) {
-		this.sophisticatedLibrary$lootingLevel = lootingLevel;
+	private int sophisticatedFabricLibrary$getLootingLevel(int lootingLevel) {
+		this.sophisticatedFabricLibrary$lootingLevel = lootingLevel;
 		return lootingLevel;
 	}
 
@@ -59,9 +59,9 @@ public abstract class LivingEntityMixin_Drops extends Entity {
 					target = "Lnet/minecraft/world/entity/LivingEntity;dropExperience()V"
 			)
 	)
-    private void sophisticatedLibrary$dropCapturedDrops(DamageSource damageSource, CallbackInfo ci) {
-        Collection<ItemEntity> drops = this.sophisticatedLibrary_captureDrops(null);
-        if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, damageSource, drops, this.sophisticatedLibrary$lootingLevel,lastHurtByPlayerTime > 0))
+    private void sophisticatedFabricLibrary$dropCapturedDrops(DamageSource damageSource, CallbackInfo ci) {
+        Collection<ItemEntity> drops = this.sophisticatedFabricLibrary_captureDrops(null);
+        if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, damageSource, drops, this.sophisticatedFabricLibrary$lootingLevel,lastHurtByPlayerTime > 0))
             drops.forEach(level()::addFreshEntity);
     }
 }

@@ -19,7 +19,7 @@ public class WitherSkullMixin_canEntityDestroy {
 					target = "Lnet/minecraft/world/entity/projectile/WitherSkull;isDangerous()Z"
 			)
 	)
-	public boolean sophisticatedLibrary$getBlockExplosionResistance(boolean original, @Local(argsOnly = true) BlockGetter blockGetter, @Local(argsOnly = true) BlockPos blockPos, @Local(argsOnly = true) BlockState blockState) {
-		return original && blockState.sophisticatedLibrary_canEntityDestroy(blockGetter, blockPos, (Entity) (Object) this);
+	public boolean sophisticatedFabricLibrary$getBlockExplosionResistance(boolean original, @Local(argsOnly = true) BlockGetter blockGetter, @Local(argsOnly = true) BlockPos blockPos, @Local(argsOnly = true) BlockState blockState) {
+		return original && blockState.sophisticatedFabricLibrary_canEntityDestroy(blockGetter, blockPos, (Entity) (Object) this);
 	}
 }

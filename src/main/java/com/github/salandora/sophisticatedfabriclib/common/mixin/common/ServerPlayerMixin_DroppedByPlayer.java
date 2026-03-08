@@ -19,10 +19,10 @@ public class ServerPlayerMixin_DroppedByPlayer {
 			),
 			cancellable = true
 	)
-	private void sophisticatedLibrary$drop(boolean dropStack, CallbackInfoReturnable<Boolean> cir, @Local Inventory inventory) {
+	private void sophisticatedFabricLibrary$drop(boolean dropStack, CallbackInfoReturnable<Boolean> cir, @Local Inventory inventory) {
 		ItemStack selected = inventory.getSelected();
 		//noinspection ConstantValue
-		if (selected.isEmpty() || !selected.sophisticatedLibrary_onDroppedByPlayer((ServerPlayer) (Object) this)) {
+		if (selected.isEmpty() || !selected.sophisticatedFabricLibrary_onDroppedByPlayer((ServerPlayer) (Object) this)) {
 			cir.setReturnValue(false);
 		}
 	}

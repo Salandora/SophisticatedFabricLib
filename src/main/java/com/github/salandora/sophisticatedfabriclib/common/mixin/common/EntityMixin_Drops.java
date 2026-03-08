@@ -15,7 +15,7 @@ import java.util.Collection;
 @Mixin(Entity.class)
 public class EntityMixin_Drops implements SophisticatedEntity {
 	@Unique
-	private Collection<ItemEntity> sophisticatedLibrary$captureDrops = null;
+	private Collection<ItemEntity> sophisticatedFabricLibrary$captureDrops = null;
 
 	@WrapOperation(
 			method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
@@ -24,9 +24,9 @@ public class EntityMixin_Drops implements SophisticatedEntity {
 					target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
 			)
 	)
-	public boolean sophisticatedLibrary$captureDrops(Level level, Entity entity, Operation<Boolean> original) {
-		if (sophisticatedLibrary_captureDrops() != null && entity instanceof ItemEntity item) {
-			sophisticatedLibrary_captureDrops().add(item);
+	public boolean sophisticatedFabricLibrary$captureDrops(Level level, Entity entity, Operation<Boolean> original) {
+		if (sophisticatedFabricLibrary_captureDrops() != null && entity instanceof ItemEntity item) {
+			sophisticatedFabricLibrary_captureDrops().add(item);
 			return false;
 		}
 		return original.call(level, entity);
@@ -34,15 +34,15 @@ public class EntityMixin_Drops implements SophisticatedEntity {
 
 	@Unique
 	@Override
-	public Collection<ItemEntity> sophisticatedLibrary_captureDrops() {
-		return this.sophisticatedLibrary$captureDrops;
+	public Collection<ItemEntity> sophisticatedFabricLibrary_captureDrops() {
+		return this.sophisticatedFabricLibrary$captureDrops;
 	}
 
 	@Unique
 	@Override
-	public Collection<ItemEntity> sophisticatedLibrary_captureDrops(Collection<ItemEntity> value) {
-		Collection<ItemEntity> ret = this.sophisticatedLibrary$captureDrops;
-		this.sophisticatedLibrary$captureDrops = value;
+	public Collection<ItemEntity> sophisticatedFabricLibrary_captureDrops(Collection<ItemEntity> value) {
+		Collection<ItemEntity> ret = this.sophisticatedFabricLibrary$captureDrops;
+		this.sophisticatedFabricLibrary$captureDrops = value;
 		return ret;
 	}
 }

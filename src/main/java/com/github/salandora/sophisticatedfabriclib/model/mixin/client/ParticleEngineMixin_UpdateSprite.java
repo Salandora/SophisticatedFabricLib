@@ -20,8 +20,8 @@ public class ParticleEngineMixin_UpdateSprite {
 					target = "(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/client/particle/TerrainParticle;"
 			)
 	)
-	private TerrainParticle sophisticatedLibrary$updateSprite(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, BlockState state, BlockPos pos, Operation<TerrainParticle> original) {
+	private TerrainParticle sophisticatedFabricLibrary$updateSprite(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, BlockState state, BlockPos pos, Operation<TerrainParticle> original) {
 		TerrainParticle particle = original.call(level, x, y, z, xSpeed, ySpeed, zSpeed, state, pos);
-		return particle.sophisticatedLibrary_updateSprite(state, pos);
+		return particle.sophisticatedFabricLibrary_updateSprite(state, pos);
 	}
 }

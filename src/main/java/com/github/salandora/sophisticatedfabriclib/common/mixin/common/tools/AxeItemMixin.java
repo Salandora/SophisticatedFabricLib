@@ -17,7 +17,7 @@ public class AxeItemMixin extends DiggerItem {
 	}
 
 	@Override
-	public boolean sophisticatedLibrary_canPerformAction(ItemStack stack, ItemAbility itemAbility) {
+	public boolean sophisticatedFabricLibrary_canPerformAction(ItemStack stack, ItemAbility itemAbility) {
 		return ItemAbilities.DEFAULT_AXE_ACTIONS.contains(itemAbility);
 	}
 }

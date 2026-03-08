@@ -34,11 +34,11 @@ public class SophisticatedLoot implements ModInitializer {
 		ResourceLocation last = SophisticatedFabricLib.id("last");
 		LootTableEvents.MODIFY.addPhaseOrdering(Event.DEFAULT_PHASE, last);
 		LootTableEvents.MODIFY.register(last, (key, manager, id, builder, source) ->
-				((SophisticatedLootTableBuilder) builder).sophisticatedLibrary_setId(id));
+				((SophisticatedLootTableBuilder) builder).sophisticatedFabricLibrary_setId(id));
 	}
 
 	public static ObjectArrayList<ItemStack> modifyLoot(ResourceLocation lootTableId, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-		context.sophisticatedLibrary_setQueriedLootTableId(lootTableId);
+		context.sophisticatedFabricLibrary_setQueriedLootTableId(lootTableId);
 		LootModifierManager man = LootModifierManager.INSTANCE;
 		for (IGlobalLootModifier mod : man.getAllLootMods()) {
 			generatedLoot = mod.apply(generatedLoot, context);

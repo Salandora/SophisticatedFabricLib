@@ -8,7 +8,7 @@ public interface SophisticatedBlockEntity {
 		return (BlockEntity) this;
 	}
 
-	default void sophisticatedLibrary_invalidateCaps() {
+	default void sophisticatedFabricLibrary_invalidateCaps() {
 		BlockEntity be = self();
 		if (!(be.getLevel() instanceof ServerWorldCache serverWorldCache)) {
 			return;
@@ -17,9 +17,9 @@ public interface SophisticatedBlockEntity {
 		serverWorldCache.fabric_invalidateCache(be.getBlockPos());
 	}
 
-	default void sophisticatedLibrary_onLoad() {
+	default void sophisticatedFabricLibrary_onLoad() {
 	}
 
-	default void sophisticatedLibrary_onChunkUnloaded() {
+	default void sophisticatedFabricLibrary_onChunkUnloaded() {
 	}
 }

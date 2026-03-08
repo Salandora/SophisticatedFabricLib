@@ -16,7 +16,7 @@ public class LivingEntityMixin_tick {
 					target = "Lnet/minecraft/world/entity/Entity;tick()V"
 			)
 	)
-	private void sophisticatedLibrary$tick(CallbackInfo ci) {
+	private void sophisticatedFabricLibrary$tick(CallbackInfo ci) {
 		LivingEntityEvents.TICK.invoker().onLivingEntityTick((LivingEntity) (Object) this);
 	}
 }

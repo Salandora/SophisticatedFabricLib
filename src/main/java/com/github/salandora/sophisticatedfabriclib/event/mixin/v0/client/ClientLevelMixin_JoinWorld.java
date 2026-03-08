@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientLevel.class)
 public class ClientLevelMixin_JoinWorld {
     @Inject(method = "addEntity", at = @At("HEAD"), cancellable = true)
-    public void sophisticatedLibrary$addEntityEvent(int entityId, Entity entity, CallbackInfo ci) {
+    public void sophisticatedFabricLibrary$addEntityEvent(int entityId, Entity entity, CallbackInfo ci) {
         if (EntityEvents.ON_JOIN_WORLD.invoker().onJoinWorld(entity, (ClientLevel) (Object) this, false))
             ci.cancel();
     }

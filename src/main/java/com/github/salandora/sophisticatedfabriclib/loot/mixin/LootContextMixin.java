@@ -10,15 +10,15 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(LootContext.class)
 public class LootContextMixin implements SophisticatedLootContext {
 	@Unique
-	private ResourceLocation sophisticatedLibrary$queriedLootTableId;
+	private ResourceLocation sophisticatedFabricLibrary$queriedLootTableId;
 
 	@Override
-	public void sophisticatedLibrary_setQueriedLootTableId(ResourceLocation queriedLootTableId) {
-		this.sophisticatedLibrary$queriedLootTableId = queriedLootTableId;
+	public void sophisticatedFabricLibrary_setQueriedLootTableId(ResourceLocation queriedLootTableId) {
+		this.sophisticatedFabricLibrary$queriedLootTableId = queriedLootTableId;
 	}
 
 	@Override
-	public ResourceLocation sophisticatedLibrary_getQueriedLootTableId() {
-		return this.sophisticatedLibrary$queriedLootTableId == null ? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.sophisticatedLibrary$queriedLootTableId;
+	public ResourceLocation sophisticatedFabricLibrary_getQueriedLootTableId() {
+		return this.sophisticatedFabricLibrary$queriedLootTableId == null ? LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.sophisticatedFabricLibrary$queriedLootTableId;
 	}
 }
