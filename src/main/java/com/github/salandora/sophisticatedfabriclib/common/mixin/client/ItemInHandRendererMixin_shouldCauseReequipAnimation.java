@@ -23,7 +23,7 @@ public class ItemInHandRendererMixin_shouldCauseReequipAnimation {
 	private int slotMainHand = 0;
 
 	@Unique
-	private boolean sophisticatedLibrary_shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot) {
+	private boolean sophisticatedFabricLibrary_shouldCauseReequipAnimation(ItemStack from, ItemStack to, int slot) {
 		boolean fromEmpty = from.isEmpty();
 		boolean toEmpty = to.isEmpty();
 
@@ -35,7 +35,7 @@ public class ItemInHandRendererMixin_shouldCauseReequipAnimation {
 			changed = slot != slotMainHand;
 			slotMainHand = slot;
 		}
-		return from.getItem().sophisticatedLibrary_shouldCauseReequipAnimation(from, to, changed);
+		return from.getItem().sophisticatedFabricLibrary_shouldCauseReequipAnimation(from, to, changed);
 	}
 
 	@Inject(
@@ -45,16 +45,16 @@ public class ItemInHandRendererMixin_shouldCauseReequipAnimation {
 					target = "Lnet/minecraft/client/player/LocalPlayer;getAttackStrengthScale(F)F"
 			)
 	)
-	private void sophisticatedLibrary$shouldCauseReequipAnimation(CallbackInfo ci,
+	private void sophisticatedFabricLibrary$shouldCauseReequipAnimation(CallbackInfo ci,
 																@Local LocalPlayer localPlayer,
 																@Local(ordinal = 0) ItemStack mainHandItem,
 																@Local(ordinal = 1) ItemStack offHandItem) {
-		boolean reequipMain = sophisticatedLibrary_shouldCauseReequipAnimation(this.mainHandItem, mainHandItem, localPlayer.getInventory().selected);
+		boolean reequipMain = sophisticatedFabricLibrary_shouldCauseReequipAnimation(this.mainHandItem, mainHandItem, localPlayer.getInventory().selected);
 		if (!reequipMain && this.mainHandItem != mainHandItem) {
 			this.mainHandItem = mainHandItem;
 		}
 
-		boolean reequipOff = sophisticatedLibrary_shouldCauseReequipAnimation(this.offHandItem, offHandItem, -1);
+		boolean reequipOff = sophisticatedFabricLibrary_shouldCauseReequipAnimation(this.offHandItem, offHandItem, -1);
 		if (!reequipOff && this.offHandItem != offHandItem) {
 			this.offHandItem = offHandItem;
 		}

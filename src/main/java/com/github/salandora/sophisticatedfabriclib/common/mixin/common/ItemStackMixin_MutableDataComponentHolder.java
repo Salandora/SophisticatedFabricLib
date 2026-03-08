@@ -16,7 +16,7 @@ public abstract class ItemStackMixin_MutableDataComponentHolder implements Sophi
 	PatchedDataComponentMap components;
 
 	@Override
-	public <T> @Nullable T sophisticatedLibrary_set(DataComponentType<? super T> type, @Nullable T value) {
+	public <T> @Nullable T sophisticatedFabricLibrary_set(DataComponentType<? super T> type, @Nullable T value) {
 		return this.components.set(type, value);
 	}
 
@@ -26,7 +26,7 @@ public abstract class ItemStackMixin_MutableDataComponentHolder implements Sophi
 	}
 
 	@Override
-	public <T> @Nullable T sophisticatedLibrary_remove(DataComponentType<? extends T> type) {
+	public <T> @Nullable T sophisticatedFabricLibrary_remove(DataComponentType<? extends T> type) {
 		return this.components.remove(type);
 	}
 }

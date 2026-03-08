@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PersistentEntitySectionManager.class)
 public class PersistentEntitySectionManagerMixin_JoinWorld<T extends EntityAccess> {
 	@Inject(method = "addEntity", at = @At("HEAD"), cancellable = true)
-	public void sophisticatedLibrary$addEntityEvent(T entityAccess, boolean loadedFromDisk, CallbackInfoReturnable<Boolean> cir) {
+	public void sophisticatedFabricLibrary$addEntityEvent(T entityAccess, boolean loadedFromDisk, CallbackInfoReturnable<Boolean> cir) {
 		if (entityAccess instanceof Entity entity && EntityEvents.ON_JOIN_WORLD.invoker().onJoinWorld(entity, entity.level(), loadedFromDisk))
 			cir.setReturnValue(false);
 	}

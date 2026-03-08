@@ -43,11 +43,11 @@ public abstract class LootTableMixin  implements SophisticatedLootTable {
 	public abstract ObjectArrayList<ItemStack> getRandomItems(LootParams params);
 
 	@Unique
-	private ResourceLocation sophisticatedLibrary$id;
+	private ResourceLocation sophisticatedFabricLibrary$id;
 
 	@Override
-	public void sophisticatedLibrary_setId(ResourceLocation id) {
-		this.sophisticatedLibrary$id = id;
+	public void sophisticatedFabricLibrary_setId(ResourceLocation id) {
+		this.sophisticatedFabricLibrary$id = id;
 	}
 
 	@Inject(
@@ -88,24 +88,24 @@ public abstract class LootTableMixin  implements SophisticatedLootTable {
 	private void getRandomItems(LootContext context, CallbackInfoReturnable<ObjectArrayList<ItemStack>> cir) {
 		ObjectArrayList<ItemStack> objectArrayList = new ObjectArrayList<>();
 		this.getRandomItemsRaw(context, createStackSplitter(context.getLevel(), objectArrayList::add));
-		objectArrayList = SophisticatedLoot.modifyLoot(sophisticatedLibrary$id, objectArrayList, context);
+		objectArrayList = SophisticatedLoot.modifyLoot(sophisticatedFabricLibrary$id, objectArrayList, context);
 		cir.setReturnValue(objectArrayList);
 	}
 
 	@Mixin(LootTable.Builder.class)
 	public static class BuilderMixin implements SophisticatedLootTableBuilder {
 		@Unique
-		private ResourceLocation sophisticatedLibrary$id;
+		private ResourceLocation sophisticatedFabricLibrary$id;
 
 		@Override
-		public void sophisticatedLibrary_setId(ResourceLocation id) {
-			this.sophisticatedLibrary$id = id;
+		public void sophisticatedFabricLibrary_setId(ResourceLocation id) {
+			this.sophisticatedFabricLibrary$id = id;
 		}
 
 		@ModifyReturnValue(method = "build", at = @At("RETURN"))
-		private LootTable sophisticatedLibrary$injectLootTableId(LootTable table) {
-			if (this.sophisticatedLibrary$id != null) {
-				((SophisticatedLootTable) table).sophisticatedLibrary_setId(this.sophisticatedLibrary$id);
+		private LootTable sophisticatedFabricLibrary$injectLootTableId(LootTable table) {
+			if (this.sophisticatedFabricLibrary$id != null) {
+				((SophisticatedLootTable) table).sophisticatedFabricLibrary_setId(this.sophisticatedFabricLibrary$id);
 			}
 
 			return table;

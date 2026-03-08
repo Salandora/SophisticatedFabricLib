@@ -41,7 +41,7 @@ public class FluidUtil {
     }
 
 	public static Optional<IFluidHandlerItem> getFluidHandler(ItemStack stack) {
-		return Optional.ofNullable(stack.sophisticatedLibrary_getCapability(Capabilities.FluidHandler.ITEM));
+		return Optional.ofNullable(stack.sophisticatedFabricLibrary_getCapability(Capabilities.FluidHandler.ITEM));
 	}
 
 	public static Optional<IFluidHandler> getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {

@@ -30,16 +30,16 @@ public abstract class LivingEntityMixin_Drops extends Entity {
 			method = "dropAllDeathLoot",
 			at = @At("HEAD")
 	)
-    private void sophisticatedLibrary$captureDrops(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
-        this.sophisticatedLibrary_captureDrops(new ArrayList<>());
+    private void sophisticatedFabricLibrary$captureDrops(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
+        this.sophisticatedFabricLibrary_captureDrops(new ArrayList<>());
     }
 
     @Inject(
 			method = "dropAllDeathLoot",
 			at = @At(value = "RETURN")
 	)
-    private void sophisticatedLibrary$dropCapturedDrops(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
-        Collection<ItemEntity> drops = this.sophisticatedLibrary_captureDrops(null);
+    private void sophisticatedFabricLibrary$dropCapturedDrops(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
+        Collection<ItemEntity> drops = this.sophisticatedFabricLibrary_captureDrops(null);
         if (!LivingEntityEvents.DROPS.invoker().onLivingEntityDrops((LivingEntity) (Object) this, damageSource, drops,lastHurtByPlayerTime > 0))
             drops.forEach(level::addFreshEntity);
     }

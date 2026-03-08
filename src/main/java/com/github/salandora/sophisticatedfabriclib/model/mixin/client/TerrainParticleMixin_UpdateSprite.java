@@ -20,7 +20,7 @@ public abstract class TerrainParticleMixin_UpdateSprite extends TextureSheetPart
 	}
 
 	@Override
-	public TerrainParticle sophisticatedLibrary_updateSprite(BlockState state, @Nullable BlockPos pos) {
+	public TerrainParticle sophisticatedFabricLibrary_updateSprite(BlockState state, @Nullable BlockPos pos) {
 		if (pos != null) {
 			BlockModelShaper shaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
 			if (shaper.getBlockModel(state) instanceof CustomParticleIcon model) {

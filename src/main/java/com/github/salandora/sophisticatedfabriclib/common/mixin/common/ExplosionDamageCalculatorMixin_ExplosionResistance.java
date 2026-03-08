@@ -24,7 +24,7 @@ public class ExplosionDamageCalculatorMixin_ExplosionResistance {
 																@Local(argsOnly = true) BlockGetter reader,
 																@Local(argsOnly = true) BlockState state,
 																@Local(argsOnly = true) BlockPos pos) {
-		float resistance = state.sophisticatedLibrary_getExplosionResistance(reader, pos, explosion);
+		float resistance = state.sophisticatedFabricLibrary_getExplosionResistance(reader, pos, explosion);
 		return Float.isNaN(resistance) ? original : resistance;
 	}
 }

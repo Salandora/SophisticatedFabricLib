@@ -17,7 +17,7 @@ public class ClientLevelMixin_EntityTick {
 					target = "Lnet/minecraft/world/entity/Entity;tick()V"
 			)
 	)
-	public void sophisticatedLibrary$entityTick(Entity instance, Operation<Void> original) {
+	public void sophisticatedFabricLibrary$entityTick(Entity instance, Operation<Void> original) {
 		original.call(instance);
 		EntityTickEvents.POST.invoker().onLivingEntityTick(instance);
 	}

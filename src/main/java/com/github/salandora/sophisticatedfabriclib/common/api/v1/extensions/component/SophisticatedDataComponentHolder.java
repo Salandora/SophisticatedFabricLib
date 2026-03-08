@@ -11,15 +11,15 @@ public interface SophisticatedDataComponentHolder {
 		return (DataComponentHolder)this;
 	}
 
-	default <T> @Nullable T sophisticatedLibrary_get(Supplier<? extends DataComponentType<? extends T>> componentType) {
+	default <T> @Nullable T sophisticatedFabricLibrary_get(Supplier<? extends DataComponentType<? extends T>> componentType) {
 		return this.self().get(componentType.get());
 	}
 
-	default <T> T sophisticatedLibrary_getOrDefault(Supplier<? extends DataComponentType<? extends T>> type, T defaultValue) {
+	default <T> T sophisticatedFabricLibrary_getOrDefault(Supplier<? extends DataComponentType<? extends T>> type, T defaultValue) {
 		return this.self().getOrDefault(type.get(), defaultValue);
 	}
 
-	default <T extends DataComponentType<?>> boolean sophisticatedLibrary_has(Supplier<T> type) {
+	default <T extends DataComponentType<?>> boolean sophisticatedFabricLibrary_has(Supplier<T> type) {
 		return this.self().has(type.get());
 	}
 }

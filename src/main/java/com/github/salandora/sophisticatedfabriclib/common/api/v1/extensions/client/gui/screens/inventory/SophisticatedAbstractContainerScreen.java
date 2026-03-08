@@ -5,24 +5,24 @@ import net.minecraft.world.inventory.Slot;
 import javax.annotation.Nullable;
 
 public interface SophisticatedAbstractContainerScreen {
-    default int sophisticatedLibrary_getSlotColor(int slotId) {
+    default int sophisticatedFabricLibrary_getSlotColor(int slotId) {
         return -2130706433;
     }
 
-    default int sophisticatedLibrary_getXSize() {
-        throw new RuntimeException("Should have been overriden by mixin.");
+    default int sophisticatedFabricLibrary_getXSize() {
+        throw new RuntimeException("Should have been overridden by mixin.");
     }
 
-    default int sophisticatedLibrary_getGuiLeft() {
-        throw new RuntimeException("Should have been overriden by mixin.");
+    default int sophisticatedFabricLibrary_getGuiLeft() {
+        throw new RuntimeException("Should have been overridden by mixin.");
     }
 
-    default int sophisticatedLibrary_getGuiTop() {
-        throw new RuntimeException("Should have been overriden by mixin.");
+    default int sophisticatedFabricLibrary_getGuiTop() {
+        throw new RuntimeException("Should have been overridden by mixin.");
     }
 
     @Nullable
-    default Slot sophisticatedLibrary_getSlotUnderMouse() {
-        throw new RuntimeException("Should have been overriden by mixin.");
+    default Slot sophisticatedFabricLibrary_getSlotUnderMouse() {
+        throw new RuntimeException("Should have been overridden by mixin.");
     }
 }

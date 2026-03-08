@@ -19,24 +19,24 @@ public class SlotMixin_Background implements SophisticatedSlot {
     private int slot;
 
     @Unique
-    private Pair<ResourceLocation, ResourceLocation> sophisticatedLibrary_background;
+    private Pair<ResourceLocation, ResourceLocation> sophisticatedFabricLibrary_background;
 
     @Inject(method = "getNoItemIcon", at = @At("HEAD"), cancellable = true)
-    private void sophisticatedLibrary$background(CallbackInfoReturnable<Pair<ResourceLocation, ResourceLocation>> cir) {
-        if (sophisticatedLibrary_background != null) {
-            cir.setReturnValue(sophisticatedLibrary_background);
+    private void sophisticatedFabricLibrary$background(CallbackInfoReturnable<Pair<ResourceLocation, ResourceLocation>> cir) {
+        if (sophisticatedFabricLibrary_background != null) {
+            cir.setReturnValue(sophisticatedFabricLibrary_background);
         }
     }
 
     @Override
-    public Slot sophisticatedLibrary_setBackground(ResourceLocation atlas, ResourceLocation sprite) {
-        this.sophisticatedLibrary_background = Pair.of(atlas, sprite);
+    public Slot sophisticatedFabricLibrary_setBackground(ResourceLocation atlas, ResourceLocation sprite) {
+        this.sophisticatedFabricLibrary_background = Pair.of(atlas, sprite);
         return (Slot) (Object) this;
     }
 
     @Unique
     @Override
-    public int sophisticatedLibrary_getSlotIndex() {
+    public int sophisticatedFabricLibrary_getSlotIndex() {
         return slot;
     }
 }

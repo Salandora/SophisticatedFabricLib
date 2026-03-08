@@ -147,7 +147,7 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	 */
 	protected ItemStack getStackFromContents(ItemContainerContents contents, int slot) {
 		this.validateSlotIndex(slot);
-		return contents.sophisticatedLibrary_getSlots() <= slot ? ItemStack.EMPTY : contents.sophisticatedLibrary_getStackInSlot(slot);
+		return contents.sophisticatedFabricLibrary_getSlots() <= slot ? ItemStack.EMPTY : contents.sophisticatedFabricLibrary_getStackInSlot(slot);
 	}
 
 	/**
@@ -162,11 +162,11 @@ public abstract class ComponentItemHandler implements IItemHandlerModifiable {
 	protected void updateContents(ItemContainerContents contents, ItemStack stack, int slot) {
 		this.validateSlotIndex(slot);
 		// Use the max of the contents slots and the capability slots to avoid truncating
-		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedLibrary_getSlots(), this.getSlotCount()), ItemStack.EMPTY);
+		NonNullList<ItemStack> list = NonNullList.withSize(Math.max(contents.sophisticatedFabricLibrary_getSlots(), this.getSlotCount()), ItemStack.EMPTY);
 		contents.copyInto(list);
 		ItemStack oldStack = list.get(slot);
 		list.set(slot, stack);
-		this.parent.sophisticatedLibrary_set(this.component, ItemContainerContents.fromItems(list));
+		this.parent.sophisticatedFabricLibrary_set(this.component, ItemContainerContents.fromItems(list));
 		this.onContentsChanged(slot, oldStack, stack);
 	}
 

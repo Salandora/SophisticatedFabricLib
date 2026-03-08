@@ -7,16 +7,16 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface SophisticatedEntity {
-	default CompoundTag sophisticatedLibrary_getCustomData() {
+	default CompoundTag sophisticatedFabricLibrary_getCustomData() {
 		throw new RuntimeException("This should have been implemented via mixin.");
 	}
 
 	@Nullable
-	default Collection<ItemEntity> sophisticatedLibrary_captureDrops() {
+	default Collection<ItemEntity> sophisticatedFabricLibrary_captureDrops() {
 		throw new RuntimeException("This should have been implemented via mixin.");
 	}
 
-	default Collection<ItemEntity> sophisticatedLibrary_captureDrops(@Nullable Collection<ItemEntity> value) {
+	default Collection<ItemEntity> sophisticatedFabricLibrary_captureDrops(@Nullable Collection<ItemEntity> value) {
 		throw new RuntimeException("This should have been implemented via mixin.");
 	}
 }

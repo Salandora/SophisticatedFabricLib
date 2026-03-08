@@ -19,7 +19,7 @@ public class MouseHandlerMixin_MouseScrolled {
     private Minecraft minecraft;
 
     @Inject(method = "onScroll", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;accumulatedScrollY:D", ordinal = 6, shift = At.Shift.AFTER), cancellable = true)
-    private void  sophisticatedLibrary$onScroll(long handle, double xOffset, double yOffset, CallbackInfo ci, @Local(ordinal = 2) double deltaX, @Local(ordinal = 3) double deltaY) {
+    private void  sophisticatedFabricLibrary$onScroll(long handle, double xOffset, double yOffset, CallbackInfo ci, @Local(ordinal = 2) double deltaX, @Local(ordinal = 3) double deltaY) {
         if (handle == this.minecraft.getWindow().getWindow()) {
             var result = ClientRawInputEvent.MOUSE_SCROLLED.invoker().mouseScrolled(minecraft, deltaX, deltaY);
             if (result != InteractionResult.PASS)

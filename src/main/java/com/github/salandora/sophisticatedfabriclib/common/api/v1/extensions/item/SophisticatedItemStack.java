@@ -26,24 +26,24 @@ public interface SophisticatedItemStack {
 		return (ItemStack) this;
 	}
 
-	default boolean sophisticatedLibrary_canPerformAction(ItemAbility itemAbility) {
-		return self().getItem().sophisticatedLibrary_canPerformAction(self(), itemAbility);
+	default boolean sophisticatedFabricLibrary_canPerformAction(ItemAbility itemAbility) {
+		return self().getItem().sophisticatedFabricLibrary_canPerformAction(self(), itemAbility);
 	}
 
-	default float sophisticatedLibrary_getXpRepairRatio() {
-		return this.self().getItem().sophisticatedLibrary_getXpRepairRatio(this.self());
+	default float sophisticatedFabricLibrary_getXpRepairRatio() {
+		return this.self().getItem().sophisticatedFabricLibrary_getXpRepairRatio(this.self());
 	}
 
-	default boolean sophisticatedLibrary_onDroppedByPlayer(Player player) {
-		return self().getItem().sophisticatedLibrary_onDroppedByPlayer(self(), player);
+	default boolean sophisticatedFabricLibrary_onDroppedByPlayer(Player player) {
+		return self().getItem().sophisticatedFabricLibrary_onDroppedByPlayer(self(), player);
 	}
 
-	default int sophisticatedLibrary_getBurnTime(@Nullable RecipeType<?> recipeType) {
+	default int sophisticatedFabricLibrary_getBurnTime(@Nullable RecipeType<?> recipeType) {
 		if (this.self().isEmpty()) {
 			return 0;
 		}
 
-		int burnTime = this.self().getItem().sophisticatedLibrary_getBurnTime(this.self(), recipeType);
+		int burnTime = this.self().getItem().sophisticatedFabricLibrary_getBurnTime(this.self(), recipeType);
 		if (burnTime < 0) {
 			String itemId = String.valueOf(BuiltInRegistries.ITEM.getKey(this.self().getItem()));
 			throw new IllegalStateException("Stack of item " + itemId + " has a negative burn time");
@@ -52,14 +52,14 @@ public interface SophisticatedItemStack {
 		return burnTime;
 	}
 
-	default InteractionResult sophisticatedLibrary_onItemUseFirst(UseOnContext context) {
+	default InteractionResult sophisticatedFabricLibrary_onItemUseFirst(UseOnContext context) {
 		Player player = context.getPlayer();
 		BlockPos pos = context.getClickedPos();
 		if (!player.getAbilities().mayBuild && !self().canPlaceOnBlockInAdventureMode(new BlockInWorld(context.getLevel(), pos, false))) {
 			return InteractionResult.PASS;
 		} else {
 			Item item = self().getItem();
-			InteractionResult result = item.sophisticatedLibrary_onItemUseFirst(self(), context);
+			InteractionResult result = item.sophisticatedFabricLibrary_onItemUseFirst(self(), context);
 			if (result == InteractionResult.SUCCESS) {
 				player.awardStat(Stats.ITEM_USED.get(item));
 			}
@@ -69,16 +69,16 @@ public interface SophisticatedItemStack {
 	}
 
 	@ApiStatus.OverrideOnly
-	default int sophisticatedLibrary_getEnchantmentLevel(Holder<Enchantment> enchantment) {
-		return self().getItem().sophisticatedLibrary_getEnchantmentLevel(self(), enchantment);
+	default int sophisticatedFabricLibrary_getEnchantmentLevel(Holder<Enchantment> enchantment) {
+		return self().getItem().sophisticatedFabricLibrary_getEnchantmentLevel(self(), enchantment);
 	}
 
-	default boolean sophisticatedLibrary_makesPiglinsNeutral(LivingEntity wearer) {
-		return self().getItem().sophisticatedLibrary_makesPiglinsNeutral(self(), wearer);
+	default boolean sophisticatedFabricLibrary_makesPiglinsNeutral(LivingEntity wearer) {
+		return self().getItem().sophisticatedFabricLibrary_makesPiglinsNeutral(self(), wearer);
 	}
 
 	@Nullable
-	default <T> T sophisticatedLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
+	default <T> T sophisticatedFabricLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
 		MutableContainerItemContext context = new MutableContainerItemContext(self());
 		return context.find(lookup);
 	}

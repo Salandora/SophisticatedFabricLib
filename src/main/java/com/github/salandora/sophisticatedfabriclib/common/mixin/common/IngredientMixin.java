@@ -13,7 +13,7 @@ public class IngredientMixin implements SophisticatedIngredient {
 	private Ingredient.Value[] values;
 
 	@Override
-	public Ingredient.Value[] sophisticatedlibrary_getValues() {
+	public Ingredient.Value[] sophisticatedFabricLibrary_getValues() {
 		if (((Ingredient) (Object) this).getCustomIngredient() != null) {
 			throw new IllegalStateException("Cannot retrieve values from custom ingredient!");
 		} else {

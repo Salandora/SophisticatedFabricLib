@@ -21,30 +21,30 @@ public class EntityMixin_CustomData implements SophisticatedEntity {
 	private static final String SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY = "SophisticatedFabricLibraryData";
 
 	@Unique
-	private CompoundTag sophisticatedLibrary$customData;
+	private CompoundTag sophisticatedFabricLibrary$customData;
 
 	@Override
-	public CompoundTag sophisticatedLibrary_getCustomData() {
-		if (this.sophisticatedLibrary$customData == null) {
-			this.sophisticatedLibrary$customData = new CompoundTag();
+	public CompoundTag sophisticatedFabricLibrary_getCustomData() {
+		if (this.sophisticatedFabricLibrary$customData == null) {
+			this.sophisticatedFabricLibrary$customData = new CompoundTag();
 		}
-		return this.sophisticatedLibrary$customData;
+		return this.sophisticatedFabricLibrary$customData;
 	}
 
 	@Inject(method = "saveWithoutId", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void sophisticatedCore$saveAdditionalData(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-		if (this.sophisticatedLibrary$customData != null && !this.sophisticatedLibrary$customData.isEmpty()) {
-			compound.put(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY, this.sophisticatedLibrary$customData);
+		if (this.sophisticatedFabricLibrary$customData != null && !this.sophisticatedFabricLibrary$customData.isEmpty()) {
+			compound.put(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY, this.sophisticatedFabricLibrary$customData);
 		}
 	}
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
 	public void sophisticatedCore$readAdditionalData(CompoundTag compound, CallbackInfo ci) {
 		if (compound.contains(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY)) {
-			this.sophisticatedLibrary$customData = compound.getCompound(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY);
+			this.sophisticatedFabricLibrary$customData = compound.getCompound(SOPHISTICATEDFABRICLIBRARYDATA_NBT_KEY);
 		} else if (compound.contains(OLD_SOPHISTICATEDCOREDATA_NBT_KEY)) {
 			// TODO: Deprecated key, this is here for conversion, remove in future
-			this.sophisticatedLibrary$customData = compound.getCompound(OLD_SOPHISTICATEDCOREDATA_NBT_KEY);
+			this.sophisticatedFabricLibrary$customData = compound.getCompound(OLD_SOPHISTICATEDCOREDATA_NBT_KEY);
 		}
 	}
 }

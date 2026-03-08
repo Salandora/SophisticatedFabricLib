@@ -16,20 +16,20 @@ public class ItemContainerContentsMixin implements SophisticatedItemContainerCon
 	private NonNullList<ItemStack> items;
 
 	@Override
-	public int sophisticatedLibrary_getSlots() {
+	public int sophisticatedFabricLibrary_getSlots() {
 		return this.items.size();
 	}
 
 	@Override
-	public ItemStack sophisticatedLibrary_getStackInSlot(int slot) {
-		this.sophisticatedLibrary_validateSlotIndex(slot);
+	public ItemStack sophisticatedFabricLibrary_getStackInSlot(int slot) {
+		this.sophisticatedFabricLibrary_validateSlotIndex(slot);
 		return this.items.get(slot).copy();
 	}
 
 	@Unique
-	private void sophisticatedLibrary_validateSlotIndex(int slot) {
-		if (slot < 0 || slot >= this.sophisticatedLibrary_getSlots()) {
-			throw new UnsupportedOperationException("Slot " + slot + " not in valid range - [0," + this.sophisticatedLibrary_getSlots() + ")");
+	private void sophisticatedFabricLibrary_validateSlotIndex(int slot) {
+		if (slot < 0 || slot >= this.sophisticatedFabricLibrary_getSlots()) {
+			throw new UnsupportedOperationException("Slot " + slot + " not in valid range - [0," + this.sophisticatedFabricLibrary_getSlots() + ")");
 		}
 	}
 }

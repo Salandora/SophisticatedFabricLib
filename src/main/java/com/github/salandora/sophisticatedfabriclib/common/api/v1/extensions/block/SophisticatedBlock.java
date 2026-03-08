@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface SophisticatedBlock {
-	default @Nullable BlockState sophisticatedLibrary_getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
+	default @Nullable BlockState sophisticatedFabricLibrary_getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
 		ItemStack stack = context.getItemInHand();
-		if (!stack.sophisticatedLibrary_canPerformAction(itemAbility)) {
+		if (!stack.sophisticatedFabricLibrary_canPerformAction(itemAbility)) {
 			return null;
 		}
 		if (ItemAbilities.AXE_STRIP == itemAbility) {
@@ -68,19 +68,19 @@ public interface SophisticatedBlock {
 		return null;
 	}
 
-	default boolean sophisticatedLibrary_addLandingEffects(BlockState state1, ServerLevel level, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
+	default boolean sophisticatedFabricLibrary_addLandingEffects(BlockState state1, ServerLevel level, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
 		return false;
 	}
 
-	default boolean sophisticatedLibrary_addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
+	default boolean sophisticatedFabricLibrary_addRunningEffects(BlockState state, Level level, BlockPos pos, Entity entity) {
 		return false;
 	}
 
-	default float sophisticatedLibrary_getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+	default float sophisticatedFabricLibrary_getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
 		return Float.NaN;
 	}
 
-	default boolean sophisticatedLibrary_canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+	default boolean sophisticatedFabricLibrary_canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
 		return true;
 	}
 }

@@ -21,11 +21,11 @@ public interface SophisticatedPlayer {
 		return (Player)this;
 	}
 
-	default OptionalInt sophisticatedCore_openMenu(MenuProvider menuProvider, BlockPos pos) {
-		return this.sophisticatedCore_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
+	default OptionalInt sophisticatedFabricLibrary_openMenu(MenuProvider menuProvider, BlockPos pos) {
+		return this.sophisticatedFabricLibrary_openMenu(menuProvider, (buf) -> buf.writeBlockPos(pos));
 	}
 
-	default OptionalInt sophisticatedCore_openMenu(MenuProvider menu, Consumer<RegistryFriendlyByteBuf> context) {
+	default OptionalInt sophisticatedFabricLibrary_openMenu(MenuProvider menu, Consumer<RegistryFriendlyByteBuf> context) {
 		var screenHandlerFactory = new ExtendedScreenHandlerFactory<>() {
 			@Override
 			public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
@@ -54,12 +54,12 @@ public interface SophisticatedPlayer {
 	}
 
 	@Nullable
-	default <T> T sophisticatedCore_getCapability(EntityApiLookup<T, ?> lookup) {
-		return sophisticatedCore_getCapability(lookup, null);
+	default <T> T sophisticatedFabricLibrary_getCapability(EntityApiLookup<T, ?> lookup) {
+		return sophisticatedFabricLibrary_getCapability(lookup, null);
 	}
 
 	@Nullable
-	default <T, C> T sophisticatedCore_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
+	default <T, C> T sophisticatedFabricLibrary_getCapability(EntityApiLookup<T, C> lookup, @Nullable C context) {
 		return lookup.find(self(), context);
 	}
 }

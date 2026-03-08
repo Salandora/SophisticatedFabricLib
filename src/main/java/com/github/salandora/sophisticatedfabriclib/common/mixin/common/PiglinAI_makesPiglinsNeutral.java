@@ -19,8 +19,8 @@ public class PiglinAI_makesPiglinsNeutral {
 			),
 			cancellable = true
 	)
-	private static void sophisticatedLibrary$makesPiglinsNeutral(LivingEntity livingEntity, CallbackInfoReturnable<Boolean> cir, @Local ItemStack itemStack) {
-		if (itemStack.sophisticatedLibrary_makesPiglinsNeutral(livingEntity)) {
+	private static void sophisticatedFabricLibrary$makesPiglinsNeutral(LivingEntity livingEntity, CallbackInfoReturnable<Boolean> cir, @Local ItemStack itemStack) {
+		if (itemStack.sophisticatedFabricLibrary_makesPiglinsNeutral(livingEntity)) {
 			cir.setReturnValue(true);
 		}
 	}

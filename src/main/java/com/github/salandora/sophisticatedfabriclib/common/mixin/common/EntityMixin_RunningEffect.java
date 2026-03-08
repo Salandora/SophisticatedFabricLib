@@ -21,8 +21,8 @@ public class EntityMixin_RunningEffect {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getDeltaMovement()Lnet/minecraft/world/phys/Vec3;"),
 			cancellable = true
 	)
-	private void sophisticatedLibrary$addRunningEffects(CallbackInfo ci, @Local BlockPos blockPos, @Local BlockState blockState) {
-		if (blockState.sophisticatedLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this)) {
+	private void sophisticatedFabricLibrary$addRunningEffects(CallbackInfo ci, @Local BlockPos blockPos, @Local BlockState blockState) {
+		if (blockState.sophisticatedFabricLibrary_addRunningEffects(level, blockPos, (Entity) (Object) this)) {
 			ci.cancel();
 		}
 	}

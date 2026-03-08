@@ -26,7 +26,7 @@ public class ParticleEngineMixin_addEffects {
 					target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"
 			)
 	)
-    private boolean sophisticatedLibrary$addDestroyEffects(BlockState blockState, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
+    private boolean sophisticatedFabricLibrary$addDestroyEffects(BlockState blockState, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
 		IClientBlockExtensions extensions = ClientExtensionManager.BLOCK_EXTENSIONS.find(level, pos, blockState, null, null);
 		if (extensions != null) {
 			return extensions.addDestroyEffects(blockState, level, pos, (ParticleEngine) (Object) this);
@@ -41,7 +41,7 @@ public class ParticleEngineMixin_addEffects {
 					target = "Lnet/minecraft/world/level/block/state/BlockState;shouldSpawnTerrainParticles()Z"
 			)
 	)
-	private boolean sophisticatedLibrary$addHitEffects(BlockState blockState, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
+	private boolean sophisticatedFabricLibrary$addHitEffects(BlockState blockState, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
 		IClientBlockExtensions extensions = ClientExtensionManager.BLOCK_EXTENSIONS.find(level, pos, blockState, null, null);
 		if (extensions != null) {
 			return !extensions.addHitEffects(blockState, level, Minecraft.getInstance().hitResult, (ParticleEngine) (Object) this);
