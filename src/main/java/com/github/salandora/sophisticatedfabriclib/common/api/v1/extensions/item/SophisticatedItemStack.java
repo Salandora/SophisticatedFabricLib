@@ -79,7 +79,7 @@ public interface SophisticatedItemStack {
 
 	@Nullable
 	default <T> T sophisticatedFabricLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
-		MutableContainerItemContext context = new MutableContainerItemContext(self());
+		ContainerItemContext context = MutableContainerItemContext.ofSingleStack(self());
 		return context.find(lookup);
 	}
 }
