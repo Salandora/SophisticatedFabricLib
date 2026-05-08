@@ -1,6 +1,7 @@
 package com.github.salandora.sophisticatedfabriclib.transfer;
 
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -58,7 +59,7 @@ public class MutableContainerItemContextTest {
 	@ParameterizedTest
 	@MethodSource("insertCases")
 	void testInsert(TestCase c) {
-		MutableContainerItemContext ctx = new MutableContainerItemContext(c.input());
+		ContainerItemContext ctx = MutableContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = ctx.find(FluidStorage.ITEM);
 		assertNotNull(storage);
 
@@ -86,7 +87,7 @@ public class MutableContainerItemContextTest {
 	@ParameterizedTest
 	@MethodSource("extractCases")
 	void testExtract(TestCase c) {
-		MutableContainerItemContext ctx = new MutableContainerItemContext(c.input());
+		ContainerItemContext ctx = MutableContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = FluidStorage.ITEM.find(c.input(), ctx);
 		assertNotNull(storage);
 
