@@ -18,7 +18,6 @@
       "com.github.salandora.sophisticatedfabriclib.model.SophisticatedModelClient"
     ],
     "main": [
-      "com.github.salandora.sophisticatedfabriclib.SophisticatedFabricLib",
       "com.github.salandora.sophisticatedfabriclib.common.SophisticatedCommon",
       "com.github.salandora.sophisticatedfabriclib.model.SophisticatedModel",
       "com.github.salandora.sophisticatedfabriclib.loot.SophisticatedLoot"

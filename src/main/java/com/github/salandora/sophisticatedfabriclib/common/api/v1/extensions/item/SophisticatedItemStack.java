@@ -77,7 +77,7 @@ public interface SophisticatedItemStack {
 	}
 
 	default <T> LazyOptional<T> sophisticatedFabricLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
-		MutableContainerItemContext context = new MutableContainerItemContext(self());
+		ContainerItemContext context = MutableContainerItemContext.ofSingleStack(self());
 		return LazyOptional.of(() -> context.find(lookup));
 	}
 
