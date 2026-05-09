@@ -3,10 +3,15 @@ package com.github.salandora.sophisticatedfabriclib.energy;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.IEnergyStorage;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.EnergyStorageWrapper;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.IEnergyStorageWrapper;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import team.reborn.energy.api.EnergyStorage;
@@ -14,7 +19,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnergyWrapperTest {
 	@BeforeAll
@@ -26,10 +31,18 @@ public class EnergyWrapperTest {
 	static final class SimpleIEnergyStorage implements IEnergyStorage {
 		private int energyStored;
 		private final int cap;
+		private final boolean canReceive;
+		private final boolean canExtract;
 
 		SimpleIEnergyStorage(int stored, int cap) {
+			this(stored, cap, true, true);
+		}
+
+		SimpleIEnergyStorage(int stored, int cap, boolean canReceive, boolean canExtract) {
 			this.energyStored = stored;
 			this.cap = cap;
+			this.canReceive = canReceive;
+			this.canExtract = canExtract;
 		}
 
 		@Override
@@ -75,19 +88,38 @@ public class EnergyWrapperTest {
 
 		@Override
 		public boolean canExtract() {
-			return true;
+			return canExtract;
 		}
 
 		@Override
 		public boolean canReceive() {
-			return true;
+			return canReceive;
 		}
 	}
 
-	static final class SimpleTREnergyStorage extends SimpleEnergyStorage {
+	static class SimpleTREnergyStorage extends SimpleEnergyStorage {
+		private int insertCalls;
+		private int extractCalls;
+
 		SimpleTREnergyStorage(long amount, long capacity) {
-			super(capacity, Long.MAX_VALUE, Long.MAX_VALUE);
+			this(amount, capacity, Long.MAX_VALUE, Long.MAX_VALUE);
+		}
+
+		SimpleTREnergyStorage(long amount, long capacity, long maxInsert, long maxExtract) {
+			super(capacity, maxInsert, maxExtract);
 			this.amount = amount;
+		}
+
+		@Override
+		public long insert(long maxAmount, TransactionContext transaction) {
+			insertCalls++;
+			return super.insert(maxAmount, transaction);
+		}
+
+		@Override
+		public long extract(long maxAmount, TransactionContext transaction) {
+			extractCalls++;
+			return super.extract(maxAmount, transaction);
 		}
 	}
 
@@ -149,6 +181,56 @@ public class EnergyWrapperTest {
 		assertEquals(tc.expectedFinalAmount(), tr.getAmount());
 	}
 
+	@Test
+	void testEnergyStorageWrapper_accessorsAndCapabilitiesDelegateToWrappedStorage() {
+		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100, 0, 15);
+		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
+
+		assertEquals(25, wrapped.getEnergyStored());
+		assertEquals(100, wrapped.getMaxEnergyStored());
+		assertFalse(wrapped.canReceive());
+		assertTrue(wrapped.canExtract());
+	}
+
+	@Test
+	void testEnergyStorageWrapper_setEnergyStoredIsNoop() {
+		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100);
+		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
+
+		wrapped.setEnergyStored(80);
+
+		assertEquals(25, wrapped.getEnergyStored());
+		assertEquals(25, tr.getAmount());
+	}
+
+	@Test
+	void testEnergyStorageWrapper_zeroReceiveAndExtractDoNotTouchWrappedStorage() {
+		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100);
+		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
+
+		assertEquals(0, wrapped.receiveEnergy(0, false));
+		assertEquals(0, wrapped.extractEnergy(0, false));
+
+		assertEquals(0, tr.insertCalls);
+		assertEquals(0, tr.extractCalls);
+		assertEquals(25, tr.getAmount());
+	}
+
+	@Test
+	void testEnergyStorageWrapper_getContainerReturnsContextStack() {
+		ItemStack stack = new ItemStack(Items.DIAMOND, 3);
+		EnergyStorageWrapper wrapped = EnergyStorageWrapper.of(
+				new SimpleTREnergyStorage(25, 100),
+				MutableContainerItemContext.ofSingleStack(stack)
+		);
+
+		ItemStack container = wrapped.getContainer();
+
+		assertNotNull(container);
+		assertEquals(Items.DIAMOND, container.getItem());
+		assertEquals(3, container.getCount());
+	}
+
 
 	// --------------------------
 	// EnergyStorage -> IEnergyStorage
@@ -205,5 +287,37 @@ public class EnergyWrapperTest {
 		}
 
 		assertEquals(tc.expectedFinalAmount(), ie.getEnergyStored());
+	}
+
+	@Test
+	void testIEnergyStorageWrapper_ofNullReturnsNull() {
+		assertNull(IEnergyStorageWrapper.of(null));
+	}
+
+	@Test
+	void testIEnergyStorageWrapper_accessorsAndCapabilitiesDelegateToWrappedStorage() {
+		SimpleIEnergyStorage ie = new SimpleIEnergyStorage(25, 100, false, true);
+		IEnergyStorageWrapper wrapped = IEnergyStorageWrapper.of(ie);
+
+		assertNotNull(wrapped);
+		assertSame(ie, wrapped.getEnergyStorage());
+		assertEquals(25, wrapped.getAmount());
+		assertEquals(100, wrapped.getCapacity());
+		assertFalse(wrapped.supportsInsertion());
+		assertTrue(wrapped.supportsExtraction());
+	}
+
+	@Test
+	void testIEnergyStorageWrapper_insertAndExtractRespectDisabledCapabilities() {
+		SimpleIEnergyStorage ie = new SimpleIEnergyStorage(25, 100, false, false);
+		EnergyStorage wrapped = IEnergyStorageWrapper.of(ie);
+
+		try (Transaction tx = Transaction.openOuter()) {
+			assertEquals(0, wrapped.insert(50, tx));
+			assertEquals(0, wrapped.extract(50, tx));
+			tx.commit();
+		}
+
+		assertEquals(25, ie.getEnergyStored());
 	}
 }
