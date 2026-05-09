@@ -1,6 +1,7 @@
 package com.github.salandora.sophisticatedfabriclib.fluid;
 
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidActionResult;
+import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidUtil;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.IItemHandler;
@@ -21,14 +22,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluids;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FluidUtilTest {
@@ -58,6 +60,51 @@ public class FluidUtilTest {
 			throw new AssertionError("Expected count " + expected.getCount() + ", got: " + got.getCount());
 	}
 
+	@Test
+	void testToBucketsConvertsFabricDropletsToMilliBuckets() {
+		assertEquals(1000, FluidUtil.toBuckets(FluidConstants.BUCKET));
+		assertEquals(250, FluidUtil.toBuckets(FluidConstants.BUCKET / 4));
+	}
+
+	@Test
+	void testIsFluidStorage() {
+		assertTrue(FluidUtil.isFluidStorage(new ItemStack(Items.BUCKET)));
+		assertFalse(FluidUtil.isFluidStorage(new ItemStack(Items.DIRT)));
+	}
+
+	@Test
+	void testTryFluidTransferByAmountSimulateAndExecute() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		TestFluidStorage destination = TestHelper.emptyStorage();
+
+		FluidStack simulated = FluidUtil.tryFluidTransfer(destination, source, FluidConstants.BUCKET, false);
+		assertEquals(FluidConstants.BUCKET, simulated.getAmount());
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+		assertEquals(0, destination.getAmount());
+
+		FluidStack transferred = FluidUtil.tryFluidTransfer(destination, source, FluidConstants.BUCKET, true);
+		assertEquals(FluidConstants.BUCKET, transferred.getAmount());
+		assertEquals(0, source.getAmount());
+		assertEquals(FluidConstants.BUCKET, destination.getAmount());
+	}
+
+	@Test
+	void testTryFluidTransferByResourceRequiresMatchingFluidAndSpace() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		TestFluidStorage destination = TestHelper.emptyStorage();
+
+		FluidStack wrongFluid = FluidUtil.tryFluidTransfer(destination, source, new FluidStack(Fluids.LAVA, FluidConstants.BUCKET), true);
+		assertTrue(wrongFluid.isEmpty());
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+		assertEquals(0, destination.getAmount());
+
+		TestFluidStorage fullDestination = TestHelper.filledStorage(10 * FluidConstants.BUCKET);
+		FluidStack noSpace = FluidUtil.tryFluidTransfer(fullDestination, source, new FluidStack(Fluids.WATER, FluidConstants.BUCKET), true);
+		assertTrue(noSpace.isEmpty());
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+		assertEquals(10 * FluidConstants.BUCKET, fullDestination.getAmount());
+	}
+
 	static Stream<TestCase> fillCases() {
 		return Stream.of(
 				new TestCase(new ItemStack(Items.BUCKET), new ItemStack(Items.WATER_BUCKET, 1), 4 * FluidConstants.BUCKET, true),
@@ -84,6 +131,28 @@ public class FluidUtilTest {
 		assertItemStack(original, test.input());
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertEquals(test.expectedFluid(), source.getAmount());
+	}
+
+	@Test
+	void testTryFillContainerFailsForNonFluidContainer() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		ItemStack dirt = new ItemStack(Items.DIRT);
+
+		FluidActionResult result = FluidUtil.tryFillContainer(dirt, source, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertItemStack(new ItemStack(Items.DIRT), dirt);
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+	}
+
+	@Test
+	void testTryFillContainerFailsWhenSourceIsEmpty() {
+		TestFluidStorage source = TestHelper.emptyStorage();
+
+		FluidActionResult result = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), source, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertEquals(0, source.getAmount());
 	}
 
 	static Stream<TestCase> emptyCases() {
@@ -115,6 +184,28 @@ public class FluidUtilTest {
 		assertEquals(test.expectedFluid(), dest.getAmount());
 	}
 
+	@Test
+	void testTryEmptyContainerFailsWhenDestinationCannotAcceptFluid() {
+		TestFluidStorage dest = TestHelper.filledStorage(10 * FluidConstants.BUCKET);
+		ItemStack waterBucket = new ItemStack(Items.WATER_BUCKET);
+
+		FluidActionResult result = FluidUtil.tryEmptyContainer(waterBucket, dest, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertItemStack(new ItemStack(Items.WATER_BUCKET), waterBucket);
+		assertEquals(10 * FluidConstants.BUCKET, dest.getAmount());
+	}
+
+	@Test
+	void testTryEmptyContainerFailsWhenContainerIsEmpty() {
+		TestFluidStorage dest = TestHelper.emptyStorage();
+
+		FluidActionResult result = FluidUtil.tryEmptyContainer(new ItemStack(Items.BUCKET), dest, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertEquals(0, dest.getAmount());
+	}
+
 	static Stream<TestCaseStow> fillStowCases() {
 		return Stream.of(
 				new TestCaseStow(new ItemStack(Items.BUCKET), new ItemStack(Items.WATER_BUCKET, 1), ItemStack.EMPTY,4 * FluidConstants.BUCKET, true),
@@ -143,6 +234,46 @@ public class FluidUtilTest {
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertTrue(TestHelper.containsItem(overflowInv, test.expectedInvItem()));
 		assertEquals(test.expectedFluid(), source.getAmount());
+	}
+
+	@Test
+	void testTryFillContainerAndStowFailsForEmptyContainerStack() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		ItemStackHandler overflowInv = TestHelper.emptyItemStorage();
+
+		FluidActionResult result = FluidUtil.tryFillContainerAndStow(ItemStack.EMPTY, source, overflowInv, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+	}
+
+	@Test
+	void testTryFillContainerAndStowFailsForStackedContainerWhenInventoryCannotAcceptResult() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		ItemStackHandler fullInventory = new ItemStackHandler(0);
+		ItemStack buckets = new ItemStack(Items.BUCKET, 2);
+
+		FluidActionResult result = FluidUtil.tryFillContainerAndStow(buckets, source, fullInventory, FluidConstants.BUCKET, null, true);
+
+		assertFalse(result.isSuccess());
+		assertItemStack(new ItemStack(Items.BUCKET, 2), buckets);
+		assertEquals(FluidConstants.BUCKET, source.getAmount());
+	}
+
+	@Test
+	void testTryFillContainerAndStowCreativePlayerKeepsOriginalStackResult() {
+		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
+		ItemStackHandler fullInventory = new ItemStackHandler(0);
+		ItemStack buckets = new ItemStack(Items.BUCKET, 2);
+		Player player = mockPlayer();
+		player.getAbilities().instabuild = true;
+
+		FluidActionResult result = FluidUtil.tryFillContainerAndStow(buckets, source, fullInventory, FluidConstants.BUCKET, player, true);
+
+		assertTrue(result.isSuccess());
+		assertItemStack(new ItemStack(Items.BUCKET, 2), result.getResult());
+		assertItemStack(new ItemStack(Items.BUCKET, 2), buckets);
+		assertEquals(0, source.getAmount());
 	}
 
 	static Stream<TestCaseStow> emptyStowCases() {
