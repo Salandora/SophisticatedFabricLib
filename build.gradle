@@ -13,6 +13,7 @@ buildscript {
 plugins {
     id 'idea'
     id 'fabric-loom' version '1.15.+'
+    id 'jacoco'
     id 'maven-publish'
     id "net.darkhax.curseforgegradle" version "1.1.15"
     id "com.modrinth.minotaur" version "2.+"
@@ -54,6 +55,11 @@ logger.lifecycle("${project.name} version: ${project.version}")
 base {
     archivesName = "${mod_id}"
 }
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+var jacocoPlugin = project.extensions.getByType(JacocoPluginExtension.class)
 
 fabricApi {
     configureTests {
@@ -102,6 +108,18 @@ loom {
 
             ideConfigGenerated = false
             runDir "build/run/gametest-datagen"
+        }
+
+        gametest {
+            server()
+            source sourceSets.testmod
+            source sourceSets.gametest
+
+            name "Game Test"
+
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.file("reports/runGametest.xml").get().asFile.absolutePath}"
+            runDir "run/gametest"
         }
 
         client {
@@ -155,6 +173,31 @@ loom {
     }
 }
 
+runGametestDatagen {
+    outputs.dir file("src/gametest/generated")
+
+    jacocoPlugin.applyTo(it)
+    extensions.configure(JacocoTaskExtension.class) {
+        it.destinationFile = layout.buildDirectory.file("jacoco/runGametestDatagen.exec").get().asFile
+        it.includes = [
+                "com.github.salandora.sophisticatedfabriclib.*"
+        ]
+    }
+}
+
+
+runGametest {
+    outputs.file layout.buildDirectory.file("reports/runGametest.xml")
+
+    jacocoPlugin.applyTo(it)
+    extensions.configure(JacocoTaskExtension.class) {
+        it.destinationFile = layout.buildDirectory.file("jacoco/runGametest.exec").get().asFile
+        it.includes = [
+                "com.github.salandora.sophisticatedfabriclib.*"
+        ]
+    }
+}
+
 configurations.configureEach {
     resolutionStrategy {
         force "net.fabricmc:fabric-loader:$project.loader_version"
@@ -183,6 +226,7 @@ dependencies {
     testmodImplementation sourceSets.main.output
 
     gametestImplementation sourceSets.testmod.output
+    gametestImplementation "org.jacoco:org.jacoco.agent:0.8.12:runtime"
     modGametestImplementation fabricApi.module("fabric-gametest-api-v1", project.fabric_version)
     modGametestImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
 
@@ -193,16 +237,36 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.+'
 }
 
-runGametestDatagen {
-    outputs.dir file("src/gametest/generated")
-}
-
 test {
-    dependsOn("processResources")
+	dependsOn("processResources")
+
+    finalizedBy("jacocoCombinedReport")
 
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
+	}
+}
+
+tasks.register("jacocoCombinedReport", JacocoReport) {
+    dependsOn test
+	dependsOn runGametestDatagen
+	dependsOn runGametest
+
+    group = JavaBasePlugin.VERIFICATION_GROUP
+
+	sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+	classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
+	executionData.from(
+            layout.buildDirectory.file("jacoco/test.exec"),
+			layout.buildDirectory.file("jacoco/runGametestDatagen.exec"),
+			layout.buildDirectory.file("jacoco/runGametest.exec")
+    )
+
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
     }
 }
 
