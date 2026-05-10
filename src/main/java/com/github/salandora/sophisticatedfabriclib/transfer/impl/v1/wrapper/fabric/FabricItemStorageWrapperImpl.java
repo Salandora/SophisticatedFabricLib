@@ -109,7 +109,7 @@ public class FabricItemStorageWrapperImpl implements FabricItemStorageWrapper {
 					ctx.commit();
 				}
 
-				return stack.copyWithCount((int) inserted);
+				return stack.copyWithCount((int) (stack.getCount() - inserted));
 			}
 		}
 

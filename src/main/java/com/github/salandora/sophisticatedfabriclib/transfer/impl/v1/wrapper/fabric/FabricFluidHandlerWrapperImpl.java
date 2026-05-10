@@ -3,31 +3,53 @@ package com.github.salandora.sophisticatedfabriclib.transfer.impl.v1.wrapper.fab
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.wrapper.fabric.FabricFluidHandlerWrapper;
+import com.google.common.collect.MapMaker;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Map;
 
-public class FabricFluidHandlerWrapperImpl extends SnapshotParticipant<List<FluidStack>> implements FabricFluidHandlerWrapper {
+public class FabricFluidHandlerWrapperImpl extends CombinedStorage<FluidVariant, SingleSlotStorage<FluidVariant>> implements FabricFluidHandlerWrapper {
+	private static final Map<IFluidHandler, FabricFluidHandlerWrapperImpl> WRAPPERS = (new MapMaker()).weakValues().makeMap();
+
 	public static FabricFluidHandlerWrapperImpl of(IFluidHandler handler) {
 		if (handler == null) {
 			return null;
 		}
 
-		return new FabricFluidHandlerWrapperImpl(handler);
+		FabricFluidHandlerWrapperImpl storage = WRAPPERS.computeIfAbsent(handler, FabricFluidHandlerWrapperImpl::new);
+		storage.resizeSlotList();
+		return storage;
 	}
 
 	private final IFluidHandler handler;
-	private Set<StorageView<FluidVariant>> views;
+	final List<WrapperFluidStorage> backingList;
 
 	private FabricFluidHandlerWrapperImpl(IFluidHandler handler) {
+		super(Collections.emptyList());
 		this.handler = handler;
+		this.backingList = new ArrayList<>();
+	}
+
+	public List<SingleSlotStorage<FluidVariant>> getSlots() {
+		return this.parts;
+	}
+	private void resizeSlotList() {
+		int inventorySize = this.handler.getTanks();
+		if (inventorySize != this.parts.size()) {
+			while(this.backingList.size() < inventorySize) {
+				this.backingList.add(new WrapperFluidStorage(this, this.backingList.size()));
+			}
+
+			this.parts = Collections.unmodifiableList(this.backingList.subList(0, inventorySize));
+		}
+
 	}
 
 	@Override
@@ -35,87 +57,61 @@ public class FabricFluidHandlerWrapperImpl extends SnapshotParticipant<List<Flui
 		return this.handler;
 	}
 
-	@Override
-	public boolean supportsInsertion() {
-		return FabricFluidHandlerWrapper.super.supportsInsertion();
-	}
-
-	@Override
-	public long insert(FluidVariant variant, long maxAmount, TransactionContext ctx) {
-		updateSnapshots(ctx);
-		ctx.addCloseCallback((c, r) -> {
-			if (r.wasCommitted()) {
-				//handler.update();
-			}
-		});
-
-		return handler.fill(new FluidStack(variant.getFluid(), maxAmount), IFluidHandler.FluidAction.EXECUTE);
-	}
-
-	@Override
-	public boolean supportsExtraction() {
-		return FabricFluidHandlerWrapper.super.supportsExtraction();
-	}
-
-	@Override
-	public long extract(FluidVariant variant, long maxAmount, TransactionContext ctx) {
-		updateSnapshots(ctx);
-		ctx.addCloseCallback((c, r) -> {
-			if (r.wasCommitted()) {
-				//handler.update();
-			}
-		});
-
-		return handler.drain(new FluidStack(variant.getFluid(), maxAmount), IFluidHandler.FluidAction.EXECUTE).getAmount();
-	}
-
-	@Override
-	public Iterator<StorageView<FluidVariant>> iterator() {
-		if (this.views != null) {
-			return views.iterator();
-		}
-
-		this.views = IntStream.range(0, this.handler.getTanks())
-				.<StorageView<FluidVariant>>mapToObj(WrapperSlotView::new)
-				.collect(Collectors.toSet());
-
-		return views.iterator();
-	}
-
-	@Override
-	protected List<FluidStack> createSnapshot() {
-		return IntStream.range(0, this.handler.getTanks()).mapToObj(slot -> this.handler.getFluidInTank(slot).copy()).toList();
-	}
-
-	@Override
-	protected void readSnapshot(List<FluidStack> snapshot) {
-		IntStream.range(0, snapshot.size()).forEach(slot -> this.handler.setFluidInTank(slot, snapshot.get(slot)));
-	}
-
-	private final class WrapperSlotView implements StorageView<FluidVariant> {
+	private static final class WrapperFluidStorage extends SnapshotParticipant<FluidStack> implements SingleSlotStorage<FluidVariant> {
+		private final FabricFluidHandlerWrapperImpl storage;
 		private final int slot;
 
-		private WrapperSlotView(int slot) {
+		public WrapperFluidStorage(FabricFluidHandlerWrapperImpl storage, int slot) {
+			this.storage = storage;
 			this.slot = slot;
 		}
 
 		private FluidStack getStack() {
-			return handler.getFluidInTank(slot);
+			return storage.handler.getFluidInTank(slot);
+		}
+
+		private void setStack(FluidStack stack) {
+			storage.handler.setFluidInTank(slot, stack);
 		}
 
 		@Override
-		public long extract(FluidVariant variant, long maxAmount, TransactionContext ctx) {
-			return FabricFluidHandlerWrapperImpl.this.extract(variant, maxAmount, ctx);
+		public long getCapacity() {
+			return storage.handler.getTankCapacity(slot);
+		}
+
+		@Override
+		public long insert(FluidVariant variant, long maxAmount, TransactionContext ctx) {
+			if (!canInsert(slot, new FluidStack(variant, maxAmount))) {
+				return 0;
+			}
+
+			updateSnapshots(ctx);
+			return storage.handler.fill(new FluidStack(variant.getFluid(), maxAmount), IFluidHandler.FluidAction.EXECUTE);
+		}
+
+		private boolean canInsert(int slot, FluidStack stack) {
+			return storage.handler.isFluidValid(slot, stack);
+		}
+
+		@Override
+		public long extract(FluidVariant resource, long maxAmount, TransactionContext ctx) {
+			FluidStack stack = getStack();
+			if (stack.isResourceBlank() || !resource.equals(stack.getResource())) {
+				return 0;
+			}
+
+			updateSnapshots(ctx);
+			return storage.handler.drain(new FluidStack(resource.getFluid(), maxAmount), IFluidHandler.FluidAction.EXECUTE).getAmount();
 		}
 
 		@Override
 		public boolean isResourceBlank() {
-			return getStack().isEmpty();
+			return getStack().isResourceBlank();
 		}
 
 		@Override
 		public FluidVariant getResource() {
-			return getStack().getVariant();
+			return getStack().getResource();
 		}
 
 		@Override
@@ -124,8 +120,20 @@ public class FabricFluidHandlerWrapperImpl extends SnapshotParticipant<List<Flui
 		}
 
 		@Override
-		public long getCapacity() {
-			return handler.getTankCapacity(slot);
+		protected FluidStack createSnapshot() {
+			FluidStack original = getStack();
+			setStack(original.copy());
+			return original;
+		}
+
+		@Override
+		protected void readSnapshot(FluidStack snapshot) {
+			setStack(snapshot);
+		}
+
+		@Override
+		public String toString() {
+			return "WrapperFluidStorage[" + getStack() + "]";
 		}
 	}
 }

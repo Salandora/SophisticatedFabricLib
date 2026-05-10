@@ -68,7 +68,7 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		}
 
 		try (Transaction ctx = Transaction.openOuter()) {
-			long inserted = storage.insert(fluidStack.getVariant(), fluidStack.getAmount(), ctx);
+			long inserted = storage.insert(fluidStack.getResource(), fluidStack.getAmount(), ctx);
 			if (action.execute()) {
 				ctx.commit();
 			}
@@ -84,7 +84,7 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		}
 
 		try (Transaction ctx = Transaction.openOuter()) {
-			long extracted = storage.extract(drainStack.getVariant(), drainStack.getAmount(), ctx);
+			long extracted = storage.extract(drainStack.getResource(), drainStack.getAmount(), ctx);
 			if (action.execute()) {
 				ctx.commit();
 			}
