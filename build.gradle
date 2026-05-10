@@ -70,19 +70,9 @@ fabricApi {
 }
 
 sourceSets {
-    testmod {
-        compileClasspath += main.compileClasspath
-        runtimeClasspath += main.runtimeClasspath
-    }
     gametest {
-        compileClasspath += testmod.compileClasspath
-        runtimeClasspath += testmod.runtimeClasspath
-
-        resources {
-            srcDirs += [
-                    'src/gametest/generated'
-            ]
-        }
+        compileClasspath += main.output + main.compileClasspath
+        runtimeClasspath += main.output + main.runtimeClasspath
     }
 }
 
@@ -98,21 +88,8 @@ loom {
     }
 
     runs {
-        gameTestDatagen {
-            server()
-            name "Gametest Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/gametest/generated")}"
-            vmArg "-Dfabric-api.datagen.strict-validation"
-            source sourceSets.testmod
-
-            ideConfigGenerated = false
-            runDir "build/run/gametest-datagen"
-        }
-
         gameTest {
             server()
-            source sourceSets.testmod
             source sourceSets.gametest
 
             name "Game Test"
@@ -198,9 +175,6 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 
-    testmodImplementation sourceSets.main.output
-
-    gametestImplementation sourceSets.testmod.output
     gametestImplementation "org.jacoco:org.jacoco.agent:0.8.12:runtime"
     modGametestImplementation fabricApi.module("fabric-gametest-api-v1", project.fabric_version)
     modGametestImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
@@ -235,23 +209,6 @@ test {
     }
 }
 
-runGametestDatagen {
-    outputs.dir file("src/gametest/generated")
-
-    jacocoPlugin.applyTo(it)
-    extensions.configure(JacocoTaskExtension.class) {
-        it.destinationFile = layout.buildDirectory.file("jacoco/runGameTestDatagen.exec").get().asFile
-        it.includes = [
-                "com.github.salandora.sophisticatedfabriclib.*"
-        ]
-        it.excludes = [
-                "com.github.salandora.sophisticatedfabriclib.*.mixin.*",
-                "com.github.salandora.sophisticatedfabriclib.tests.*",
-                "com.github.salandora.sophisticatedfabriclib.gametests.*"
-        ]
-    }
-}
-
 runGameTest {
     outputs.file layout.buildDirectory.file("reports/runGameTest.xml")
     outputs.upToDateWhen { false }
@@ -271,8 +228,9 @@ runGameTest {
 
 tasks.register("jacocoCombinedReport", JacocoReport) {
     dependsOn test
-    dependsOn runGameTestDatagen
     dependsOn runGameTest
+
+    outputs.upToDateWhen { false }
 
     group = JavaBasePlugin.VERIFICATION_GROUP
 
@@ -280,7 +238,6 @@ tasks.register("jacocoCombinedReport", JacocoReport) {
     classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
     executionData.from(
             layout.buildDirectory.file("jacoco/test.exec"),
-            layout.buildDirectory.file("jacoco/runGameTestDatagen.exec"),
             layout.buildDirectory.file("jacoco/runGameTest.exec")
     )
 
@@ -290,8 +247,6 @@ tasks.register("jacocoCombinedReport", JacocoReport) {
         csv.required = false
     }
 }
-
-processGametestResources.dependsOn(runGametestDatagen)
 
 tasks.register('validateMixinNames', ValidateMixinNameTask) {
     source(sourceSets.main.output)

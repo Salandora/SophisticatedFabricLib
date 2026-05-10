@@ -1,5 +1,11 @@
 package com.github.salandora.sophisticatedfabriclib.gametests;
 
+import com.github.salandora.sophisticatedfabriclib.gametests.util.LootMultiplierModifier;
+import com.github.salandora.sophisticatedfabriclib.loot.SophisticatedLoot;
+import com.github.salandora.sophisticatedfabriclib.loot.api.v1.IGlobalLootModifier;
+import com.github.salandora.sophisticatedfabriclib.util.DeferredHolder;
+import com.github.salandora.sophisticatedfabriclib.util.DeferredRegister;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,6 +28,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GlobalLootModifierTest {
+	private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIER = DeferredRegister.create(SophisticatedLoot.GLOBAL_LOOT_MODIFIER_SERIALIZERS, "global_loot_modifier_test");
+	private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<LootMultiplierModifier>> LOOT_MULTIPLIER_MODIFIER = GLOBAL_LOOT_MODIFIER.register("loot_multiplier", LootMultiplierModifier.CODEC);
+
+	static {
+		GLOBAL_LOOT_MODIFIER.register();
+	}
+
 	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
 	public void LootModifierTest(GameTestHelper context) {
 		long seed = 123;

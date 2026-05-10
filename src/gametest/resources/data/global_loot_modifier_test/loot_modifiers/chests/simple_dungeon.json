@@ -1,0 +1,10 @@
+{
+  "type": "global_loot_modifier_test:loot_multiplier",
+  "conditions": [
+    {
+      "condition": "sophisticatedfabriclib:loot_table_id",
+      "loot_table_id": "minecraft:chests/simple_dungeon"
+    }
+  ],
+  "multiplication_factor": 2
+}
