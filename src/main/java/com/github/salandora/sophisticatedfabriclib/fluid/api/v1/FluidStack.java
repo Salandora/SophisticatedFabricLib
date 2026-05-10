@@ -25,7 +25,7 @@ public final class FluidStack extends SingleFluidStorage {
 	public static final Codec<FluidStack> CODEC = Codec.lazyInitialized(() ->
 			RecordCodecBuilder.create(
 			instance -> instance.group(
-					FluidVariant.CODEC.fieldOf("FluidVariant").forGetter(FluidStack::getVariant),
+					FluidVariant.CODEC.fieldOf("FluidVariant").forGetter(FluidStack::getResource),
 					Codec.LONG.fieldOf("Amount").forGetter(FluidStack::getAmount)
 			).apply(instance, FluidStack::new)
 	));
@@ -35,7 +35,7 @@ public final class FluidStack extends SingleFluidStorage {
 
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStack> STREAM_CODEC = StreamCodec.composite(
-			FluidVariant.PACKET_CODEC, FluidStack::getVariant,
+			FluidVariant.PACKET_CODEC, FluidStack::getResource,
 			ByteBufCodecs.VAR_LONG, FluidStack::getAmount,
 			FluidStack::new
 	);
@@ -79,10 +79,6 @@ public final class FluidStack extends SingleFluidStorage {
 
 	public Fluid getFluid() {
 		return this.variant.getFluid();
-	}
-
-	public FluidVariant getVariant() {
-		return this.variant;
 	}
 
 	public boolean isEmpty() {
