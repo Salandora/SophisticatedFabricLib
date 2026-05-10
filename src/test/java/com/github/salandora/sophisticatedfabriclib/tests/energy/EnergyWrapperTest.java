@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.energy;
+package com.github.salandora.sophisticatedfabriclib.tests.energy;
 
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.IEnergyStorage;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.EnergyStorageWrapper;

@@ -6,8 +6,8 @@
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": [
-      "com.github.salandora.sophisticatedfabriclib.GlobalLootModifierTest",
-      "com.github.salandora.sophisticatedfabriclib.FluidUtilGameTest"
+      "com.github.salandora.sophisticatedfabriclib.gametests.GlobalLootModifierTest",
+      "com.github.salandora.sophisticatedfabriclib.gametests.FluidUtilGameTest"
     ]
   }
 }

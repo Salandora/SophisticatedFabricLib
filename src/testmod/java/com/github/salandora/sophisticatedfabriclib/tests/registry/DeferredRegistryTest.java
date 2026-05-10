@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.registry;
+package com.github.salandora.sophisticatedfabriclib.tests.registry;
 
 import com.github.salandora.sophisticatedfabriclib.util.DeferredHolder;
 import com.github.salandora.sophisticatedfabriclib.util.DeferredRegister;

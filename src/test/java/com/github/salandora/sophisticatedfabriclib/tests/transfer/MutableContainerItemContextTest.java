@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.transfer;
+package com.github.salandora.sophisticatedfabriclib.tests.transfer;
 
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;

@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.loot;
+package com.github.salandora.sophisticatedfabriclib.tests.loot;
 
 import com.github.salandora.sophisticatedfabriclib.loot.api.v1.IGlobalLootModifier;
 import com.github.salandora.sophisticatedfabriclib.loot.api.v1.LootModifier;

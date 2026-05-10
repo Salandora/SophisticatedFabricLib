@@ -98,7 +98,7 @@ loom {
     }
 
     runs {
-        gametestDatagen {
+        gameTestDatagen {
             server()
             name "Gametest Data Generation"
             vmArg "-Dfabric-api.datagen"
@@ -110,7 +110,7 @@ loom {
             runDir "build/run/gametest-datagen"
         }
 
-        gametest {
+        gameTest {
             server()
             source sourceSets.testmod
             source sourceSets.gametest
@@ -118,7 +118,7 @@ loom {
             name "Game Test"
 
             vmArg "-Dfabric-api.gametest"
-            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.file("reports/runGametest.xml").get().asFile.absolutePath}"
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.file("reports/runGameTest.xml").get().asFile.absolutePath}"
             runDir "run/gametest"
         }
 
@@ -173,31 +173,6 @@ loom {
     }
 }
 
-runGametestDatagen {
-    outputs.dir file("src/gametest/generated")
-
-    jacocoPlugin.applyTo(it)
-    extensions.configure(JacocoTaskExtension.class) {
-        it.destinationFile = layout.buildDirectory.file("jacoco/runGametestDatagen.exec").get().asFile
-        it.includes = [
-                "com.github.salandora.sophisticatedfabriclib.*"
-        ]
-    }
-}
-
-
-runGametest {
-    outputs.file layout.buildDirectory.file("reports/runGametest.xml")
-
-    jacocoPlugin.applyTo(it)
-    extensions.configure(JacocoTaskExtension.class) {
-        it.destinationFile = layout.buildDirectory.file("jacoco/runGametest.exec").get().asFile
-        it.includes = [
-                "com.github.salandora.sophisticatedfabriclib.*"
-        ]
-    }
-}
-
 configurations.configureEach {
     resolutionStrategy {
         force "net.fabricmc:fabric-loader:$project.loader_version"
@@ -238,29 +213,75 @@ dependencies {
 }
 
 test {
-	dependsOn("processResources")
+    dependsOn("processResources")
+    dependsOn("runGameTest")
 
     finalizedBy("jacocoCombinedReport")
 
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
-	}
+    }
+
+    extensions.configure(JacocoTaskExtension.class) {
+        it.destinationFile = layout.buildDirectory.file("jacoco/test.exec").get().asFile
+        it.includes = [
+                "com.github.salandora.sophisticatedfabriclib.*"
+        ]
+        it.excludes = [
+                "com.github.salandora.sophisticatedfabriclib.tests.*",
+                "com.github.salandora.sophisticatedfabriclib.gametests.*"
+        ]
+    }
+}
+
+runGametestDatagen {
+    outputs.dir file("src/gametest/generated")
+
+    jacocoPlugin.applyTo(it)
+    extensions.configure(JacocoTaskExtension.class) {
+        it.destinationFile = layout.buildDirectory.file("jacoco/runGameTestDatagen.exec").get().asFile
+        it.includes = [
+                "com.github.salandora.sophisticatedfabriclib.*"
+        ]
+        it.excludes = [
+                "com.github.salandora.sophisticatedfabriclib.*.mixin.*",
+                "com.github.salandora.sophisticatedfabriclib.tests.*",
+                "com.github.salandora.sophisticatedfabriclib.gametests.*"
+        ]
+    }
+}
+
+runGameTest {
+    outputs.file layout.buildDirectory.file("reports/runGameTest.xml")
+    outputs.upToDateWhen { false }
+
+    jacocoPlugin.applyTo(it)
+    extensions.configure(JacocoTaskExtension.class) {
+        it.destinationFile = layout.buildDirectory.file("jacoco/runGameTest.exec").get().asFile
+        it.includes = [
+                "com.github.salandora.sophisticatedfabriclib.*"
+        ]
+        it.excludes = [
+                "com.github.salandora.sophisticatedfabriclib.tests.*",
+                "com.github.salandora.sophisticatedfabriclib.gametests.*"
+        ]
+    }
 }
 
 tasks.register("jacocoCombinedReport", JacocoReport) {
     dependsOn test
-	dependsOn runGametestDatagen
-	dependsOn runGametest
+    dependsOn runGameTestDatagen
+    dependsOn runGameTest
 
     group = JavaBasePlugin.VERIFICATION_GROUP
 
-	sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
-	classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
-	executionData.from(
+    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
+    executionData.from(
             layout.buildDirectory.file("jacoco/test.exec"),
-			layout.buildDirectory.file("jacoco/runGametestDatagen.exec"),
-			layout.buildDirectory.file("jacoco/runGametest.exec")
+            layout.buildDirectory.file("jacoco/runGameTestDatagen.exec"),
+            layout.buildDirectory.file("jacoco/runGameTest.exec")
     )
 
     reports {

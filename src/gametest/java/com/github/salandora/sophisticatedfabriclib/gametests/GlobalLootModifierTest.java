@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib;
+package com.github.salandora.sophisticatedfabriclib.gametests;
 
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.core.BlockPos;

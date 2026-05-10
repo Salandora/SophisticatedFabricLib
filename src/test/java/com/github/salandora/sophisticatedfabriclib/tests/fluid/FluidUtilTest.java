@@ -1,13 +1,13 @@
-package com.github.salandora.sophisticatedfabriclib.fluid;
+package com.github.salandora.sophisticatedfabriclib.tests.fluid;
 
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidActionResult;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidUtil;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
+import com.github.salandora.sophisticatedfabriclib.tests.util.TestFluidStorage;
+import com.github.salandora.sophisticatedfabriclib.tests.util.TestHelper;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.IItemHandler;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackHandler;
-import com.github.salandora.sophisticatedfabriclib.util.TestFluidStorage;
-import com.github.salandora.sophisticatedfabriclib.util.TestHelper;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.component.DataComponents;
@@ -127,7 +127,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainer(test.input(), source, FluidConstants.BUCKET, null, test.commit());
 
-		assertTrue(result.isSuccess());
+		assertTrue(result.success());
 		assertItemStack(original, test.input());
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertEquals(test.expectedFluid(), source.getAmount());
@@ -140,7 +140,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainer(dirt, source, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertItemStack(new ItemStack(Items.DIRT), dirt);
 		assertEquals(FluidConstants.BUCKET, source.getAmount());
 	}
@@ -151,7 +151,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), source, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertEquals(0, source.getAmount());
 	}
 
@@ -178,7 +178,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryEmptyContainer(test.input(), dest, FluidConstants.BUCKET, null, test.commit());
 
-		assertTrue(result.isSuccess());
+		assertTrue(result.success());
 		assertItemStack(original, test.input());
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertEquals(test.expectedFluid(), dest.getAmount());
@@ -191,7 +191,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryEmptyContainer(waterBucket, dest, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertItemStack(new ItemStack(Items.WATER_BUCKET), waterBucket);
 		assertEquals(10 * FluidConstants.BUCKET, dest.getAmount());
 	}
@@ -202,7 +202,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryEmptyContainer(new ItemStack(Items.BUCKET), dest, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertEquals(0, dest.getAmount());
 	}
 
@@ -229,7 +229,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainerAndStow(test.input(), source, overflowInv, FluidConstants.BUCKET, null, test.commit());
 
-		assertTrue(result.isSuccess());
+		assertTrue(result.success());
 		assertItemStack(original, test.input());
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertTrue(TestHelper.containsItem(overflowInv, test.expectedInvItem()));
@@ -243,7 +243,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainerAndStow(ItemStack.EMPTY, source, overflowInv, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertEquals(FluidConstants.BUCKET, source.getAmount());
 	}
 
@@ -255,7 +255,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainerAndStow(buckets, source, fullInventory, FluidConstants.BUCKET, null, true);
 
-		assertFalse(result.isSuccess());
+		assertFalse(result.success());
 		assertItemStack(new ItemStack(Items.BUCKET, 2), buckets);
 		assertEquals(FluidConstants.BUCKET, source.getAmount());
 	}
@@ -270,7 +270,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryFillContainerAndStow(buckets, source, fullInventory, FluidConstants.BUCKET, player, true);
 
-		assertTrue(result.isSuccess());
+		assertTrue(result.success());
 		assertItemStack(new ItemStack(Items.BUCKET, 2), result.getResult());
 		assertItemStack(new ItemStack(Items.BUCKET, 2), buckets);
 		assertEquals(0, source.getAmount());
@@ -299,7 +299,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = FluidUtil.tryEmptyContainerAndStow(test.input(), dest, overflowInv, FluidConstants.BUCKET, null, test.commit());
 
-		assertTrue(result.isSuccess());
+		assertTrue(result.success());
 		assertItemStack(original, test.input());
 		assertItemStack(test.expectedItem(), result.getResult());
 		assertTrue(TestHelper.containsItem(overflowInv, test.expectedInvItem()));
@@ -350,7 +350,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = testCase.op.apply(testCase.container.copy(), testCase.storage, inventory, FluidConstants.BUCKET, player, true);
 
-		assertTrue(result.isSuccess(), "Transfer should succeed");
+		assertTrue(result.success(), "Transfer should succeed");
 		assertTrue(TestHelper.containsItem(player.getInventory(), testCase.expectedResultItem()), "Mock player should receive dropped item: " + testCase.expectedResultItem());
 
 	}
@@ -368,7 +368,7 @@ public class FluidUtilTest {
 
 		FluidActionResult result = testCase.op.apply(testCase.container.copy(), testCase.storage, inventory, FluidConstants.BUCKET, player, true);
 
-		assertTrue(result.isSuccess(), "Transfer should succeed");
+		assertTrue(result.success(), "Transfer should succeed");
 		verify(player, atLeastOnce()).drop(
 				argThat(stack -> stack.getItem() == testCase.expectedResultItem()),
 				anyBoolean(),

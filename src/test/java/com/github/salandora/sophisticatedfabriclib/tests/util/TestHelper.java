@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.util;
+package com.github.salandora.sophisticatedfabriclib.tests.util;
 
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackHandler;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;

@@ -1,4 +1,4 @@
-package com.github.salandora.sophisticatedfabriclib.transfer;
+package com.github.salandora.sophisticatedfabriclib.tests.transfer;
 
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
