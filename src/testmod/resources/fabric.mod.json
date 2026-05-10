@@ -6,7 +6,6 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.salandora.sophisticatedfabriclib.tests.registry.DeferredRegistryTest",
       "com.github.salandora.sophisticatedfabriclib.tests.loot.GlobalLootModifierHelper"
     ],
     "fabric-datagen": [

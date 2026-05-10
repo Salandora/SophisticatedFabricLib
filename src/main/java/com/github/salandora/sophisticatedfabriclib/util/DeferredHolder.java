@@ -131,4 +131,20 @@ public class DeferredHolder<T, U extends T> implements Holder<T>, Supplier<U> {
 		this.bind(false);
 		return this.holder != null && this.holder.canSerializeIn(owner);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		return obj instanceof DeferredHolder<?, ?> h
+				&& h.kind() == Kind.REFERENCE
+				&& h.getKey() == this.key;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.key.hashCode();
+	}
 }
