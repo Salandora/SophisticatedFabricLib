@@ -7,11 +7,9 @@ import com.google.gson.*;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.impl.resource.conditions.ResourceConditionsImpl;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -21,20 +19,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class LootModifierManager implements IdentifiableResourceReloadListener, PreparableReloadListener {
+public class LootModifierManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder()
 			.setPrettyPrinting()
 			.disableHtmlEscaping()
 			.create();
 
-	private static final String folder = "loot_modifiers";
-	public static final ResourceLocation ID = SophisticatedFabricLib.id(folder);
+	private static final String directory = "loot_modifiers";
+	public static final ResourceLocation ID = SophisticatedFabricLib.id(directory);
 
 	public static final LootModifierManager INSTANCE = new LootModifierManager();
 
@@ -42,30 +41,19 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 	private HolderLookup.Provider registries;
 
 	public LootModifierManager() {
+		super(GSON, directory);
 	}
 
 	public void setRegistries(HolderLookup.Provider registries) {
 		this.registries = registries;
 	}
 
-	@Override
-	public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
-		return CompletableFuture
-				.supplyAsync(() -> this.prepare(resourceManager, preparationsProfiler), backgroundExecutor)
-				.thenCompose(preparationBarrier::wait)
-				.thenAcceptAsync((object) -> {
-					applyResourceConditions(reloadProfiler, object);
-					this.apply(object, resourceManager, reloadProfiler);
-				}, gameExecutor);
-	}
-
-	protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+	protected @NotNull Map<ResourceLocation, JsonElement> prepare(@NotNull ResourceManager resourceManager, ProfilerFiller profiler) {
 		profiler.push("LootModifierManager prepare: %s".formatted(getName()));
 
-		Map<ResourceLocation, JsonElement> map = new HashMap<>();
-		SimpleJsonResourceReloadListener.scanDirectory(resourceManager, folder, GSON, map);
+		Map<ResourceLocation, JsonElement> map = super.prepare(resourceManager, profiler);
 
-		ResourceLocation global_loot_modifiers = ResourceLocation.fromNamespaceAndPath("sophisticated", folder + "/global_loot_modifiers.json");
+		ResourceLocation global_loot_modifiers = ResourceLocation.fromNamespaceAndPath("sophisticated", directory + "/global_loot_modifiers.json");
 		List<ResourceLocation> finalLocations = new ArrayList<>();
 		for (Resource resource : resourceManager.getResourceStack(global_loot_modifiers)) {
 			try (Reader reader = resource.openAsReader()) {
@@ -95,7 +83,7 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 		return collect;
 	}
 
-	protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+	protected void apply(Map<ResourceLocation, JsonElement> object, @NotNull ResourceManager resourceManager, ProfilerFiller profiler) {
 		profiler.push("LootModifierManager apply: %s".formatted(getName()));
 
 		DynamicOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
@@ -123,25 +111,5 @@ public class LootModifierManager implements IdentifiableResourceReloadListener, 
 	@Override
 	public ResourceLocation getFabricId() {
 		return ID;
-	}
-
-	protected void applyResourceConditions(ProfilerFiller profiler, Map<ResourceLocation, JsonElement> object) {
-		profiler.push("Fabric resource conditions: %s".formatted(getName()));
-
-		Iterator<Map.Entry<ResourceLocation, JsonElement>> it = object.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<ResourceLocation, JsonElement> entry = it.next();
-			JsonElement resourceData = entry.getValue();
-
-			if (resourceData.isJsonObject()) {
-				JsonObject obj = resourceData.getAsJsonObject();
-
-				if (!ResourceConditionsImpl.applyResourceConditions(obj, getName(), entry.getKey(), this.registries)) {
-					it.remove();
-				}
-			}
-		}
-
-		profiler.pop();
 	}
 }
