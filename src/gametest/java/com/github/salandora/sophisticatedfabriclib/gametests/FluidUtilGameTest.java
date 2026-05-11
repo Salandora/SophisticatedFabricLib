@@ -1,5 +1,6 @@
 package com.github.salandora.sophisticatedfabriclib.gametests;
 
+import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.BucketPickupHandlerWrapper;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidUtil;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -204,6 +206,86 @@ public class FluidUtilGameTest {
 		context.succeed();
 	}
 
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+	public void bucketPickupWrapperExposesSourceFluidAndRejectsFill(GameTestHelper context) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		context.setBlock(pos, Blocks.WATER);
+
+		BucketPickupHandlerWrapper wrapper = bucketPickupWrapper(context, pos);
+
+		context.assertTrue(wrapper.getTanks() == 1, "Expected one tank");
+		context.assertTrue(wrapper.getTankCapacity(0) == FluidConstants.BUCKET, "Expected bucket capacity");
+		context.assertTrue(wrapper.getFluidInTank(0).getFluid() == Fluids.WATER, "Expected water in tank");
+		context.assertTrue(wrapper.getFluidInTank(0).getAmount() == FluidConstants.BUCKET, "Expected one bucket of water");
+		context.assertTrue(wrapper.isFluidValid(0, lavaStack()), "Expected wrapper to accept any fluid as valid");
+		context.assertTrue(wrapper.fill(waterStack(), IFluidHandler.FluidAction.EXECUTE) == 0, "Expected fill to be unsupported");
+		wrapper.setFluidInTank(0, lavaStack());
+		context.assertTrue(wrapper.getFluidInTank(0).getFluid() == Fluids.WATER, "Expected setFluidInTank to be a noop");
+		context.assertBlockPresent(Blocks.WATER, pos);
+		context.succeed();
+	}
+
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+	public void bucketPickupWrapperDrainsByAmount(GameTestHelper context) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		context.setBlock(pos, Blocks.WATER);
+		BucketPickupHandlerWrapper wrapper = bucketPickupWrapper(context, pos);
+
+		FluidStack tooSmall = wrapper.drain(FluidConstants.BUCKET - 1, IFluidHandler.FluidAction.EXECUTE);
+		context.assertTrue(tooSmall.isEmpty(), "Expected less than a bucket to drain nothing");
+		context.assertBlockPresent(Blocks.WATER, pos);
+
+		FluidStack simulated = wrapper.drain(FluidConstants.BUCKET, IFluidHandler.FluidAction.SIMULATE);
+		context.assertTrue(simulated.getFluid() == Fluids.WATER, "Expected simulated drain to return water");
+		context.assertTrue(simulated.getAmount() == FluidConstants.BUCKET, "Expected simulated drain to return one bucket");
+		context.assertBlockPresent(Blocks.WATER, pos);
+
+		FluidStack drained = wrapper.drain(FluidConstants.BUCKET, IFluidHandler.FluidAction.EXECUTE);
+		context.assertTrue(drained.getFluid() == Fluids.WATER, "Expected executed drain to return water");
+		context.assertTrue(drained.getAmount() == FluidConstants.BUCKET, "Expected executed drain to return one bucket");
+		context.assertBlockPresent(Blocks.AIR, pos);
+		context.succeed();
+	}
+
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+	public void bucketPickupWrapperDrainsByMatchingResource(GameTestHelper context) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		context.setBlock(pos, Blocks.WATER);
+		BucketPickupHandlerWrapper wrapper = bucketPickupWrapper(context, pos);
+
+		context.assertTrue(wrapper.drain(FluidStack.EMPTY, IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Expected empty resource to drain nothing");
+		context.assertTrue(wrapper.drain(new FluidStack(Fluids.WATER, FluidConstants.BUCKET - 1), IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Expected partial bucket resource to drain nothing");
+		context.assertTrue(wrapper.drain(lavaStack(), IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Expected mismatched resource to drain nothing");
+		context.assertBlockPresent(Blocks.WATER, pos);
+
+		FluidStack simulated = wrapper.drain(waterStack(), IFluidHandler.FluidAction.SIMULATE);
+		context.assertTrue(simulated.getFluid() == Fluids.WATER, "Expected simulated matching resource drain to return water");
+		context.assertTrue(simulated.getAmount() == FluidConstants.BUCKET, "Expected simulated matching resource drain to return one bucket");
+		context.assertBlockPresent(Blocks.WATER, pos);
+
+		FluidStack drained = wrapper.drain(waterStack(), IFluidHandler.FluidAction.EXECUTE);
+		context.assertTrue(drained.getFluid() == Fluids.WATER, "Expected executed matching resource drain to return water");
+		context.assertTrue(drained.getAmount() == FluidConstants.BUCKET, "Expected executed matching resource drain to return one bucket");
+		context.assertBlockPresent(Blocks.AIR, pos);
+		context.succeed();
+	}
+
+	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+	public void bucketPickupWrapperReportsEmptyWhenNoFluidIsPresent(GameTestHelper context) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		context.setBlock(pos, Blocks.AIR);
+		BucketPickupHandlerWrapper wrapper = bucketPickupWrapper(context, pos);
+
+		context.assertTrue(wrapper.getFluidInTank(0).isEmpty(), "Expected empty tank");
+		context.assertTrue(wrapper.drain(FluidConstants.BUCKET, IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Expected amount drain to return empty");
+		context.assertTrue(wrapper.drain(waterStack(), IFluidHandler.FluidAction.EXECUTE).isEmpty(), "Expected resource drain to return empty");
+		context.assertBlockPresent(Blocks.AIR, pos);
+		context.succeed();
+	}
+
+	private static BucketPickupHandlerWrapper bucketPickupWrapper(GameTestHelper context, BlockPos pos) {
+		return new BucketPickupHandlerWrapper(null, (BucketPickup) Blocks.WATER, context.getLevel(), context.absolutePos(pos));
+	}
 
 	private static FluidStack waterStack() {
 		return new FluidStack(Fluids.WATER, FluidConstants.BUCKET);
