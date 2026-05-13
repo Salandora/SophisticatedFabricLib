@@ -26,9 +26,11 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		this.container = container;
 	}
 
-	@Nullable
 	@Override
 	public ItemStack getContainer() {
+		if (this.container == null || this.container.getItemVariant() == null) {
+			return ItemStack.EMPTY;
+		}
 		return this.container.getItemVariant().toStack((int) this.container.getAmount());
 	}
 
