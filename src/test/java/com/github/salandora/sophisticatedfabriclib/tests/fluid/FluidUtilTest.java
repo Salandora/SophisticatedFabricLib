@@ -61,19 +61,19 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testToBucketsConvertsFabricDropletsToMilliBuckets() {
+	void toBucketsConvertsFabricDropletsToMilliBuckets() {
 		assertEquals(1000, FluidUtil.toBuckets(FluidConstants.BUCKET));
 		assertEquals(250, FluidUtil.toBuckets(FluidConstants.BUCKET / 4));
 	}
 
 	@Test
-	void testIsFluidStorage() {
+	void isFluidStorageRecognizesFluidContainers() {
 		assertTrue(FluidUtil.isFluidStorage(new ItemStack(Items.BUCKET)));
 		assertFalse(FluidUtil.isFluidStorage(new ItemStack(Items.DIRT)));
 	}
 
 	@Test
-	void testTryFluidTransferByAmountSimulateAndExecute() {
+	void tryFluidTransferByAmountSimulatesAndExecutes() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		TestFluidStorage destination = TestHelper.emptyStorage();
 
@@ -89,7 +89,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFluidTransferByResourceRequiresMatchingFluidAndSpace() {
+	void tryFluidTransferByResourceRequiresMatchingFluidAndSpace() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		TestFluidStorage destination = TestHelper.emptyStorage();
 
@@ -121,7 +121,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("fillCases")
-	void testTryFillContainer(TestCase test) {
+	void tryFillContainerTransfersFluidIntoContainer(TestCase test) {
 		TestFluidStorage source = TestHelper.filledStorage(5 * FluidConstants.BUCKET);
 		ItemStack original = test.input().copy();
 
@@ -134,7 +134,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFillContainerFailsForNonFluidContainer() {
+	void tryFillContainerFailsForNonFluidContainer() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		ItemStack dirt = new ItemStack(Items.DIRT);
 
@@ -146,7 +146,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFillContainerFailsWhenSourceIsEmpty() {
+	void tryFillContainerFailsWhenSourceIsEmpty() {
 		TestFluidStorage source = TestHelper.emptyStorage();
 
 		FluidActionResult result = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), source, FluidConstants.BUCKET, null, true);
@@ -172,7 +172,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("emptyCases")
-	void testTryEmptyContainer(TestCase test) {
+	void tryEmptyContainerTransfersFluidIntoStorage(TestCase test) {
 		TestFluidStorage dest = TestHelper.emptyStorage();
 		ItemStack original = test.input().copy();
 
@@ -185,7 +185,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryEmptyContainerFailsWhenDestinationCannotAcceptFluid() {
+	void tryEmptyContainerFailsWhenDestinationCannotAcceptFluid() {
 		TestFluidStorage dest = TestHelper.filledStorage(10 * FluidConstants.BUCKET);
 		ItemStack waterBucket = new ItemStack(Items.WATER_BUCKET);
 
@@ -197,7 +197,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryEmptyContainerFailsWhenContainerIsEmpty() {
+	void tryEmptyContainerFailsWhenContainerIsEmpty() {
 		TestFluidStorage dest = TestHelper.emptyStorage();
 
 		FluidActionResult result = FluidUtil.tryEmptyContainer(new ItemStack(Items.BUCKET), dest, FluidConstants.BUCKET, null, true);
@@ -221,7 +221,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("fillStowCases")
-	void testTryFillContainerAndStow(TestCaseStow test) {
+	void tryFillContainerAndStowStoresResult(TestCaseStow test) {
 		TestFluidStorage source = TestHelper.filledStorage(5 * FluidConstants.BUCKET);
 		ItemStackHandler overflowInv = TestHelper.emptyItemStorage();
 
@@ -237,7 +237,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFillContainerAndStowFailsForEmptyContainerStack() {
+	void tryFillContainerAndStowFailsForEmptyContainerStack() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		ItemStackHandler overflowInv = TestHelper.emptyItemStorage();
 
@@ -248,7 +248,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFillContainerAndStowFailsForStackedContainerWhenInventoryCannotAcceptResult() {
+	void tryFillContainerAndStowFailsForStackedContainerWhenInventoryCannotAcceptResult() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		ItemStackHandler fullInventory = new ItemStackHandler(0);
 		ItemStack buckets = new ItemStack(Items.BUCKET, 2);
@@ -261,7 +261,7 @@ public class FluidUtilTest {
 	}
 
 	@Test
-	void testTryFillContainerAndStowCreativePlayerKeepsOriginalStackResult() {
+	void tryFillContainerAndStowCreativePlayerKeepsOriginalStackResult() {
 		TestFluidStorage source = TestHelper.filledStorage(FluidConstants.BUCKET);
 		ItemStackHandler fullInventory = new ItemStackHandler(0);
 		ItemStack buckets = new ItemStack(Items.BUCKET, 2);
@@ -291,7 +291,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("emptyStowCases")
-	void testTryEmptyContainerAndStow(TestCaseStow test) {
+	void tryEmptyContainerAndStowStoresResult(TestCaseStow test) {
 		TestFluidStorage dest = TestHelper.emptyStorage();
 		ItemStackHandler overflowInv = TestHelper.emptyItemStorage();
 
@@ -342,7 +342,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("dropTestCases")
-	public void testOfferToPlayer(OfferDropTestCase testCase) {
+	public void offerToPlayerPlacesResultInInventory(OfferDropTestCase testCase) {
 		Player player = mockPlayer();
 
 		// Simulate full inventory
@@ -357,7 +357,7 @@ public class FluidUtilTest {
 
 	@ParameterizedTest
 	@MethodSource("dropTestCases")
-	public void testDropToPlayer(OfferDropTestCase testCase) {
+	public void dropToPlayerDropsResultWhenInventoryCannotAcceptIt(OfferDropTestCase testCase) {
 		Player player = mockPlayer();
 
 		// Fill player's inventory completely to simulate no space

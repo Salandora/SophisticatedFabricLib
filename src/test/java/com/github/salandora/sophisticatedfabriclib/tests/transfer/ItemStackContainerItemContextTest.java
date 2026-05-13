@@ -58,7 +58,7 @@ public class ItemStackContainerItemContextTest {
 
 	@ParameterizedTest
 	@MethodSource("insertCases")
-	void testInsert(TestCase c) {
+	void insertsFluidIntoContainerItem(TestCase c) {
 		ContainerItemContext ctx = ItemStackContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = ctx.find(FluidStorage.ITEM);
 		assertNotNull(storage);
@@ -86,7 +86,7 @@ public class ItemStackContainerItemContextTest {
 
 	@ParameterizedTest
 	@MethodSource("extractCases")
-	void testExtract(TestCase c) {
+	void extractsFluidFromContainerItem(TestCase c) {
 		ContainerItemContext ctx = ItemStackContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = FluidStorage.ITEM.find(c.input(), ctx);
 		assertNotNull(storage);

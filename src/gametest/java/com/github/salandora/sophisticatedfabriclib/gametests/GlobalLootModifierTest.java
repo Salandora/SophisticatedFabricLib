@@ -36,7 +36,7 @@ public class GlobalLootModifierTest {
 	}
 
 	@GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
-	public void LootModifierTest(GameTestHelper context) {
+	public void globalLootModifierDoublesSimpleDungeonLoot(GameTestHelper context) {
 		long seed = 123;
 
 		AtomicReference<Map<Item, Integer>> stacks = new AtomicReference<>();

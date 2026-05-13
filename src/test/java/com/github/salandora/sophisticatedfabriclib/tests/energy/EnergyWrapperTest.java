@@ -148,7 +148,7 @@ public class EnergyWrapperTest {
 
 	@ParameterizedTest
 	@MethodSource("receiveCases")
-	void testEnergyStorageWrapper_receiveEnergy(TestCase tc) {
+	void energyStorageWrapperReceivesEnergy(TestCase tc) {
 		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(tc.startAmount(), tc.capacity());
 		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
 
@@ -171,7 +171,7 @@ public class EnergyWrapperTest {
 
 	@ParameterizedTest
 	@MethodSource("extractCases")
-	void testEnergyStorageWrapper_extractEnergy(TestCase tc) {
+	void energyStorageWrapperExtractsEnergy(TestCase tc) {
 		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(tc.startAmount(), tc.capacity());
 		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
 
@@ -182,7 +182,7 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testEnergyStorageWrapper_accessorsAndCapabilitiesDelegateToWrappedStorage() {
+	void energyStorageWrapperAccessorsAndCapabilitiesDelegateToWrappedStorage() {
 		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100, 0, 15);
 		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
 
@@ -193,7 +193,7 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testEnergyStorageWrapper_setEnergyStoredIsNoop() {
+	void energyStorageWrapperSetEnergyStoredIsNoop() {
 		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100);
 		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
 
@@ -204,7 +204,7 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testEnergyStorageWrapper_zeroReceiveAndExtractDoNotTouchWrappedStorage() {
+	void energyStorageWrapperZeroReceiveAndExtractDoNotTouchWrappedStorage() {
 		SimpleTREnergyStorage tr = new SimpleTREnergyStorage(25, 100);
 		IEnergyStorage wrapped = EnergyStorageWrapper.of(tr);
 
@@ -217,7 +217,7 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testEnergyStorageWrapper_getContainerReturnsContextStack() {
+	void energyStorageWrapperGetContainerReturnsContextStack() {
 		ItemStack stack = new ItemStack(Items.DIAMOND, 3);
 		EnergyStorageWrapper wrapped = EnergyStorageWrapper.of(
 				new SimpleTREnergyStorage(25, 100),
@@ -261,7 +261,7 @@ public class EnergyWrapperTest {
 
 	@ParameterizedTest
 	@MethodSource("insertCommitCases")
-	void testIEnergyStorageWrapper_insert_commitAndRollback(TestCase tc) {
+	void iEnergyStorageWrapperInsertCommitsAndRollsBack(TestCase tc) {
 		SimpleIEnergyStorage ie = new SimpleIEnergyStorage((int) tc.startAmount(), (int) tc.capacity());
 		EnergyStorage wrapped = IEnergyStorageWrapper.of(ie);
 
@@ -276,7 +276,7 @@ public class EnergyWrapperTest {
 
 	@ParameterizedTest
 	@MethodSource("extractCommitCases")
-	void testIEnergyStorageWrapper_extract_commitAndRollback(TestCase tc) {
+	void iEnergyStorageWrapperExtractCommitsAndRollsBack(TestCase tc) {
 		SimpleIEnergyStorage ie = new SimpleIEnergyStorage((int) tc.startAmount(), (int) tc.capacity());
 		EnergyStorage wrapped = IEnergyStorageWrapper.of(ie);
 
@@ -290,12 +290,12 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testIEnergyStorageWrapper_ofNullReturnsNull() {
+	void iEnergyStorageWrapperOfNullReturnsNull() {
 		assertNull(IEnergyStorageWrapper.of(null));
 	}
 
 	@Test
-	void testIEnergyStorageWrapper_accessorsAndCapabilitiesDelegateToWrappedStorage() {
+	void iEnergyStorageWrapperAccessorsAndCapabilitiesDelegateToWrappedStorage() {
 		SimpleIEnergyStorage ie = new SimpleIEnergyStorage(25, 100, false, true);
 		IEnergyStorageWrapper wrapped = IEnergyStorageWrapper.of(ie);
 
@@ -308,7 +308,7 @@ public class EnergyWrapperTest {
 	}
 
 	@Test
-	void testIEnergyStorageWrapper_insertAndExtractRespectDisabledCapabilities() {
+	void iEnergyStorageWrapperInsertAndExtractRespectDisabledCapabilities() {
 		SimpleIEnergyStorage ie = new SimpleIEnergyStorage(25, 100, false, false);
 		EnergyStorage wrapped = IEnergyStorageWrapper.of(ie);
 

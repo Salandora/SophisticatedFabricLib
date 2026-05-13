@@ -56,7 +56,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertAndExtract() {
+	void insertsAndExtractsStack() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		ItemStack input = new ItemStack(Items.DIRT, 10);
 
@@ -70,7 +70,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertBeyondLimit() {
+	void insertBeyondLimitReturnsRemainder() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		ItemStack input = new ItemStack(Items.DIRT, 100);
 
@@ -81,7 +81,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertSimulate() {
+	void simulatedInsertLeavesSlotEmpty() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		ItemStack input = new ItemStack(Items.DIRT, 10);
 
@@ -91,14 +91,14 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertEmptyStackReturnsEmptyWithoutValidatingSlot() {
+	void insertEmptyStackReturnsEmptyWithoutValidatingSlot() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 
 		assertEquals(ItemStack.EMPTY, handler.insertItem(99, ItemStack.EMPTY, false));
 	}
 
 	@Test
-	void testInsertRejectedByItemValidityReturnsOriginalStack() {
+	void insertRejectedByItemValidityReturnsOriginalStack() {
 		RestrictedItemStackHandler handler = new RestrictedItemStackHandler(1);
 		ItemStack input = new ItemStack(Items.STONE, 3);
 
@@ -110,7 +110,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertMergesMatchingStackAndReturnsRemainderAtSlotLimit() {
+	void insertMergesMatchingStackAndReturnsRemainderAtSlotLimit() {
 		RestrictedItemStackHandler handler = new RestrictedItemStackHandler(1);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 2));
 		handler.changedCount = 0;
@@ -125,7 +125,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertDifferentItemIntoOccupiedSlotReturnsOriginalStack() {
+	void insertDifferentItemIntoOccupiedSlotReturnsOriginalStack() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 2));
 		ItemStack input = new ItemStack(Items.STONE, 5);
@@ -138,7 +138,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInsertIntoFullSlotReturnsOriginalStack() {
+	void insertIntoFullSlotReturnsOriginalStack() {
 		RestrictedItemStackHandler handler = new RestrictedItemStackHandler(1);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 4));
 		handler.changedCount = 0;
@@ -152,7 +152,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testExtractSimulate() {
+	void simulatedExtractLeavesSlotUntouched() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 10));
 
@@ -162,21 +162,21 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testExtractZeroAmountReturnsEmptyWithoutValidatingSlot() {
+	void extractZeroAmountReturnsEmptyWithoutValidatingSlot() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 
 		assertEquals(ItemStack.EMPTY, handler.extractItem(99, 0, false));
 	}
 
 	@Test
-	void testExtractEmptySlotReturnsEmpty() {
+	void extractEmptySlotReturnsEmpty() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 
 		assertEquals(ItemStack.EMPTY, handler.extractItem(0, 5, false));
 	}
 
 	@Test
-	void testExtractAllClearsSlotAndFiresChange() {
+	void extractAllClearsSlotAndFiresChange() {
 		RestrictedItemStackHandler handler = new RestrictedItemStackHandler(1);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 3));
 		handler.changedCount = 0;
@@ -191,7 +191,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testExtractAllSimulateReturnsCopyAndLeavesSlotUntouched() {
+	void simulatedExtractAllReturnsCopyAndLeavesSlotUntouched() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		ItemStack stored = new ItemStack(Items.DIRT, 3);
 		handler.setStackInSlot(0, stored);
@@ -204,7 +204,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testSetAndGetStack() {
+	void setAndGetStackRoundTrips() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		ItemStack stack = new ItemStack(Items.STONE, 3);
 		handler.setStackInSlot(0, stack);
@@ -212,7 +212,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testConstructorsSlotCountLimitsAndSetSize() {
+	void constructorsSlotCountLimitsAndSetSizeBehaveAsExpected() {
 		ItemStackHandler defaultHandler = new ItemStackHandler();
 		assertEquals(1, defaultHandler.getSlotCount());
 
@@ -232,7 +232,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testInvalidSlotInsertExtract() {
+	void invalidSlotOperationsThrow() {
 		ItemStackHandler handler = new ItemStackHandler(1);
 		assertThrows(RuntimeException.class, () -> handler.insertItem(1, new ItemStack(Items.DIRT), false));
 		assertThrows(RuntimeException.class, () -> handler.extractItem(1, 1, false));
@@ -241,7 +241,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testSerializeDeserialize() {
+	void serializeDeserializeRoundTripsStoredStacks() {
 		ItemStackHandler handler = new ItemStackHandler(2);
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 4));
 		handler.setStackInSlot(1, new ItemStack(Items.STONE, 6));
@@ -261,7 +261,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testSerializeSkipsEmptySlotsAndStoresSize() {
+	void serializeSkipsEmptySlotsAndStoresSize() {
 		ItemStackHandler handler = new ItemStackHandler(3);
 		handler.setStackInSlot(1, new ItemStack(Items.DIRT, 4));
 
@@ -274,7 +274,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testDeserializeWithoutSizeKeepsCurrentSizeAndIgnoresOutOfRangeSlots() {
+	void deserializeWithoutSizeKeepsCurrentSizeAndIgnoresOutOfRangeSlots() {
 		HolderLookup.Provider provider = registryProvider();
 		ItemStackHandler source = new ItemStackHandler(3);
 		source.setStackInSlot(0, new ItemStack(Items.DIRT, 2));
@@ -292,7 +292,7 @@ public class ItemStackHandlerTest {
 	}
 
 	@Test
-	void testSetStackInSlotFiresChangeNotification() {
+	void setStackInSlotFiresChangeNotification() {
 		RestrictedItemStackHandler handler = new RestrictedItemStackHandler(1);
 
 		handler.setStackInSlot(0, new ItemStack(Items.DIRT, 1));
