@@ -1,6 +1,6 @@
 package com.github.salandora.sophisticatedfabriclib.tests.transfer;
 
-import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MutableContainerItemContextTest {
+public class ItemStackContainerItemContextTest {
 	@BeforeAll
 	static void setup() {
 		SharedConstants.tryDetectVersion();
@@ -59,7 +59,7 @@ public class MutableContainerItemContextTest {
 	@ParameterizedTest
 	@MethodSource("insertCases")
 	void testInsert(TestCase c) {
-		ContainerItemContext ctx = MutableContainerItemContext.ofSingleStack(c.input());
+		ContainerItemContext ctx = ItemStackContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = ctx.find(FluidStorage.ITEM);
 		assertNotNull(storage);
 
@@ -87,7 +87,7 @@ public class MutableContainerItemContextTest {
 	@ParameterizedTest
 	@MethodSource("extractCases")
 	void testExtract(TestCase c) {
-		ContainerItemContext ctx = MutableContainerItemContext.ofSingleStack(c.input());
+		ContainerItemContext ctx = ItemStackContainerItemContext.ofSingleStack(c.input());
 		Storage<FluidVariant> storage = FluidStorage.ITEM.find(c.input(), ctx);
 		assertNotNull(storage);
 

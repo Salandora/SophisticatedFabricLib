@@ -3,7 +3,7 @@ package com.github.salandora.sophisticatedfabriclib.tests.energy;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.IEnergyStorage;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.EnergyStorageWrapper;
 import com.github.salandora.sophisticatedfabriclib.energy.api.v1.wrapper.teamreborn.IEnergyStorageWrapper;
-import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.SharedConstants;
@@ -221,7 +221,7 @@ public class EnergyWrapperTest {
 		ItemStack stack = new ItemStack(Items.DIAMOND, 3);
 		EnergyStorageWrapper wrapped = EnergyStorageWrapper.of(
 				new SimpleTREnergyStorage(25, 100),
-				MutableContainerItemContext.ofSingleStack(stack)
+				ItemStackContainerItemContext.ofSingleStack(stack)
 		);
 
 		ItemStack container = wrapped.getContainer();

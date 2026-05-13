@@ -2,7 +2,7 @@ package com.github.salandora.sophisticatedfabriclib.tests.transfer;
 
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.FluidStack;
 import com.github.salandora.sophisticatedfabriclib.fluid.api.v1.IFluidHandler;
-import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackContainerItemContext;
 import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.wrapper.fabric.FabricFluidStorageWrapper;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
@@ -42,7 +42,7 @@ public class FabricFluidStorageWrapperTest {
 	void accessorsExposeSingleTankAndContainerContext() {
 		SingleFluidStorage storage = fixedStorage(FluidConstants.BUCKET);
 		ItemStack containerStack = new ItemStack(Items.BUCKET, 3);
-		ContainerItemContext context = MutableContainerItemContext.ofSingleStack(containerStack);
+		ContainerItemContext context = ItemStackContainerItemContext.ofSingleStack(containerStack);
 		FabricFluidStorageWrapper wrapper = FabricFluidStorageWrapper.of(storage, context);
 
 		assertEquals(1, wrapper.getTanks());

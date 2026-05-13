@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedfabriclib.common.api.v1.extensions.item;
 
 import com.github.salandora.sophisticatedfabriclib.common.api.v1.ItemAbility;
-import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackContainerItemContext;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.minecraft.core.BlockPos;
@@ -79,7 +79,7 @@ public interface SophisticatedItemStack {
 
 	@Nullable
 	default <T> T sophisticatedFabricLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
-		ContainerItemContext context = MutableContainerItemContext.ofSingleStack(self());
+		ContainerItemContext context = ItemStackContainerItemContext.ofSingleStack(self());
 		return context.find(lookup);
 	}
 }
