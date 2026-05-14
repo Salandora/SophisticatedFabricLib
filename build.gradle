@@ -14,8 +14,7 @@ plugins {
     id 'idea'
     id 'fabric-loom' version '1.16.+'
     id 'maven-publish'
-    id "net.darkhax.curseforgegradle" version "1.1.15"
-    id "com.modrinth.minotaur" version "2.+"
+    id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.1"
 }
 
 idea {
@@ -84,14 +83,13 @@ loom {
 
     runs {
         gameTest {
-            server()
-
-            name "Game Test"
-
-            vmArg "-Dfabric-api.gametest"
             vmArg "-Dfabric-api.gametest.report-file=${project.layout.buildDirectory.file("junit.xml").get().getAsFile()}"
-            runDir "build/gametest"
         }
+
+        /*clientGameTest {
+            vmArg "-Dfabric-tag-conventions-v2.missingTagTranslationWarning=fail"
+            vmArg "-Dfabric-tag-conventions-v1.legacyTagWarning=fail"
+        }*/
 
         client {
             client()
@@ -422,43 +420,35 @@ tasks.register('generateChangelog') {
     project.ext.changelog = ""
 }
 
-task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    dependsOn 'generateChangelog'
+publishMods {
+    changelog = providers.provider { project.ext.changelog }
+    file = remapJar.archiveFile
+    type = project.release_type
+    modLoaders.add("fabric")
+    dryRun = providers.environmentVariable("CURSEFORGE_API_KEY").getOrNull() == null
 
-    apiToken = System.getenv("CURSEFORGE_TOKEN")
-    def mainFile = upload(project.curseforge_id, file("${project.layout.buildDirectory.get()}/libs/${base.archivesName.get()}-${version}.jar"))
-    mainFile.changelogType = 'markdown'
-    mainFile.changelog = { project.ext.changelog }
-    mainFile.addModLoader('Fabric')
-    mainFile.releaseType = "${release_type}"
+    curseforge {
+        accessToken = System.getenv("CURSEFORGE_TOKEN")
+        projectId = project.curseforge_id
 
-    // Game versions
-    mainFile.addGameVersion("${release_versions}".split(','))
+        // Game versions
+        minecraftVersionList(project.curseforge_minecraft_versions)
 
-    // Dependencies
-    mainFile.addRequirement('fabric-api')
-    mainFile.addRequirement('forge-config-api-port-fabric')
-    mainFile.addEmbedded('porting-lib')
-    onlyIf { !project.ext.changelog.isEmpty() }
-}
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "${modrinth_project_id}"
-    versionType = "${release_type}"
-    uploadFile = remapJar
-    gameVersions = "${release_versions}".split(',').collect {e -> e}
-    loaders = ["fabric"]
-    dependencies {
-        required.project "fabric-api"
-        required.project "forge-config-api-port"
-        embedded.project "porting_lib"
+        // Dependencies
+        requires('fabric-api')
     }
-    changelog = provider {
-        project.ext.changelog
+    modrinth {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = project.modrinth_project_id
+
+        // Game versions
+        minecraftVersionList(project.modrinth_minecraft_versions)
+
+        // Dependencies
+        requires('fabric-api')
     }
 }
-tasks.modrinth {
+tasks.publishMods {
     dependsOn(tasks.generateChangelog)
     onlyIf { !project.ext.changelog.isEmpty() }
 }
