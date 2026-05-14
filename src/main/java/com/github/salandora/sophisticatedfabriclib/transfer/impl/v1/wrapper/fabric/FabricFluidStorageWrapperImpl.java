@@ -26,9 +26,11 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		this.container = container;
 	}
 
-	@Nullable
 	@Override
 	public ItemStack getContainer() {
+		if (this.container == null || this.container.getItemVariant() == null) {
+			return ItemStack.EMPTY;
+		}
 		return this.container.getItemVariant().toStack((int) this.container.getAmount());
 	}
 
@@ -68,7 +70,7 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		}
 
 		try (Transaction ctx = Transaction.openOuter()) {
-			long inserted = storage.insert(fluidStack.getVariant(), fluidStack.getAmount(), ctx);
+			long inserted = storage.insert(fluidStack.getResource(), fluidStack.getAmount(), ctx);
 			if (action.execute()) {
 				ctx.commit();
 			}
@@ -84,7 +86,7 @@ public class FabricFluidStorageWrapperImpl implements FabricFluidStorageWrapper 
 		}
 
 		try (Transaction ctx = Transaction.openOuter()) {
-			long extracted = storage.extract(drainStack.getVariant(), drainStack.getAmount(), ctx);
+			long extracted = storage.extract(drainStack.getResource(), drainStack.getAmount(), ctx);
 			if (action.execute()) {
 				ctx.commit();
 			}

@@ -109,7 +109,7 @@ public class FabricItemStorageWrapperImpl implements FabricItemStorageWrapper {
 					ctx.commit();
 				}
 
-				return stack.copyWithCount((int) inserted);
+				return stack.copyWithCount((int) (stack.getCount() - inserted));
 			}
 		}
 
@@ -119,8 +119,12 @@ public class FabricItemStorageWrapperImpl implements FabricItemStorageWrapper {
 				return ItemStack.EMPTY;
 			}
 
+			var resource = slotted.getSlot(slot).getResource();
+			if (resource.isBlank()) {
+				return ItemStack.EMPTY;
+			}
+
 			try (Transaction ctx = Transaction.openOuter()) {
-				var resource = slotted.getSlot(slot).getResource();
 				long extracted = slotted.getSlot(slot).extract(resource, amount, ctx);
 				if (!simulate) {
 					ctx.commit();

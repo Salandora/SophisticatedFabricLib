@@ -27,7 +27,7 @@ public class SimpleFluidContent implements DataComponentHolder {
 
 	@Override
 	public DataComponentMap getComponents() {
-		return fluidStack.getVariant().getComponentMap();
+		return fluidStack.getResource().getComponentMap();
 	}
 
 	public FluidStack copy() {

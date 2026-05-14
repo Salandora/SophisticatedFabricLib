@@ -62,14 +62,6 @@ public class LazyOptional<T> {
 		return resolved.getValue();
 	}
 
-	private T getValueUnsafe() {
-		T ret = getValue();
-		if (ret == null) {
-			throw new IllegalStateException("LazyOptional is empty or otherwise returned null from getValue() unexpectedly");
-		}
-		return ret;
-	}
-
 	public boolean isPresent() {
 		return supplier != null && isValid;
 	}
@@ -84,7 +76,7 @@ public class LazyOptional<T> {
 
 	public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
 		Objects.requireNonNull(mapper);
-		return isPresent() ? Optional.of(mapper.apply(getValueUnsafe())) : Optional.empty();
+		return isPresent() && getValue() != null ? Optional.of(mapper.apply(getValue())) : Optional.empty();
 	}
 
 	public <U> Optional<U> flatMap(Function<? super T, ? extends Optional<? extends U>> mapper) {
@@ -98,7 +90,7 @@ public class LazyOptional<T> {
 	}
 
 	public Optional<T> resolve() {
-		return isPresent() ? Optional.of(getValueUnsafe()) : Optional.empty();
+		return isPresent() ? Optional.of(getValue()) : Optional.empty();
 	}
 
 	public T orElse(T other) {

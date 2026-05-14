@@ -92,7 +92,7 @@ public class FluidUtil {
 		}
 
 		if (level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), 3) || fluidState.isSource()) {
-			level.playSound(player, pos, FluidVariantAttributes.getEmptySound(resource.getVariant()), SoundSource.BLOCKS, 1.0f, 1.0f);
+			level.playSound(player, pos, FluidVariantAttributes.getEmptySound(resource.getResource()), SoundSource.BLOCKS, 1.0f, 1.0f);
 			level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
 			return true;
 		}
@@ -145,7 +145,7 @@ public class FluidUtil {
 						if (doTransfer) {
 							tryFluidTransfer(to, from, maxAmount,true);
 							if (player != null) {
-								SoundEvent sound = fill ? FluidVariantAttributes.getFillSound(simulated.getVariant()) : FluidVariantAttributes.getEmptySound(simulated.getVariant());
+								SoundEvent sound = fill ? FluidVariantAttributes.getFillSound(simulated.getResource()) : FluidVariantAttributes.getEmptySound(simulated.getResource());
 								player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.BLOCKS, 1, 1);
 							}
 						} else {

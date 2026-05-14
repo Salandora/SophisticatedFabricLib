@@ -1,0 +1,108 @@
+name: Build
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v5
+        with:
+          path: "**/.gradle/loom-cache"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+          cache: gradle
+      - uses: gradle/actions/wrapper-validation@v5
+      - run: chmod +x ./gradlew
+      - run: ./gradlew check build publishToMavenLocal --stacktrace
+      - run: |
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2)
+          echo "minecraft_version=$minecraft_version" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SophisticatedFabricLib-${{ env.minecraft_version }}
+          path: build/libs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Maven Local SophisticatedFabricLib-${{ env.minecraft_version }}
+          path: ~/.m2/repository/net/fabricmc/
+
+#  client_test:
+#    runs-on: ubuntu-24.04
+#    steps:
+#      - uses: actions/setup-java@v5
+#        with:
+#          distribution: zulu
+#          java-version: 21
+#          cache: gradle
+#      - uses: actions/checkout@v6
+#        with:
+#          fetch-depth: 0
+#      - uses: actions/cache@v5
+#        with:
+#          path: "**/.gradle/loom-cache"
+#          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+#          restore-keys: "${{ runner.os }}-gradle-"
+#      - run: |
+#          curl -L -o tracy-capture https://github.com/modmuss50/tracy-utils/releases/download/0.0.2/linux-x86_64-tracy-capture
+#          chmod +x tracy-capture
+#          mkdir run && echo "eula=true" >> run/eula.txt
+#      - run: ./gradlew runClientGametest --stacktrace --warning-mode=fail
+#        env:
+#          ENABLE_TRACY: false
+#      - uses: actions/upload-artifact@v7
+#        if: always()
+#        with:
+#          name: Test Screenshots
+#          path: run/screenshots
+#      - uses: actions/upload-artifact@v7
+#        if: always()
+#        with:
+#          name: Tracy Profile
+#          path: profile.tracy
+
+  server_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v5
+        with:
+          path: "**/.gradle/loom-cache"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+          cache: gradle
+      - run: mkdir run && echo "eula=true" >> run/eula.txt
+      - run: ./gradlew runGametest --stacktrace --warning-mode=fail
+
+  dry_run_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v5
+        with:
+          path: "**/.gradle/loom-cache"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+          cache: gradle
+      - name: Dry run of publishMods
+        run: ./gradlew publishMods

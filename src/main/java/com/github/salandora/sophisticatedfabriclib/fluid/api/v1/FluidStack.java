@@ -27,7 +27,7 @@ public final class FluidStack extends SingleFluidStorage {
 	}
 
 	public FluidStack(FluidStack stack, long amount) {
-		this(stack.getVariant(), amount);
+		this(stack.getResource(), amount);
 	}
 
 	public FluidStack(FluidVariant variant, long amount) {
@@ -51,9 +51,7 @@ public final class FluidStack extends SingleFluidStorage {
 		return this.variant.getFluid();
 	}
 
-	public FluidVariant getVariant() {
-		return this.variant;
-	}
+	public FluidVariant getVariant() { return this.variant; }
 
 	public boolean isEmpty() {
 		return this.isResourceBlank();
@@ -106,11 +104,11 @@ public final class FluidStack extends SingleFluidStorage {
 			return true;
 		}
 
-		return isFluidEqual(other.getVariant());
+		return isFluidEqual(other.getResource());
 	}
 
 	public boolean isFluidEqual(FluidVariant other) {
-		return isFluidEqual(getVariant(), other);
+		return isFluidEqual(getResource(), other);
 	}
 
 	public static boolean isFluidEqual(FluidVariant a, FluidVariant b) {

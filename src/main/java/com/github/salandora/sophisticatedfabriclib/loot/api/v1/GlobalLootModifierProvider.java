@@ -1,6 +1,5 @@
 package com.github.salandora.sophisticatedfabriclib.loot.api.v1;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -13,9 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -85,14 +82,6 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 
 			return CompletableFuture.allOf(futures.build().toArray(CompletableFuture[]::new));
 		});
-	}
-
-	public BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> withConditions(BiConsumer<ResourceKey<LootTable>, IGlobalLootModifier> exporter, ConditionJsonProvider... conditions) {
-		Preconditions.checkArgument(conditions.length > 0, "Must add at least one condition.");
-		return (id, table) -> {
-			FabricDataGenHelper.addConditions(table, conditions);
-			exporter.accept(id, table);
-		};
 	}
 
 	@Override

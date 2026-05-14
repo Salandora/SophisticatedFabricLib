@@ -1,7 +1,7 @@
 package com.github.salandora.sophisticatedfabriclib.common.api.v1.extensions.item;
 
 import com.github.salandora.sophisticatedfabriclib.common.api.v1.ItemAbility;
-import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.MutableContainerItemContext;
+import com.github.salandora.sophisticatedfabriclib.transfer.api.v1.ItemStackContainerItemContext;
 import com.github.salandora.sophisticatedfabriclib.util.LazyOptional;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -77,7 +77,7 @@ public interface SophisticatedItemStack {
 	}
 
 	default <T> LazyOptional<T> sophisticatedFabricLibrary_getCapability(ItemApiLookup<T, ContainerItemContext> lookup) {
-		ContainerItemContext context = MutableContainerItemContext.ofSingleStack(self());
+		ContainerItemContext context = ItemStackContainerItemContext.ofSingleStack(self());
 		return LazyOptional.of(() -> context.find(lookup));
 	}
 
@@ -85,6 +85,5 @@ public interface SophisticatedItemStack {
 		// This can be null!
 		LazyOptional<T> capability = lookup.find(self(), null);
 		return capability == null ? LazyOptional.empty() : capability;
-
 	}
 }
