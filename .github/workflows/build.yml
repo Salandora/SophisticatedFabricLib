@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
+          fetch-depth: 200
       - uses: actions/cache@v5
         with:
           path: "**/.gradle/loom-cache"
@@ -22,7 +22,7 @@ jobs:
           cache: gradle
       - uses: gradle/actions/wrapper-validation@v5
       - run: chmod +x ./gradlew
-      - run: ./gradlew check build publishToMavenLocal --stacktrace
+      - run: ./gradlew build publishToMavenLocal --stacktrace
       - run: |
           minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2)
           echo "minecraft_version=$minecraft_version" >> $GITHUB_ENV
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: Maven Local SophisticatedFabricLib-${{ env.minecraft_version }}
-          path: ~/.m2/repository/net/fabricmc/
+          path: ~/.m2/repository/com/github/salandora
 
 #  client_test:
 #    runs-on: ubuntu-24.04
@@ -88,8 +88,14 @@ jobs:
       - run: mkdir run && echo "eula=true" >> run/eula.txt
       - run: ./gradlew runGametest --stacktrace --warning-mode=fail
 
-  dry_run_publish:
+  release:
+    needs:
+      - build
+      - server_test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -104,5 +110,40 @@ jobs:
           distribution: zulu
           java-version: 21
           cache: gradle
-      - name: Dry run of publishMods
-        run: ./gradlew publishMods
+      - uses: gradle/actions/wrapper-validation@v5
+      - run: chmod +x ./gradlew
+      - run: ./gradlew build --stacktrace --no-configuration-cache
+      - name: Publish to Github Packages
+        run: ./gradlew publish -x check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'com.github.salandora.sophisticatedfabriclib'
+          package-type: 'maven'
+          min-versions-to-keep: 10
+      - name: PublishMods
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          BRANCH_NAME=${GITHUB_REF##*/}
+          if [[ "$BRANCH_NAME" =~ ^[0-9]+\.[0-9]+\.([0-9]+|x)-fabric$ ]]; then
+            ./gradlew publishMods -x check
+          
+            mod_version=$(grep -E '^mod_version[[:space:]]*=' gradle.properties | sed 's/.*=[[:space:]]*//')
+            minecraft_version=$(grep -E '^minecraft_version[[:space:]]*=' gradle.properties | sed 's/.*=[[:space:]]*//')
+            tag_name="${mod_version}+${minecraft_version}"
+
+            if git rev-parse -q --verify "refs/tags/${tag_name}" >/dev/null; then
+              echo "Tag ${tag_name} already exists. Skipping tag creation."
+            else
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git tag -a "${tag_name}" -m "Release ${tag_name}"
+              git push origin "refs/tags/${tag_name}"
+            fi
+          else
+            echo "Branch name does not match the pattern: $BRANCH_NAME. Skipping upload."
+            exit 0
+          fi
