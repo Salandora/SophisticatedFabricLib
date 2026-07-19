@@ -371,8 +371,8 @@ tasks.register('generateChangelog') {
 
         changelog.append("### General\n")
         if (lastRelevantTag == null) {
-            changelog.append("- Initial release for ${project.minecraft_version}\n")
-            changelog.append("- Based on version ${project.mod_version}\n")
+            changelog.append("- Initial release for Minecraft ${project.minecraft_version}\n")
+            changelog.append("- Version ${project.mod_version}\n")
         } else {
             changelog.append("- Update to version ${project.mod_version}\n")
         }
@@ -430,7 +430,7 @@ publishMods {
     file = remapJar.archiveFile
     type = ReleaseType.valueOf(project.release_type)
     modLoaders.add("fabric")
-    dryRun = providers.environmentVariable("CURSEFORGE_API_KEY").getOrNull() == null
+    dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
 
     curseforge {
         accessToken = System.getenv("CURSEFORGE_TOKEN")
