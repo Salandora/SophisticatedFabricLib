@@ -7,17 +7,16 @@ import com.github.salandora.sophisticatedfabriclib.model.api.v1.loading.IUnbaked
 import com.github.salandora.sophisticatedfabriclib.model.api.v1.models.SimpleMeshBuilder;
 import com.github.salandora.sophisticatedfabriclib.model.api.v1.util.SimpleModelState;
 import com.github.salandora.sophisticatedfabriclib.model.api.v1.util.UnbakedGeometryHelper;
-import com.github.salandora.sophisticatedfabriclib.util.Lazy;
-import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
-import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.model.WrapperBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -46,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,125 +71,55 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 		this.translucentEmissiveMaterial = finder.blendMode(BlendMode.TRANSLUCENT).emissive(true).find();
 	}
 
-	public DynamicFluidContainerModel withFluid(Fluid newFluid) {
-		return new DynamicFluidContainerModel(FluidVariant.of(newFluid), applyFluidLuminosity);
+	public DynamicFluidContainerModel withFluid(FluidVariant newFluid) {
+		return new DynamicFluidContainerModel(newFluid, applyFluidLuminosity);
 	}
 
 	public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
-		return new LazyBaked(() -> {
-			Material particleLocation = context.hasTexture("particle") ? context.getMaterial("particle") : null;
-			Material baseLocation = context.hasTexture("base") ? context.getMaterial("base") : null;
-			Material fluidMaskLocation = context.hasTexture("fluid") ? context.getMaterial("fluid") : null;
+		Material particleLocation = context.hasTexture("particle") ? context.getMaterial("particle") : null;
+		Material baseLocation = context.hasTexture("base") ? context.getMaterial("base") : null;
+		Material fluidMaskLocation = context.hasTexture("fluid") ? context.getMaterial("fluid") : null;
 
-			TextureAtlasSprite baseSprite = baseLocation != null ? spriteGetter.apply(baseLocation) : null;
-			TextureAtlasSprite templateSprite = fluidMaskLocation != null ? spriteGetter.apply(fluidMaskLocation) : null;
-			TextureAtlasSprite fluidSprite = !fluidVariant.isBlank()? FluidVariantRendering.getSprite(fluidVariant) : null;
+		TextureAtlasSprite baseSprite = baseLocation != null ? spriteGetter.apply(baseLocation) : null;
+		TextureAtlasSprite templateSprite = fluidMaskLocation != null ? spriteGetter.apply(fluidMaskLocation) : null;
+		TextureAtlasSprite fluidSprite = !fluidVariant.isBlank()? getSprite(fluidVariant) : null;
 
-			TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
-			if (particleSprite == null) particleSprite = fluidSprite;
-			if (particleSprite == null) particleSprite = baseSprite;
+		TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
+		if (particleSprite == null) particleSprite = fluidSprite;
+		if (particleSprite == null) particleSprite = baseSprite;
 
-			var itemContext = GeometryBakingContext.builder(context)
-					.withGui3d(false)
-					.withUseBlockLight(false)
-					.build();
-			var overrideHandler = new ContainedFluidOverrideHandler(overrides, baker, itemContext, this);
+		var itemContext = GeometryBakingContext.builder(context)
+				.withGui3d(false)
+				.withUseBlockLight(false)
+				.build();
+		var overrideHandler = new ContainedFluidOverrideHandler(overrides, baker, itemContext, this);
 
-			Mesh baseMesh = null, fluidMesh = null;
-			if (baseSprite != null) {
-				// Base texture
-				var builder = new SimpleMeshBuilder(translucentMaterial);
-				var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
-				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState);
+		Mesh baseMesh = null, fluidMesh = null;
+		if (baseSprite != null) {
+			// Base texture
+			var builder = new SimpleMeshBuilder(translucentMaterial);
+			var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
+			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> baseSprite, modelState);
 
-				quads.forEach(builder::addUnculledFace);
+			quads.forEach(builder::addUnculledFace);
 
-				baseMesh = builder.build();
-			}
-
-			if (fluidSprite != null) {
-				// Fluid layer
-				var builder = new SimpleMeshBuilder(applyFluidLuminosity && FluidVariantAttributes.getLuminance(fluidVariant) > 0 ? translucentEmissiveMaterial : translucentMaterial);
-
-				var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
-				var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite.contents()); // Use template as mask
-				var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState); // Bake with fluid texture
-
-				quads.forEach(builder::addUnculledFace);
-
-				fluidMesh = builder.build();
-			}
-
-			return new Baked(itemContext, particleSprite, overrideHandler, baseMesh, fluidMesh);
-		});
-	}
-
-	private static final class LazyBaked implements BakedModel, WrapperBakedModel {
-		private final Lazy<BakedModel> lazyWrappedModel;
-
-		private LazyBaked(Supplier<BakedModel> lazyWrappedModel) {
-			this.lazyWrappedModel = Lazy.of(lazyWrappedModel);
+			baseMesh = builder.build();
 		}
 
-		@Override
-		public boolean isVanillaAdapter() {
-			return getWrappedModel().isVanillaAdapter();
+		if (fluidSprite != null && templateSprite != null) {
+			// Fluid layer
+			var builder = new SimpleMeshBuilder(applyFluidLuminosity && FluidVariantAttributes.getLuminance(fluidVariant) > 0 ? translucentEmissiveMaterial : translucentMaterial);
+
+			var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
+			var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite.contents()); // Use template as mask
+			var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState); // Bake with fluid texture
+
+			quads.forEach(builder::addUnculledFace);
+
+			fluidMesh = builder.build();
 		}
 
-		@Override
-		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-			getWrappedModel().emitBlockQuads(blockView, state, pos, randomSupplier, context);
-		}
-
-		@Override
-		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-			getWrappedModel().emitItemQuads(stack, randomSupplier, context);
-		}
-
-		@Override
-		public List<BakedQuad> getQuads(BlockState blockState, Direction face, RandomSource rand) {
-			return getWrappedModel().getQuads(blockState, face, rand);
-		}
-
-		@Override
-		public boolean useAmbientOcclusion() {
-			return getWrappedModel().useAmbientOcclusion();
-		}
-
-		@Override
-		public boolean isGui3d() {
-			return getWrappedModel().isGui3d();
-		}
-
-		@Override
-		public boolean isCustomRenderer() {
-			return getWrappedModel().isCustomRenderer();
-		}
-
-		@Override
-		public TextureAtlasSprite getParticleIcon() {
-			return getWrappedModel().getParticleIcon();
-		}
-
-		@Override
-		public boolean usesBlockLight() {
-			return getWrappedModel().usesBlockLight();
-		}
-
-		@Override
-		public ItemTransforms getTransforms() {
-			return getWrappedModel().getTransforms();
-		}
-
-		@Override
-		public ItemOverrides getOverrides() {
-			return getWrappedModel().getOverrides();
-		}
-
-		@Override
-		public BakedModel getWrappedModel() {
-			return lazyWrappedModel.get();
-		}
+		return new Baked(itemContext, particleSprite, overrideHandler, baseMesh, fluidMesh);
 	}
 
 	private static final class Baked implements BakedModel {
@@ -221,8 +151,12 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 
 		@Override
 		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-			baseMesh.outputTo(context.getEmitter());
-			fluidMesh.outputTo(context.getEmitter());
+			if (baseMesh != null) {
+				baseMesh.outputTo(context.getEmitter());
+			}
+			if (fluidMesh != null) {
+				fluidMesh.outputTo(context.getEmitter());
+			}
 		}
 
 		@Override
@@ -282,8 +216,6 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 
 				Fluid fluid = BuiltInRegistries.FLUID.get(fluidName);
 				variant = FluidVariant.of(fluid);
-			} else if (jsonObject.has("variant")) {
-				variant = FluidVariant.CODEC.decode(JsonOps.INSTANCE, jsonObject).getOrThrow().getFirst();
 			} else {
 				throw new RuntimeException("Either 'fluid' or ' variant' must be present for a dynamic fluid container model");
 			}
@@ -296,7 +228,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 	}
 
 	private static final class ContainedFluidOverrideHandler extends ItemOverrides {
-		private final Map<String, BakedModel> cache = Maps.newHashMap(); // contains all the baked models since they'll never change
+		private final Map<FluidVariant, BakedModel> cache = new HashMap<>(); // contains all the baked models since they'll never change
 		private final ItemOverrides nested;
 		private final ModelBaker baker;
 		private final IGeometryBakingContext owner;
@@ -312,41 +244,54 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry {
 		@Override
 		public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
 			BakedModel overridden = nested.resolve(originalModel, stack, level, entity, seed);
-			if (overridden != originalModel) return overridden;
+			if (overridden != originalModel) {
+				return overridden;
+			}
 			return getFluidContained(stack)
-					.map(f -> {
-						Fluid fluid = f.resource().getFluid();
-						String name = BuiltInRegistries.FLUID.getKey(fluid).toString();
-
-						if (!cache.containsKey(name)) {
-							DynamicFluidContainerModel unbaked = this.parent.withFluid(fluid);
-							BakedModel bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this);
-							cache.put(name, bakedModel);
-							return bakedModel;
-						}
-
-						return cache.get(name);
-					})
+					.map(f -> cache.computeIfAbsent(
+							f.resource(),
+							variant ->
+									this.parent
+											.withFluid(variant)
+											.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this))
+					)
 					// not a fluid item apparently
 					.orElse(originalModel); // empty bucket
 		}
+	}
 
-		/**
-		 * Helper method to get the fluid contained in an itemStack
-		 */
-		public static Optional<ResourceAmount<FluidVariant>> getFluidContained(ItemStack container) {
-			if (!container.isEmpty()) {
-				container = container.copyWithCount(1);
-				Optional<ResourceAmount<FluidVariant>> fluidContained =
-						Optional.ofNullable(
-								ContainerItemContext.withConstant(container).find(FluidStorage.ITEM)
-						).map(handler ->
-								StorageUtil.findExtractableContent(handler, null)
-						);
+	/**
+	 * Helper methods
+	 */
+	private static Optional<ResourceAmount<FluidVariant>> getFluidContained(ItemStack container) {
+		if (!container.isEmpty()) {
+			container = container.copyWithCount(1);
+			Optional<ResourceAmount<FluidVariant>> fluidContained =
+					Optional.ofNullable(
+							ContainerItemContext.withConstant(container).find(FluidStorage.ITEM)
+					).map(handler ->
+							StorageUtil.findExtractableContent(handler, null)
+					);
 
-				return fluidContained.filter(f -> !f.resource().isBlank());
-			}
-			return Optional.empty();
+			return fluidContained.filter(f -> !f.resource().isBlank());
 		}
+		return Optional.empty();
+	}
+
+	private static @Nullable TextureAtlasSprite getSprite(FluidVariant fluidVariant) {
+		FluidVariantRenderHandler handler = FluidVariantRendering.getHandler(fluidVariant.getFluid());
+		if (handler != null) {
+			return FluidVariantRendering.getSprite(fluidVariant);
+		}
+
+		FluidRenderHandler handler1 = FluidRenderHandlerRegistry.INSTANCE.get(fluidVariant.getFluid());
+		if (handler1 != null) {
+			TextureAtlasSprite[] sprites = handler1.getFluidSprites(null, null, fluidVariant.getFluid().defaultFluidState());
+			if (sprites != null && sprites.length > 0 && sprites[0] != null) {
+				return sprites[0];
+			}
+		}
+
+		return null;
 	}
 }
